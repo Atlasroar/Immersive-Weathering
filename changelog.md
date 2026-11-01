@@ -3,6 +3,8 @@
 - Migrated to one root Fabric Loom project for Minecraft 1.20.1 and Java 17.
 - Removed IW-owned Forge modules, platform annotations/bridges, Quark leftovers,
   unfinished seasonal bridge, transformer output, and historical binary copies.
+- Removed unused throwing config placeholders and their unregistered enum/field;
+  all real registered config keys and defaults remain unchanged.
 - Kept Moonlight's required registration, config, event, networking, and dynamic
   resource behavior; retained existing Fabric flammability and stable content IDs.
 - Read the actual liquid fluid field directly and register biome features through

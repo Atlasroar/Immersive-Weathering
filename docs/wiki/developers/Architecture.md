@@ -38,6 +38,9 @@ needed on Fabric.
 IW-owned platform bridge classes/annotations, Forge resources and overrides,
 Quark-only optional pairs, and the unused/unimplemented Serene Seasons bridge
 are removed. Fabric never adjusted temperature through that seasonal stub.
+Unregistered historical config placeholder methods, their unused enum/field,
+and misleading tail comments are removed; registered config keys/defaults stay
+unchanged.
 EMI and Mod Menu entrypoints remain optional; Moonlight continues to supply the
 config screen, lifecycle, registries, events, networking, and generated packs.
 

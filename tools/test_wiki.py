@@ -44,6 +44,10 @@ builder.pop();
         with self.assertRaisesRegex(ValueError, "missing"):
             wiki.config_rows("public static Supplier<Boolean> FLAG;\nFLAG = anotherBuilder.define();")
 
+    def test_common_config_has_no_unregistered_placeholder_tail(self):
+        source = (wiki.ROOT / wiki.JAVA_ROOT / "configs" / "CommonConfigs.java").read_text(encoding="utf-8")
+        self.assertNotRegex(source, r"throw new AssertionError|LeafPileMode|VITRIFIED_LAVA")
+
     def test_unbalanced_sections_fail(self):
         with self.assertRaisesRegex(ValueError, "pop"):
             wiki.config_rows("builder.pop();")
