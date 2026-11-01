@@ -4,7 +4,7 @@ import argparse
 import json
 import re
 import sys
-from pathlib import Path
+from pathlib import Path, PurePath
 from urllib.parse import quote, unquote, urlsplit
 
 
@@ -67,6 +67,10 @@ def source_link(root: Path, path: Path, label: str | None = None) -> str:
 
 def table_cell(value: str) -> str:
     return value.replace("|", r"\|").replace("\n", " ")
+
+
+def path_sort_key(path: PurePath) -> str:
+    return path.as_posix()
 
 
 def moonlight_coordinates(source: str) -> list[str]:
@@ -146,7 +150,7 @@ def generate(root: Path) -> str:
                   "Annotations, utility APIs, and functional dependencies are all included.", "",
                   "| Source file | Imported API symbols |", "| --- | --- |"])
     base = root / "src" / "main" / "java"
-    for path in sorted(base.rglob("*.java")):
+    for path in sorted(base.rglob("*.java"), key=path_sort_key):
         imports = re.findall(r"^import (?:static )?(net\.mehvahdjukaar\.moonlight\.[^;]+);",
                              path.read_text(encoding="utf-8"), re.MULTILINE)
         if imports:
@@ -162,8 +166,8 @@ def generate(root: Path) -> str:
     data_root = root / "src" / "main" / "resources" / "data"
     for directory in ("block_growths", "fluid_generators"):
         lines.extend([f"### {directory}", "", "| Resource ID | Definition |", "| --- | --- |"])
-        for namespace in sorted(data_root.iterdir()):
-            for path in sorted((namespace / directory).rglob("*.json")):
+        for namespace in sorted(data_root.iterdir(), key=path_sort_key):
+            for path in sorted((namespace / directory).rglob("*.json"), key=path_sort_key):
                 resource = path.relative_to(namespace / directory).with_suffix("").as_posix()
                 lines.append(f"| `{namespace.name}:{resource}` | {source_link(root, path)} |")
         lines.append("")
@@ -199,7 +203,7 @@ def check(root: Path, expected: str) -> list[str]:
     if not reference.is_file() or reference.read_text(encoding="utf-8") != expected:
         errors.append("Generated reference is stale or missing; run python tools\\wiki.py --write")
     wiki = root / "docs" / "wiki"
-    pages = sorted(wiki.rglob("*.md"))
+    pages = sorted(wiki.rglob("*.md"), key=path_sort_key)
     documents = [root / name for name in ("README.md", "CONTRIBUTING.md", "AGENTS.md")]
     documents.append(root / ".github" / "pull_request_template.md")
     for path in [*documents, *pages]:
@@ -270,7 +274,7 @@ def export_wiki(root: Path, output: Path, repo_url: str, ref: str) -> None:
         raise ValueError("Export destination must not overwrite the source wiki")
     output.mkdir(parents=True, exist_ok=True)
     wiki_root = root / "docs" / "wiki"
-    pages = sorted(wiki_root.rglob("*.md"))
+    pages = sorted(wiki_root.rglob("*.md"), key=path_sort_key)
     exported = {}
     for page in pages:
         slug = wiki_slug(page.relative_to(wiki_root))

@@ -43,6 +43,8 @@ instead of silently omitting unfamiliar definitions.
 The documentation workflow runs those checks plus standard-library unit tests on
 every push/pull request. There is no date stamp or network/API dependency in the
 generated page; identical source produces identical output.
+Inventories sort case-sensitively by POSIX-rendered path, independent of the
+host's Windows/Linux path-comparison rules.
 
 `python tools\fabric.py --check` rejects IW-owned platform residue in active
 source/build surfaces, legacy source modules, and bundled historical binaries.

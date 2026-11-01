@@ -1,6 +1,6 @@
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 import wiki
 
@@ -8,6 +8,13 @@ import wiki
 class WikiTests(unittest.TestCase):
     def test_properties_preserve_values(self):
         self.assertEqual(wiki.properties("# note\n x = a=b\n ! note\n"), {"x": "a=b"})
+
+    def test_path_sorting_is_case_sensitive_and_identical_on_windows_and_linux(self):
+        names = ["configs/CommonConfigs.java", "blocks/LeafPileBlock.java", "ImmersiveWeathering.java"]
+        expected = ["ImmersiveWeathering.java", "blocks/LeafPileBlock.java", "configs/CommonConfigs.java"]
+        for kind in (PurePosixPath, PureWindowsPath):
+            paths = [kind(name) for name in names]
+            self.assertEqual([path.as_posix() for path in sorted(paths, key=wiki.path_sort_key)], expected)
 
     def test_coordinates_exclude_resource_expansion_properties(self):
         source = '''
