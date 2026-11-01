@@ -3,10 +3,64 @@
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
 **Target:** Immersive Weathering **2.0.6-beta.2**, Minecraft **1.20.1**, Fabric.
-This is a source-backed manual acceptance checklist, not a record of completed
-gameplay tests. All results start **Not run**. The report that most features
-appear to work is encouraging, but does not establish individual case results.
+This is a source-backed manual acceptance checklist with a dated user-reported
+results ledger below. The detailed tables remain a **reusable blank checklist**:
+their `Not run` cells are template defaults, not the current test-round verdicts.
+Use the dated ledger for recorded outcomes.
 Datapacks, configuration, other mods, and later releases can change expectations.
+
+## Reported results: November 1, 2026
+
+The tester supplied these verdicts for the current beta.2 test round. They are
+**user-reported in-game observations**, not independent reproductions or proof
+that every control/subcase in a combined row was exercised. The planned method
+was accelerated random ticking; exact effective gamerules, durations, counts,
+world seed/coordinates, configurations, logs, screenshots, and a fresh complete
+mod/version inventory were not supplied with this report.
+
+| Group | Reported Pass | Other outcomes / coverage limits |
+| --- | --- | --- |
+| Weathering | W01-W10 | W01 and W02 explicitly passed for all listed blocks. W09/W10 retain the reported pass, but steel-wool coverage is unresolved; see below. |
+| Stone-brick subcases | SB01-SB06 | All passed. The tester explicitly authorized closure of #11. |
+| Trees | T01-T11 | All reported Pass; no individual biome/modded-tree/control inventory supplied. |
+| Soil and plants | G01-G06, G08-G09, G12-G13 | **G07 Fail:** double-tall blocks do not appear to work. G11 and G14 **Not observed**. **G10 not reported**. |
+| Cold/weather | C01-C07, C09-C13 | **C08 mixed:** hanging-ice/support-loss drop Pass; **vibration does not work**. |
+| Fire/lightning | H01-H05, H09-H10 | H06-H08 **Not observed**. |
+| Fluid generators | None reported | **R01-R14 not reported**, not failed or passed by implication. |
+| Other/regressions | Q01-Q06, Q08-Q09 | Q07 **Not applicable**. Q08's broad pass does not establish individual optional-mod combinations. |
+
+Across the 81 main cases this records **58 reported passes** (including the
+qualified W09/W10 reports), **one failure**, **one mixed result**, **five Not
+observed**, **one Not applicable**, and **15 not reported**. SB01-SB06 are six
+additional subcases, not additional main cases. Keep missing reports distinct
+from unsuccessful observations.
+
+**Stone-brick report closed:** [#11](https://github.com/Atlasroar/Immersive-Weathering/issues/11)
+was closed as completed at the tester's explicit request, based on W01-W06 and
+SB01-SB06 passing. No new code fix or measured equality of spread rates is
+claimed.
+
+**G07 follow-up:** the tester reports double-tall growth does not appear to
+work. This combined case includes grass -> tall grass, fern -> large fern,
+and seagrass -> tall seagrass; which individual transitions failed was not
+specified. Preserve the reported failure without inventing a root cause or
+claiming a fix.
+
+**C08 follow-up:** falling after support loss passed, while vibration-triggered
+falling failed according to the tester. This is consistent with the source
+discrepancy documented in section C, but the report does not yet isolate the
+event, distance, listener setting, or exact causal path.
+
+**W09/W10 steel-wool discrepancy:** the tester could not find steel wool and
+reported that axes replaced it in 1.20.1. Their axe observations and overall
+pass verdicts are preserved. However, this fork still registers
+`immersive_weathering:steel_wool` in
+[ModItems](../../../src/main/java/com/ordana/immersive_weathering/reg/ModItems.java)
+and retains its interaction path in
+[ModEvents](../../../src/main/java/com/ordana/immersive_weathering/events/ModEvents.java).
+The claim of removal/replacement is therefore **not confirmed for this build**.
+Steel-wool acquisition/use and exact axe coverage remain unresolved; the report
+does not validate absent steel-wool interactions.
 
 ## Prepare a disposable test world
 
@@ -121,8 +175,9 @@ including the mapped shapes. These are not all moss families.
 
 Record the exact missing behavior in
 [#11](https://github.com/Atlasroar/Immersive-Weathering/issues/11): moss,
-cracking, tool conversion, or a different growth. That report remains
-unreproduced; the performance beta did not claim to fix its rates.
+cracking, tool conversion, or a different growth. That report was closed after
+the November 1 tester confirmation above; the performance beta did not claim
+a separate rate fix.
 Authoritative variant maps:
 [Mossable](../../../src/main/java/com/ordana/immersive_weathering/blocks/mossy/Mossable.java)
 and [Crackable](../../../src/main/java/com/ordana/immersive_weathering/blocks/cracked/Crackable.java).

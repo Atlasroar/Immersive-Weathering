@@ -21,12 +21,17 @@ current status and any verified fixes.
 | [Diagonal Walls compatibility](https://github.com/Atlasroar/Immersive-Weathering/issues/9) | Compare affected and unaffected walls in the same layout. |
 | [Water Erosion property conflict](https://github.com/Atlasroar/Immersive-Weathering/issues/8) | Test the mods separately in copies of the world and capture the full combined stack trace. |
 
-An additional current-fork report,
-[stone-brick growth/spread differences](https://github.com/Atlasroar/Immersive-Weathering/issues/11),
-has not yet established which mechanic or variants fail. Use the
-[feature test sheet](Feature-testing.md), particularly W01-W06 and SB01-SB06,
-to separate natural moss/cracking from manual conversion and record comparable
-controls. The performance beta did not claim to fix this report.
+The current-fork
+[stone-brick growth/spread report](https://github.com/Atlasroar/Immersive-Weathering/issues/11)
+was closed at the tester's request on November 1, 2026 after W01-W06 and
+SB01-SB06 passed in the beta.2 test round. This is user-reported confirmation,
+not a new code fix or measured equality of rates. The
+[feature test sheet](Feature-testing.md) preserves the results and limitations.
+The same round reports double-tall plant growth failing (G07), and icicle
+support-loss falling passing but vibration-triggered falling failing (C08).
+These behaviors have not been fixed; exact minimal reproductions remain to be
+isolated. Steel-wool availability/use also remains unresolved despite the
+reported axe-interaction passes.
 
 [Browse current Fabric issues](https://github.com/Atlasroar/Immersive-Weathering/issues?q=is%3Aissue+is%3Aopen+label%3Afabric+label%3Aminecraft-1.20.1).
 Do not file Forge/NeoForge support requests against this fork.
