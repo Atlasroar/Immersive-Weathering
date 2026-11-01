@@ -1,6 +1,6 @@
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 import wiki
 
@@ -9,10 +9,17 @@ class WikiTests(unittest.TestCase):
     def test_properties_preserve_values(self):
         self.assertEqual(wiki.properties("# note\n x = a=b\n ! note\n"), {"x": "a=b"})
 
+    def test_path_sorting_is_case_sensitive_and_identical_on_windows_and_linux(self):
+        names = ["configs/CommonConfigs.java", "blocks/LeafPileBlock.java", "ImmersiveWeathering.java"]
+        expected = ["ImmersiveWeathering.java", "blocks/LeafPileBlock.java", "configs/CommonConfigs.java"]
+        for kind in (PurePosixPath, PureWindowsPath):
+            paths = [kind(name) for name in names]
+            self.assertEqual([path.as_posix() for path in sorted(paths, key=wiki.path_sort_key)], expected)
+
     def test_coordinates_exclude_resource_expansion_properties(self):
         source = '''
 modImplementation("curse.maven:selene-499980:5619072")
-inputs.property "moonlight_version", rootProject.moonlight_version
+inputs.property "moonlight_min_version", project.moonlight_min_version
 '''
         self.assertEqual(wiki.moonlight_coordinates(source), ["curse.maven:selene-499980:5619072"])
 
@@ -36,6 +43,10 @@ builder.pop();
     def test_unrecognized_config_definition_fails(self):
         with self.assertRaisesRegex(ValueError, "missing"):
             wiki.config_rows("public static Supplier<Boolean> FLAG;\nFLAG = anotherBuilder.define();")
+
+    def test_common_config_has_no_unregistered_placeholder_tail(self):
+        source = (wiki.ROOT / wiki.JAVA_ROOT / "configs" / "CommonConfigs.java").read_text(encoding="utf-8")
+        self.assertNotRegex(source, r"throw new AssertionError|LeafPileMode|VITRIFIED_LAVA")
 
     def test_unbalanced_sections_fail(self):
         with self.assertRaisesRegex(ValueError, "pop"):
@@ -65,6 +76,15 @@ builder.pop();
         generated = wiki.generate(wiki.ROOT)
         self.assertEqual(generated, wiki.generate(wiki.ROOT))
         self.assertEqual(wiki.check(wiki.ROOT, generated), [])
+
+    def test_reference_uses_root_layout_and_expanded_runtime_requirements(self):
+        generated = wiki.generate(wiki.ROOT)
+        self.assertIn("Build project: root only (no subprojects).", generated)
+        self.assertIn("src/main/resources/fabric.mod.json", generated)
+        self.assertIn("| `moonlight` | `>=1.20-2.12.11` |", generated)
+        self.assertNotIn("common/src", generated)
+        self.assertNotIn("fabric/src", generated)
+        self.assertNotIn("${fabric_loader_version}", generated)
 
     def test_stale_reference_is_detected(self):
         errors = wiki.check(wiki.ROOT, wiki.generate(wiki.ROOT) + "\nchanged")

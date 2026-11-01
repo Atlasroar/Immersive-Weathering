@@ -52,9 +52,9 @@ cold or lightning effects.
 ## Recipes and natural generators
 
 For exact crafting recipes, consult the installed pack's recipe display and the
-[shipped recipes](../../../common/src/main/resources/data/immersive_weathering/recipes).
+[shipped recipes](../../../src/main/resources/data/immersive_weathering/recipes).
 Natural fluid generators have separate
-[data definitions](../../../common/src/main/resources/data/immersive_weathering/fluid_generators);
+[data definitions](../../../src/main/resources/data/immersive_weathering/fluid_generators);
 their output depends on flow, neighboring blocks, and generator priority.
 Do not rely on older upstream wiki layouts as current instructions.
 

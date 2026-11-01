@@ -1,8 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#immersive_weathering:has_loam",
-  "features": [
-    "immersive_weathering:loam"
-  ],
-  "step": "raw_generation"
-}

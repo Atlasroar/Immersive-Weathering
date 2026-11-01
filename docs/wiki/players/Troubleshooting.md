@@ -26,6 +26,20 @@ Do not file Forge/NeoForge support requests against this fork.
 
 ## Before reporting
 
+For this beta, a missing Moonlight error requires the Fabric
+**1.20-2.12.11** library (or a deliberately verified compatible newer version),
+not a second IW jar. Fabric API **0.92.12+1.20.1** also needs a recent Loader;
+IW declares **0.16.14+**. Check the complete dependency message before assuming
+the migration broke gameplay. Forge-only Quark integrations and the unfinished
+season-temperature bridge are not offered by this Fabric build; existing
+Fabric behavior never implemented that seasonal adjustment.
+
+The beta's isolated production smoke successfully loaded the IW EMI plugin with
+EMI **1.1.24+1.20.1**. That is limited startup/reload evidence, not a verified fix
+for every reproduction of [the EMI report](https://github.com/Atlasroar/Immersive-Weathering/issues/3).
+Developer `runClient` audits have a separate optional-JEI class-loading caveat;
+see [development validation](../developers/Development.md).
+
 1. Back up the affected world and reproduce in a disposable copy.
 2. Record Minecraft, Fabric Loader, Fabric API, IW, Moonlight, and relevant
    compatibility-mod versions. Note singleplayer versus dedicated server.

@@ -5,7 +5,7 @@
 ## Shipped data
 
 The main data root is
-[`data/immersive_weathering`](../../../common/src/main/resources/data/immersive_weathering).
+[`data/immersive_weathering`](../../../src/main/resources/data/immersive_weathering).
 Recipes, loot, tags, worldgen definitions, block growths, and fluid generators
 are separate resources. Data IDs are namespaced; file paths are part of their
 contracts. Inventories and tick-source names are in the
@@ -39,10 +39,10 @@ For Minecraft 1.20.1, create a datapack with a root `pack.mcmeta`:
 ```
 
 Copy the shipped
-[`weeds.json`](../../../common/src/main/resources/data/immersive_weathering/block_growths/weeds.json)
+[`weeds.json`](../../../src/main/resources/data/immersive_weathering/block_growths/weeds.json)
 to `data\immersive_weathering\block_growths\weeds.json` in that pack and change
 only `growth_chance` to `0`. Preserve the rest of the valid definition. Override
-[`weeds_spread.json`](../../../common/src/main/resources/data/immersive_weathering/block_growths/weeds_spread.json)
+[`weeds_spread.json`](../../../src/main/resources/data/immersive_weathering/block_growths/weeds_spread.json)
 separately if spreading should also stop. Install the pack in the world's
 `datapacks` directory, use `/reload`, and inspect logs and effective behavior.
 

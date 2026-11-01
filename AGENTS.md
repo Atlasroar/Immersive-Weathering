@@ -1,7 +1,8 @@
 # Repository guidance
 
 - Maintenance targets Minecraft 1.20.1 and Fabric. Do not add Forge, NeoForge,
-  or multiloader obligations. Existing legacy projects have not yet been removed.
+  or multiloader obligations. Sources and resources live in the single root
+  Fabric Loom project under `src/main`.
 - The GitHub default branch is `atlasroar-fabric-1-20-1-bugs`. Retired branch
   history is preserved under `archive/2026-11-01/*` tags. Do not remove archive
   tags or recreate retired support branches without explicit user direction.

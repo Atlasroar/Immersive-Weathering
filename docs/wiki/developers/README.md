@@ -13,7 +13,7 @@
 | [Wiki maintenance](Maintenance.md) | Documentation ownership, regeneration, checks, and limits |
 | [Licensing and attribution](Licensing.md) | Upstream LGPLv3, incorporated GPLv3, and third-party notices |
 
-The inherited architecture is multiloader; maintenance is Fabric-only. Document
-the code that exists rather than describing the planned migration as finished.
+The source and build are Fabric-only, under one root `src/main` tree. Moonlight's
+functional APIs remain dependencies; IW no longer owns platform bridges.
 This wiki is a navigation map, not a replacement for reading the implementation
 and reproducing behavior.
