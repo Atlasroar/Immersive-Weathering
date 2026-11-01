@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "immersive_weathering:snow_covered_grass",
+    "immersive_weathering:snow_covered_fern",
+    "immersive_weathering:snow_covered_tall_grass",
+    "immersive_weathering:snow_covered_large_fern",
+    "immersive_weathering:snow_covered_sunflower",
+    "immersive_weathering:snow_covered_lilac",
+    "immersive_weathering:snow_covered_rose_bush",
+    "immersive_weathering:snow_covered_peony"
+  ]
+}

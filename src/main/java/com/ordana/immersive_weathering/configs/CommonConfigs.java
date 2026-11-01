@@ -76,6 +76,12 @@ public class CommonConfigs {
 
 
     public static final Supplier<Boolean> THIN_ICE_MELTING;
+    public static final Supplier<Boolean> SNOW_HOSTS;
+    public static final Supplier<Boolean> FALLING_SNOW;
+    public static final Supplier<Boolean> REPLACE_PARTIAL_SNOW;
+    public static final Supplier<Boolean> SNOW_ACCUMULATION;
+    public static final Supplier<Boolean> SNOW_ACCUMULATION_WITHOUT_THUNDER;
+    public static final Supplier<Integer> SNOW_COLUMN_CAP;
 
     public static final Supplier<Boolean> VITRIFIED_LIGHTNING;
     public static final Supplier<Double> FULGURITE_CHANCE;
@@ -183,6 +189,16 @@ public class CommonConfigs {
 
         builder.push("thin_ice");
         THIN_ICE_MELTING = builder.define("natural_melting", false);
+        builder.pop();
+
+        builder.push("snow");
+        SNOW_HOSTS = builder.define("host_mixing", true);
+        FALLING_SNOW = builder.define("falling", true);
+        REPLACE_PARTIAL_SNOW = builder.define("replace_partial_layers", true);
+        SNOW_ACCUMULATION = builder.define("accumulation", true);
+        SNOW_ACCUMULATION_WITHOUT_THUNDER = builder.define("accumulate_without_thunder", false);
+        SNOW_COLUMN_CAP = builder.comment("Maximum weather-deposited layers in one column; never spills above.")
+                .define("column_cap", 8, 1, 8);
         builder.pop();
 
         builder.push("lightning_growths"); //TODO:move to data

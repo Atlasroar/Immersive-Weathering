@@ -149,6 +149,12 @@
   "config.immersive_weathering.leaf_piles.leaf_piles_blacklist": "Leaf Piles Blacklist",
 
   "config.immersive_weathering.thin_ice.natural_melting": "Natural Melting",
+  "config.immersive_weathering.snow.host_mixing": "Snow Shares Host Cells",
+  "config.immersive_weathering.snow.falling": "Unsupported Snow Falls",
+  "config.immersive_weathering.snow.replace_partial_layers": "Replace Partial Snow Layers",
+  "config.immersive_weathering.snow.accumulation": "Extra Snow Accumulation",
+  "config.immersive_weathering.snow.accumulate_without_thunder": "Accumulate During Ordinary Snowfall",
+  "config.immersive_weathering.snow.column_cap": "Maximum Weather Snow Layers",
 
   "config.immersive_weathering.lightning_growths.vitrified_lightning": "Fulgurite Formation",
   "config.immersive_weathering.lightning_growths.fulgurite_chance": "Fulgurite Formation Chance",

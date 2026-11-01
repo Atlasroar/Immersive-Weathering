@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "#immersive_weathering:snow_hosts/walls",
     "immersive_weathering:mossy_brick_wall",
     "immersive_weathering:mossy_stone_wall",
     "immersive_weathering:stone_wall",

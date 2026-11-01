@@ -50,7 +50,7 @@ Fabric behavior never implemented that seasonal adjustment.
 The **2.0.6-beta.1** isolated production smoke successfully loaded the IW EMI plugin with
 EMI **1.1.24+1.20.1**. That is limited startup/reload evidence, not a verified fix
 for every reproduction of [the EMI report](https://github.com/Atlasroar/Immersive-Weathering/issues/3).
-It is not blanket gameplay verification for **2.0.6-beta.3**; record current-version
+It is not blanket gameplay verification for **2.1.0-beta.1**; record current-version
 observations with the feature test sheet.
 Developer `runClient` audits have a separate optional-JEI class-loading caveat;
 see [development validation](../developers/Development.md).
@@ -68,3 +68,20 @@ see [development validation](../developers/Development.md).
 Missing generated textures are not automatically Moonlight bugs. IW owns its
 generation rules and may encounter unusual mod models or resource-pack layouts.
 For technical diagnosis, see the [developer architecture map](../developers/Architecture.md).
+
+## Standalone snow checks
+
+No extra layers in ordinary snowfall is the default, not a failure. Compare
+`/weather thunder` in a cold biome with a warm-rain control, then inspect the
+[snow config and gamerule sentinel](Configuration.md#standalone-snow).
+Check for roofs, block light above 11, and the column cap before increasing tick
+speed. A modded fence, gate, slab, or waterlogged block is deliberately not a host.
+Right-click a covered fence/wall with a shovel to retain it; mining the composite
+breaks the host instead. Full plain snow (layer 8) is not replaced in place by the
+partial-layer override. Source-water ice conversion requires falling snow, not
+stationary layers adjacent to water.
+
+Rendering uses ordinary multipart models with vanilla host textures and the
+vanilla snow sprite, with no Indium/Kiwi requirement. Alternate resource packs
+and Sodium still need the [manual snow checks](Feature-testing.md#standalone-snow-candidate-retest);
+a model bake or fixture pass is not visual acceptance.

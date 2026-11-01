@@ -1,0 +1,27 @@
+{
+  "replace": false,
+  "values": [
+    "immersive_weathering:snow_covered_cobblestone_wall",
+    "immersive_weathering:snow_covered_mossy_cobblestone_wall",
+    "immersive_weathering:snow_covered_brick_wall",
+    "immersive_weathering:snow_covered_prismarine_wall",
+    "immersive_weathering:snow_covered_red_sandstone_wall",
+    "immersive_weathering:snow_covered_mossy_stone_brick_wall",
+    "immersive_weathering:snow_covered_granite_wall",
+    "immersive_weathering:snow_covered_stone_brick_wall",
+    "immersive_weathering:snow_covered_nether_brick_wall",
+    "immersive_weathering:snow_covered_andesite_wall",
+    "immersive_weathering:snow_covered_red_nether_brick_wall",
+    "immersive_weathering:snow_covered_sandstone_wall",
+    "immersive_weathering:snow_covered_end_stone_brick_wall",
+    "immersive_weathering:snow_covered_diorite_wall",
+    "immersive_weathering:snow_covered_blackstone_wall",
+    "immersive_weathering:snow_covered_polished_blackstone_wall",
+    "immersive_weathering:snow_covered_polished_blackstone_brick_wall",
+    "immersive_weathering:snow_covered_cobbled_deepslate_wall",
+    "immersive_weathering:snow_covered_polished_deepslate_wall",
+    "immersive_weathering:snow_covered_deepslate_brick_wall",
+    "immersive_weathering:snow_covered_deepslate_tile_wall",
+    "immersive_weathering:snow_covered_mud_brick_wall"
+  ]
+}

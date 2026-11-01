@@ -2,12 +2,33 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.0.6-beta.3**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.1.0-beta.1**, Minecraft **1.20.1**, Fabric.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
 their `Not run` cells are template defaults, not the current test-round verdicts.
 Use the dated ledger for recorded outcomes.
 Datapacks, configuration, other mods, and later releases can change expectations.
+
+## Standalone snow candidate retest
+
+Use a new backed-up/disposable test area. These are **not recorded in-game
+passes**. Automated production-code fixtures and client/server launch evidence
+are described in [development validation](../developers/Development.md#snow-mechanics-harness).
+Keep the beta.2 ledger below unchanged.
+
+| Case | Setup and controls | Required result | Manual verdict |
+| --- | --- | --- | --- |
+| N01 | Each of 12 vanilla fences and 22 walls; isolated, raw/wrapped neighbors, four rotations, all snow layers 1-8 | Snow shares the cell; raw connectivity, host textures, collision, pathfinding and pick-block remain correct | Not run |
+| N02 | Grass, fern, tall grass, large fern, sunflower, lilac, rose bush, peony; snow-first and host-first, both halves | Correct host/state after placing, shoveling and melting; no transient paired disappearance; bonemeal preserves snow | Not run |
+| N03 | Shovel use, ordinary break, correct/incorrect host tool, shears, Silk Touch, Creative; each half of a mixed pair | Shovel use removes only cover; breaking uses host mining/drop rules; no doubled host or snow drops; Creative no cover drops | Not run |
+| N04 | Remove support under plain/covered snow at layers 1-8; remove plant soil/partner; unload/reload and save/reopen while falling | Only snow falls; valid hosts stay; invalid plants die; counts/state persist; no ghost entity/client disagreement | Not run |
+| N05 | Land every incoming count 1-8 on partial piles, full piles, dry hosts, blocked/wet cells, moving pistons and build bounds | At most eight in target cell, exact remainder as items, no overwrites/spill/dupes; gamerule-disabled drops are intentional | Not run |
+| N06 | Fall through source water, flowing levels, waterlogged fence/wall, and a high-speed source crossing; warm/cold controls | Only an actual source WATER block becomes ice; flowing/waterlogged solids stay intact; source consumes incoming snow | Not run |
+| N07 | Cold exposed columns: clear, ordinary snowfall, thunder; warm rain, roof, block light 12, outside simulation distance | Default extra layers only in eligible thunder; vanilla first snow in ordinary snowfall; no roof/light/warm/unticked accumulation | Not run |
+| N08 | Gamerule 0,1,2,8,24; IW cap 1,3,8; accumulation off; ordinary on/off; mixing/falling/replacement off; block-growth off | Sentinel 1 uses IW cap, 0 stops weather snow, custom positive limits intersect cap; independent toggles and single-column bound hold | Not run |
+| N09 | Replace plain snow 1-8 with stone, chest, oriented fence, flowers and unsupported hosts; permission/adventure/obstruction controls | Normal item placement/callbacks/consumption survive; 1-7 replace in place, layer 8 does not through this override; no arbitrary containment | Not run |
+| N10 | Piston push/destroy, explosion, fire, shearing; dedicated client sync; save/reload; vanilla renderer and existing Sodium setup; resource-pack reload | Original host/drop/state semantics; no missing models, plant-tint/snow-tint errors, flickering or rendering-library requirement | Not run |
+| N11 | Existing IW snowy masonry IDs/config/data, old worlds, leaf/sand falling layers, beta.3 G07 cases | No destructive migration or changed independent mechanisms | Not run |
 
 ## Reported results: November 1, 2026
 

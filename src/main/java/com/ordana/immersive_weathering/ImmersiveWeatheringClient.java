@@ -43,6 +43,8 @@ public class ImmersiveWeatheringClient {
     }
 
     public static void setup() {
+        com.ordana.immersive_weathering.snow.SnowHosts.entries().values().forEach(block ->
+                ClientHelper.registerRenderType(block.get(), RenderType.cutoutMipped()));
 
         ClientHelper.registerRenderType(ModBlocks.GRASSY_PERMAFROST.get(), RenderType.cutoutMipped());
         ClientHelper.registerRenderType(ModBlocks.GRASSY_SILT.get(), RenderType.cutoutMipped());
@@ -167,6 +169,9 @@ public class ImmersiveWeatheringClient {
 
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
+        com.ordana.immersive_weathering.snow.SnowHosts.entries().values().forEach(block ->
+                event.register((state, level, pos, tint) -> event.getColor(
+                        com.ordana.immersive_weathering.snow.SnowHosts.raw(state), level, pos, tint), block.get()));
         ModBlocks.LEAF_PILES.forEach((type, leafPile) ->
                 event.register((blockState, blockAndTintGetter, blockPos, i) ->
                 getLeafTypeColor(event, type, blockState, blockAndTintGetter, blockPos, i), leafPile));

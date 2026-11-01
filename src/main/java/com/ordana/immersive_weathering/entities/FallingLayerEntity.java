@@ -90,6 +90,10 @@ public class FallingLayerEntity extends FallingBlockEntity {
             return;
         }
         BlockState blockState = this.getBlockState();
+        if (blockState.is(Blocks.SNOW)) {
+            com.ordana.immersive_weathering.snow.SnowPhysics.tick(this);
+            return;
+        }
         if (blockState.isAir() || !(blockState.getBlock() instanceof LayerBlock block)) {
             this.discard();
         } else {

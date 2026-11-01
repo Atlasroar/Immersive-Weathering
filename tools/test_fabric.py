@@ -6,6 +6,7 @@ from pathlib import Path
 
 import fabric
 import wiki
+import snow_resources
 
 
 class FabricTests(unittest.TestCase):
@@ -85,6 +86,8 @@ class FabricTests(unittest.TestCase):
         manifest = self.manifest()
         extension = ".java" if sources else ".class"
         entries = {"fabric.mod.json": json.dumps(manifest)}
+        for resource in snow_resources.outputs():
+            entries[resource.relative_to(snow_resources.RESOURCES).as_posix()] = resource.read_bytes()
         for notice in fabric.NOTICES:
             if notice != missing_notice:
                 entries[notice] = (wiki.ROOT / notice).read_bytes()

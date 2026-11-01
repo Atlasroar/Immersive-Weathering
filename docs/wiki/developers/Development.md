@@ -46,7 +46,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.0.6-beta.3.jar --sources build\libs\immersive_weathering-2.0.6-beta.3-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0-beta.1.jar --sources build\libs\immersive_weathering-2.1.0-beta.1-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -54,7 +54,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.0.6-beta.
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.0.6-beta.3.jar`; install that remapped
+`build\libs\immersive_weathering-2.1.0-beta.1.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -109,6 +109,64 @@ python -m unittest discover -s tools -p "test_*.py"
 The [documentation workflow](../../../.github/workflows/docs.yml) runs the checks
 on pushes and pull requests independently of the Minecraft build. It does not
 launch Minecraft, validate external URLs, or prove narrative/gameplay accuracy.
+
+## Snow mechanics harness
+
+```powershell
+python tools\snow_resources.py
+python tools\snow_resources.py --check
+.\gradlew.bat snowMechanicsTest --console=plain
+```
+
+`build`/`check` includes this separate Java 17 source set, without adding a test
+framework or packaged dependency. Production `SnowHosts`, `SnowCoveredBlock`,
+`SnowPhysics`, `SnowWeather`, falling-entity save/tick methods, placement injection
+bodies and Mojang block states/shapes/loot code are exercised. The source set
+substitutes only common-config initialization and the falling entity's registration
+supplier. Reflection stages test registry registration before freeze, rather than
+unfreezing a live game registry. Test blocks initialize native state caches.
+
+Coverage includes every dry state/layer of all 42 hosts, exact NBT round trips,
+native collision unions, rotations, vanilla-model reference resolution, raw fence
+connectivity, wet/unsupported host rejection, placement-policy 1-8 boundaries and
+toggles, mixed double halves, scheduled orphan resolution for both halves at
+every layer count, unsupported-host detachment, falling NBT, all
+incoming/target layer counts, overflow item counts, actual source/flow/waterlogged
+ray contacts, vanilla host/snow loot composition, melt/clone/piston-reaction
+contracts, and cold/warm/light/heightmap/load/config/weather/cap controls.
+Weather fixtures use Mojang's actual heightmap opacity predicate and verify all
+42 hosts reach eight without a second cell. Gamerules 0,1,2,8,24 and IW caps 1,3,8
+are crossed with clear/rain/thunder and ordinary-weather opt-in.
+The candidate's final harness run passed **31,850 cases**.
+
+The explicit fixture uses `Unsafe` to bypass server/level constructors, with
+in-memory storage, a supplied vanilla loot-table registry, seeded RNG, native
+heightmap predicates, and captured entity/item additions. Falling-contact probes
+move by an explicit fixture vector/on-ground flag, not the chunk collision engine.
+Injection bodies are invoked directly where needed: these checks are not a
+Mixin-loader, networking, chunk-save, piston-engine, explosion-engine, permissions,
+or real rendering test. Block-state and falling-entity NBT round trips are not a
+whole-world save/reload claim. The test-only entity type can log its missing data
+fixer; it is not shipped.
+
+Python checks include the existing 26 wiki/Fabric-tool tests and six snow-resource
+tests. The artifact guard additionally verifies every generated composite
+blockstate/model/tag is packaged byte-for-byte, retaining all prior license,
+metadata, side/mixin/refmap and dependency checks.
+
+The candidate's isolated development server initialized Fabric and all snow
+mixins/registrations up to the **unaccepted EULA gate**; no dedicated world was
+started. Default `runClient` reproduced the documented Moonlight/optional-EMI
+JEMI audit failure before window creation. A session-only Gradle init script
+excluding EMI from `modLocalRuntime` (not compile-time API or repository
+dependencies) allowed a real client resource bake and integrated-world startup,
+with config sync and 78 growth/14 fluid-generator definitions. Model baking
+caught bamboo's directional side-model naming, subsequently corrected in the
+generator. Observed player actions during the development launches are not an agent-controlled
+acceptance reproduction. Visual correctness, Sodium, alternate packs, multiplayer
+sync and N01-N11 remain explicitly pending in the
+[manual sheet](../players/Feature-testing.md#standalone-snow-candidate-retest).
+Do not modify an external profile or accept an EULA to make a smoke command pass.
 
 ## Paired-growth regression harness
 

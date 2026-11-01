@@ -9,6 +9,7 @@ import zipfile
 from pathlib import Path
 
 from wiki import ROOT, properties
+import snow_resources
 
 
 RESOURCES = Path("src") / "main" / "resources"
@@ -141,6 +142,12 @@ def artifact_errors(root: Path, path: Path, sources: bool = False) -> list[str]:
         for notice in NOTICES:
             if notice not in names or archive.read(notice) != (root / notice).read_bytes():
                 errors.append(f"{path}: {notice} is missing or differs from the repository")
+        for resource in snow_resources.outputs():
+            relative = resource.relative_to(snow_resources.RESOURCES)
+            name = relative.as_posix()
+            original = root / RESOURCES / relative
+            if name not in names or archive.read(name) != original.read_bytes():
+                errors.append(f"{path}: generated snow resource {name} is missing or changed")
         if "fabric.mod.json" not in names:
             return [*errors, f"{path}: missing fabric.mod.json"]
         manifest = json.loads(archive.read("fabric.mod.json"))
