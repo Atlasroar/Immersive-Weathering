@@ -125,6 +125,24 @@ tasks.register("growthPerformanceBenchmark", JavaExec) {
     }
 }
 
+sourceSets {
+    growthTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+tasks.register("pairedGrowthTest", JavaExec) {
+    group = "verification"
+    description = "Exercise production configurable growth with vanilla paired block states."
+    dependsOn growthTestClasses
+    classpath = sourceSets.growthTest.runtimeClasspath
+    mainClass = "com.ordana.immersive_weathering.data.block_growths.PairedGrowthTest"
+    workingDir layout.buildDirectory.dir("paired-growth-harness")
+    args file("src/main/resources/data/immersive_weathering/block_growths").absolutePath
+    doFirst { workingDir.mkdirs() }
+}
+
 tasks.named("check") {
-    dependsOn growthPerformanceTest
+    dependsOn growthPerformanceTest, pairedGrowthTest
 }

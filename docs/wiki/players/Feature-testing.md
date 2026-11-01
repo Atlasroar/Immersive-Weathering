@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.0.6-beta.2**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.0.6-beta.3**, Minecraft **1.20.1**, Fabric.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
 their `Not run` cells are template defaults, not the current test-round verdicts.
@@ -61,6 +61,28 @@ and retains its interaction path in
 The claim of removal/replacement is therefore **not confirmed for this build**.
 Steel-wool acquisition/use and exact axe coverage remain unresolved; the report
 does not validate absent steel-wool interactions.
+
+## Beta.3 paired-growth retest
+
+The beta.2 ledger above is historical and remains unchanged. Beta.3 corrects
+paired placement in the implementation; deterministic production-code fixtures
+now retain both halves. This is **not** a new in-game pass for G07, and does not
+change its recorded beta.2 failure. No fresh client/server game-loop smoke is
+claimed.
+
+Retest grass -> tall grass, fern -> large fern, and seagrass -> tall seagrass
+separately, on supported soil with loaded space above. For seagrass, use water
+above the short plant, not air, lava, or a waterlogged solid block. Compare
+blocked upper positions and unsupported plants; obstructions must not be
+overwritten. Inspect `half=lower` and `half=upper` with F3, then update neighboring
+blocks and confirm both halves persist without drops or holes.
+
+Also repeat G04's double-flower outputs (lilac, rose bush, peony, sunflower) in
+their configured biomes and the rare dark-forest fence/pumpkin variants when
+observed. Keep rarity distinct from failure. Growth chances, density limits,
+biome rules, and random-tick cadence have not been increased; accelerated ticking
+does not guarantee a rare output in a short observation window. Record version,
+fixtures, controls, counts, and logs using the preparation steps below.
 
 ## Prepare a disposable test world
 

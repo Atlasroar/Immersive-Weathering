@@ -1,3 +1,28 @@
+## 2.0.6-beta.3
+
+- Corrected paired double-plant placement: do not normalize a lower half against
+  its not-yet-placed upper half, and evaluate the upper half at its actual position.
+  This addresses the deterministic placement failure behind G07's grass, fern,
+  and seagrass transitions and the shared double-flower path.
+- Kept `above_block` vertically above the target even for side/down growth faces,
+  and reject paired placements crossing build-height bounds before writing.
+- Preserved replacement/fluid rules, biome restrictions, area limits, weights,
+  chances, random draws, single-block behavior, and dependencies.
+- Added a separate real-production-class regression harness covering all 18
+  bundled paired entries, neighbor-shape persistence, obstructions, water,
+  build-height limits, direction semantics, and single-output differential checks.
+- Investigated matching open
+  [Silversmith-Mods/Immersive-Weathering#458](https://github.com/Silversmith-Mods/Immersive-Weathering/issues/458).
+  No ready upstream patch was found in the bounded investigation; this correction
+  was independently authored. See the wiki's technical contract for the inspected
+  upstream revision.
+
+Use backed-up or disposable worlds. Automated fixtures are not a fresh Fabric
+game-loop smoke or a passed manual G07 retest. Preserve the dated beta.2 failure
+report; test all three transitions, blocked/wrong-fluid controls, and G04's paired
+biome outputs separately on beta.3. Icicle vibration and steel-wool reports are
+outside this fix.
+
 ## 2.0.6-beta.2
 
 - Included independently authored growth-dispatch and area-scan optimizations

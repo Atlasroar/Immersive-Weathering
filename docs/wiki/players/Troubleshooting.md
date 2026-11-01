@@ -29,9 +29,10 @@ not a new code fix or measured equality of rates. The
 [feature test sheet](Feature-testing.md) preserves the results and limitations.
 The same round reports double-tall plant growth failing (G07), and icicle
 support-loss falling passing but vibration-triggered falling failing (C08).
-These behaviors have not been fixed; exact minimal reproductions remain to be
-isolated. Steel-wool availability/use also remains unresolved despite the
-reported axe-interaction passes.
+Beta.3 corrects a deterministically reproduced paired-placement failure behind
+G07; its [manual retest](Feature-testing.md#beta3-paired-growth-retest) remains
+pending. C08 vibration is not fixed by that change. Steel-wool availability/use
+also remains unresolved despite the reported axe-interaction passes.
 
 [Browse current Fabric issues](https://github.com/Atlasroar/Immersive-Weathering/issues?q=is%3Aissue+is%3Aopen+label%3Afabric+label%3Aminecraft-1.20.1).
 Do not file Forge/NeoForge support requests against this fork.
@@ -49,7 +50,7 @@ Fabric behavior never implemented that seasonal adjustment.
 The **2.0.6-beta.1** isolated production smoke successfully loaded the IW EMI plugin with
 EMI **1.1.24+1.20.1**. That is limited startup/reload evidence, not a verified fix
 for every reproduction of [the EMI report](https://github.com/Atlasroar/Immersive-Weathering/issues/3).
-It is not blanket gameplay verification for **2.0.6-beta.2**; record current-version
+It is not blanket gameplay verification for **2.0.6-beta.3**; record current-version
 observations with the feature test sheet.
 Developer `runClient` audits have a separate optional-JEI class-loading caveat;
 see [development validation](../developers/Development.md).
