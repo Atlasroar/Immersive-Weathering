@@ -148,6 +148,15 @@ visual acceptance remains required.
 `SnowHostReplaceMixin`, `SnowLayerBlockMixin` and `SnowHostPlacementMixin` cooperate
 with normal `BlockPlaceContext`/`BlockItem` placement rather than reimplementing
 permissions, collision tests, callbacks, advancements, sounds or stack consumption.
+Partial covered plants permit ordinary block-item replacement only when
+`replace_partial_layers` is enabled and their reconstructed raw host accepts
+the item. Same-host items, full eight-layer covers, fences/walls and non-block
+items are not widened. A supported dry replacement keeps the old layer count
+through the same placement injection while mixing is enabled; unsupported
+solids or mixing-disabled replacements consume the cover normally. Snow items
+remain a separate mixing/add-layer path.
+The normal double-plant placement callback applies the same eligibility check
+to a covered upper cell, preserving its independent layer count too.
 `SnowDoublePlantMixin` recognizes raw/wrapped partners and preserves an existing
 partial-snow upper cell. The location-predicate fallback is restricted to explicit
 vanilla double-plant block-ID predicates against wrapped counterparts, with their
@@ -184,6 +193,10 @@ Research context:
 Source was inspected during research; this is not a clean-room/source-unread
 claim. The implementation and static resources here are independently authored
 against IW/Mojang behavior; no SnowRealMagic source or assets were ported.
+
+English `block.immersive_weathering.snow_covered_*` display names cover all 42
+registered hosts; the resource tests enforce exact inventory coverage without
+rewriting existing translations or other locales.
 
 ## Branch policy and historical reference
 

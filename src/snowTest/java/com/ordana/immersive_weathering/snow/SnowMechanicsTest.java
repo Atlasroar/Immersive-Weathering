@@ -318,11 +318,98 @@ public final class SnowMechanicsTest {
         CallbackInfoReturnable<BlockState> result = new CallbackInfoReturnable<>("test", true);
         cover.invoke(mixin, context(level, Items.SNOW.getDefaultInstance()), result);
         check(SnowHosts.raw(result.getReturnValue()).is(Blocks.OAK_FENCE), "Raw host snow placement");
+        coveredReplacement(placement);
+    }
+
+    private static void coveredReplacement(Method placement) throws Exception {
+        List<Block> hosts = new ArrayList<>(List.of(Blocks.OAK_FENCE, Blocks.COBBLESTONE_WALL));
+        SnowHosts.vanillaHosts().stream().filter(host -> host instanceof BushBlock).forEach(hosts::add);
+        List<Block> incoming = new ArrayList<>(hosts);
+        incoming.addAll(List.of(Blocks.STONE, Blocks.CHEST, Blocks.SNOW));
+        for (Block host : hosts) {
+            for (BlockState raw : host.getStateDefinition().getPossibleStates()) {
+                if (!(host instanceof BushBlock) && !raw.equals(host.defaultBlockState())) continue;
+                for (int layers = 1; layers <= 8; layers++) {
+                    for (boolean replacement : new boolean[]{true, false}) {
+                        for (boolean mixing : new boolean[]{true, false}) {
+                            CommonConfigs.replacement = replacement;
+                            CommonConfigs.mixing = mixing;
+                            Fixture level = world();
+                            BlockState covered = SnowHosts.cover(raw, layers);
+                            level.states.put(POS, covered);
+                            for (Block next : incoming) {
+                                BlockPlaceContext context = context(level, next.asItem().getDefaultInstance());
+                                boolean expected = layers < 8 && (next == Blocks.SNOW ? mixing
+                                        : replacement && raw.canBeReplaced(context));
+                                check(covered.canBeReplaced(context) == expected,
+                                        "Covered replacement diverged: " + raw + " layers=" + layers + " item=" + next
+                                                + " replacement=" + replacement + " mixing=" + mixing);
+                                BlockState nextState = next.defaultBlockState();
+                                CallbackInfoReturnable<BlockState> result =
+                                        new CallbackInfoReturnable<>("test", true, nextState);
+                                placement.invoke(new SnowHostPlacementMixin(), context, result);
+                                boolean preserve = expected && mixing && SnowHosts.supported(nextState);
+                                check(result.getReturnValue().equals(preserve
+                                                ? SnowHosts.cover(nextState, layers) : nextState),
+                                        "Replacement lost cover or wrapped an ineligible target: " + raw + " -> " + next);
+                                cases++;
+                            }
+                            check(!covered.canBeReplaced(context(level, Items.SHEARS.getDefaultInstance())),
+                                    "Non-block item replaced covered host");
+                            cases++;
+                            BlockState wet = Blocks.OAK_FENCE.defaultBlockState()
+                                    .setValue(FenceBlock.WATERLOGGED, true);
+                            CallbackInfoReturnable<BlockState> wetResult =
+                                    new CallbackInfoReturnable<>("test", true, wet);
+                            placement.invoke(new SnowHostPlacementMixin(), context(level, Items.OAK_FENCE.getDefaultInstance()), wetResult);
+                            check(wetResult.getReturnValue().equals(wet), "Wrapped wet replacement");
+                            CallbackInfoReturnable<BlockState> failed = new CallbackInfoReturnable<>("test", true);
+                            placement.invoke(new SnowHostPlacementMixin(), context(level, Items.OAK_FENCE.getDefaultInstance()), failed);
+                            check(failed.getReturnValue() == null, "Revived failed item placement");
+                            cases += 2;
+                        }
+                    }
+                }
+            }
+        }
+        CommonConfigs.mixing = CommonConfigs.replacement = true;
     }
 
     private static void pairs() throws Exception {
+        Method preserve = SnowDoublePlantMixin.class.getDeclaredMethod("preserveUpperSnow", net.minecraft.world.level.Level.class,
+                BlockPos.class, BlockState.class, net.minecraft.world.entity.LivingEntity.class, ItemStack.class,
+                org.spongepowered.asm.mixin.injection.callback.CallbackInfo.class);
+        preserve.setAccessible(true);
         for (Block block : SnowHosts.vanillaHosts()) {
             if (!(block instanceof DoublePlantBlock)) continue;
+            for (Block next : SnowHosts.vanillaHosts()) {
+                if (!(next instanceof DoublePlantBlock)) continue;
+                for (int layers = 1; layers <= 8; layers++) {
+                    for (boolean replacement : new boolean[]{true, false}) {
+                        for (boolean mixing : new boolean[]{true, false}) {
+                            CommonConfigs.replacement = replacement;
+                            CommonConfigs.mixing = mixing;
+                            Fixture level = world();
+                            BlockState upper = SnowHosts.cover(block.defaultBlockState()
+                                    .setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER), layers);
+                            level.states.put(POS.above(), upper);
+                            ItemStack item = next.asItem().getDefaultInstance();
+                            boolean expected = mixing && layers < 8 && upper.canBeReplaced(
+                                    new net.minecraft.world.item.context.DirectionalPlaceContext(
+                                            level, POS.above(), Direction.DOWN, item, Direction.UP));
+                            var ci = new org.spongepowered.asm.mixin.injection.callback.CallbackInfo("test", true);
+                            preserve.invoke(new SnowDoublePlantMixin(), level, POS, next.defaultBlockState(), null, item, ci);
+                            check(ci.isCancelled() == expected, "Upper replacement preservation gate");
+                            check(level.getBlockState(POS.above()).equals(expected
+                                            ? SnowHosts.cover(next.defaultBlockState()
+                                                    .setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER), layers) : upper),
+                                    "Upper replacement lost snow or changed an ineligible target");
+                            cases++;
+                        }
+                    }
+                }
+            }
+            CommonConfigs.mixing = CommonConfigs.replacement = true;
             for (boolean coveredLower : new boolean[]{true, false}) {
                 for (boolean coveredUpper : new boolean[]{true, false}) {
                     Fixture level = world();

@@ -146,7 +146,11 @@ public class SnowCoveredBlock extends Block implements BonemealableBlock {
 
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
-        return SnowHosts.canAddSnow(context, state);
+        if (SnowHosts.canAddSnow(context, state)) return true;
+        return SnowSettings.replacement() && SnowHosts.layers(state) < 8
+                && context.getItemInHand().getItem() instanceof net.minecraft.world.item.BlockItem
+                && !context.getItemInHand().is(net.minecraft.world.item.Items.SNOW)
+                && raw(state).canBeReplaced(context);
     }
 
     @Override

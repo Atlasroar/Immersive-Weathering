@@ -49,7 +49,7 @@ Restart after file edits, and test fresh fixtures with the effective server conf
 | --- | --- | --- |
 | `host_mixing` | `true` | Allows new snow/host combinations and snow-item additions. Existing covered states remain registered/removable when disabled. |
 | `falling` | `true` | Detaches unsupported snow into falling entities. When disabled, newly unsupported covered hosts lose the cover rather than the host; plain snow follows vanilla neighbor removal. |
-| `replace_partial_layers` | `true` | Widens ordinary block-item replacement of plain snow to layers 1-7. Layer 8 and covered nonreplaceable hosts are excluded. |
+| `replace_partial_layers` | `true` | Widens ordinary block-item replacement of plain snow to layers 1-7 and allows raw-plant-eligible replacement of partial covered plants. Same-plant items, layer 8 and covered nonreplaceable hosts are excluded. |
 | `accumulation` | `true` | Enables extra weather layers and weather mixing. Disabling it retains vanilla initial snow, not extra layering. |
 | `accumulate_without_thunder` | `false` | Opts into extra layers during ordinary snowfall; clear weather and warm rain still cannot accumulate snow. |
 | `column_cap` | `8` (1-8) | Maximum weather-deposited layers, in one cell. Lowering it does not delete existing snow. |
@@ -68,6 +68,12 @@ vanilla's existing chunk sample, not the block-growth dispatcher. Changing
 `randomTickSpeed` or disabling IW block growths is not a snow-weather off switch;
 use the snow config and gamerule. Cold temperature, actual weather, heightmap
 exposure, block light at most 11, and normal ticking-chunk limits still matter.
+
+Replacing a partial covered plant with another supported dry host retains its
+layer count only while `host_mixing` is enabled. Ordinary solid replacement
+removes the old plant and snow together through normal item placement. Turning
+off `replace_partial_layers` blocks these covered-plant replacements; snow-item
+addition remains controlled independently by `host_mixing`.
 
 ## Growth blacklist and datapacks
 

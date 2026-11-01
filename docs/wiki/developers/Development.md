@@ -137,7 +137,12 @@ contracts, and cold/warm/light/heightmap/load/config/weather/cap controls.
 Weather fixtures use Mojang's actual heightmap opacity predicate and verify all
 42 hosts reach eight without a second cell. Gamerules 0,1,2,8,24 and IW caps 1,3,8
 are crossed with clear/rain/thunder and ordinary-weather opt-in.
-The candidate's final harness run passed **31,850 cases**.
+The covered-plant replacement matrix invokes actual wrapper replaceability and
+the placement injection for every plant state, layers 1-8, both independent
+settings, same/different supported hosts, solid/chest replacements, snow items,
+non-block items, wet/failed placements, negative fence/wall controls, and
+upper-half preservation through the normal double-plant placement callback.
+The candidate's final harness run passed **41,194 cases**.
 
 The explicit fixture uses `Unsafe` to bypass server/level constructors, with
 in-memory storage, a supplied vanilla loot-table registry, seeded RNG, native
@@ -149,8 +154,9 @@ or real rendering test. Block-state and falling-entity NBT round trips are not a
 whole-world save/reload claim. The test-only entity type can log its missing data
 fixer; it is not shipped.
 
-Python checks include the existing 26 wiki/Fabric-tool tests and six snow-resource
-tests. The artifact guard additionally verifies every generated composite
+Python checks include the existing 26 wiki/Fabric-tool tests and seven snow-resource
+tests, including English display-name coverage for all registered snow hosts.
+The artifact guard additionally verifies every generated composite
 blockstate/model/tag is packaged byte-for-byte, retaining all prior license,
 metadata, side/mixin/refmap and dependency checks.
 

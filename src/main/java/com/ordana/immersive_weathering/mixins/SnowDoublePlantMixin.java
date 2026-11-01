@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -53,7 +54,9 @@ public class SnowDoublePlantMixin {
     private void preserveUpperSnow(Level level, BlockPos pos, BlockState state, LivingEntity entity,
                                     ItemStack stack, CallbackInfo ci) {
         BlockState above = level.getBlockState(pos.above());
-        if (SnowSettings.mixing() && above.is(Blocks.SNOW) && SnowHosts.layers(above) < 8) {
+        boolean replaceableCover = above.getBlock() instanceof SnowCoveredBlock
+                && above.canBeReplaced(new DirectionalPlaceContext(level, pos.above(), Direction.DOWN, stack, Direction.UP));
+        if (SnowSettings.mixing() && (above.is(Blocks.SNOW) || replaceableCover) && SnowHosts.layers(above) < 8) {
             BlockState covered = SnowHosts.cover(state.setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER),
                     SnowHosts.layers(above));
             if (covered != null) {

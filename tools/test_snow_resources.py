@@ -18,6 +18,14 @@ class SnowResourceTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertEqual(json.loads(path.read_text(encoding="utf-8")), data)
 
+    def test_english_display_names_match_registered_hosts(self):
+        language = json.loads((snow_resources.RESOURCES / "assets/immersive_weathering/lang/en_us.json")
+                              .read_text(encoding="utf-8"))
+        prefix = "block.immersive_weathering.snow_covered_"
+        expected = {prefix + name: "Snow-Covered " + name.replace("_", " ").title()
+                    for name in snow_resources.hosts()}
+        self.assertEqual({key: value for key, value in language.items() if key.startswith(prefix)}, expected)
+
     def test_each_layer_has_exactly_one_snow_part(self):
         for name in snow_resources.hosts():
             parts = snow_resources.multipart(name)["multipart"]

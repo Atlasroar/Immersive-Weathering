@@ -10,7 +10,10 @@
   Gamerule 0 disables deposition; default 1 uses IW's cap; other positive values
   intersect that cap. Vanilla initial snow remains in ordinary snowfall.
 - Allowed ordinary block items to replace plain snow layers 1-7 in place,
-  excluding layer 8 and nonreplaceable covered hosts.
+  excluding layer 8 and nonreplaceable covered hosts. Partial covered plants
+  retain raw-host replacement restrictions; supported replacements preserve snow
+  while mixing is enabled, and ordinary solids replace plant and cover together.
+- Added English display names for all 42 snow-covered host states.
 - Kept existing snowy masonry, leaf/sand physics, growth cadence, Moonlight,
   Fabric API and all existing IDs; no snow-mod or renderer dependency.
 - Added real-production transition/state/loot fixtures, static composite resources,

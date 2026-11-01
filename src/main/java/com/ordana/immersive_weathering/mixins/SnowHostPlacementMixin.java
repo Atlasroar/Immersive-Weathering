@@ -1,6 +1,7 @@
 package com.ordana.immersive_weathering.mixins;
 
 import com.ordana.immersive_weathering.snow.SnowHosts;
+import com.ordana.immersive_weathering.snow.SnowCoveredBlock;
 import com.ordana.immersive_weathering.snow.SnowSettings;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,7 +18,9 @@ public class SnowHostPlacementMixin {
     private void snowHostPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir) {
         BlockState placement = cir.getReturnValue();
         BlockState old = context.getLevel().getBlockState(context.getClickedPos());
-        if (placement != null && SnowSettings.mixing() && old.is(Blocks.SNOW) && SnowHosts.layers(old) < 8) {
+        boolean replaceableCover = old.getBlock() instanceof SnowCoveredBlock && old.canBeReplaced(context);
+        if (placement != null && SnowSettings.mixing() && (old.is(Blocks.SNOW) || replaceableCover)
+                && SnowHosts.layers(old) < 8) {
             BlockState covered = SnowHosts.cover(placement, SnowHosts.layers(old));
             if (covered != null) cir.setReturnValue(covered);
         }

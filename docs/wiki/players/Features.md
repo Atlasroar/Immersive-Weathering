@@ -58,6 +58,13 @@ The [snow configuration](Configuration.md#standalone-snow) explains the gamerule
 compatibility sentinel and independent toggles. Any block item can replace plain
 vanilla partial snow layers 1-7 in place; this override does not replace layer 8
 or a nonreplaceable snow-covered fence/wall.
+At layers 1-7, covered plants also retain their raw plant's replacement rules
+when partial-layer replacement is enabled: the same plant item remains rejected.
+Replacing one with another supported dry host retains its snow when mixing is
+enabled; an ordinary solid block replaces the plant and cover together.
+Disabling mixing stops that preservation but does not prevent an otherwise
+eligible ordinary replacement. Full eight-layer covers cannot be replaced this
+way, and snow items still require mixing and room for another layer.
 
 The [snow acceptance matrix](Feature-testing.md#standalone-snow-candidate-retest)
 separates automated fixture evidence from outstanding in-game checks.
