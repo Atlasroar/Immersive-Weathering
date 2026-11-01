@@ -99,3 +99,32 @@ publishing {
         }
     }
 }
+
+tasks.register("growthPerformanceTest", JavaExec) {
+    group = "verification"
+    description = "Run dependency-free growth differential checks against production classes."
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "com.ordana.immersive_weathering.data.block_growths.area_condition.GrowthPerformanceTest"
+    workingDir layout.buildDirectory.dir("growth-harness")
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register("growthPerformanceBenchmark", JavaExec) {
+    group = "verification"
+    description = "Measure isolated growth traversal time and thread allocations."
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "com.ordana.immersive_weathering.data.block_growths.area_condition.GrowthPerformanceTest"
+    workingDir layout.buildDirectory.dir("growth-harness")
+    doFirst { workingDir.mkdirs() }
+    args "--benchmark"
+    jvmArgs "-Xms512m", "-Xmx512m"
+    if (providers.gradleProperty("growthNoEscapeAnalysis").isPresent()) {
+        jvmArgs "-XX:-DoEscapeAnalysis"
+    }
+}
+
+tasks.named("check") {
+    dependsOn growthPerformanceTest
+}

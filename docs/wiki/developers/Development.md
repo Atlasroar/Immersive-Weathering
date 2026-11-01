@@ -86,3 +86,80 @@ python -m unittest discover -s tools -p "test_*.py"
 The [documentation workflow](../../../.github/workflows/docs.yml) runs the checks
 on pushes and pull requests independently of the Minecraft build. It does not
 launch Minecraft, validate external URLs, or prove narrative/gameplay accuracy.
+
+## Growth performance harness
+
+Run the standard-library Java 17 harness using the existing Loom classpath:
+
+```powershell
+.\gradlew.bat growthPerformanceTest --console=plain
+.\gradlew.bat growthPerformanceBenchmark --console=plain
+.\gradlew.bat growthPerformanceBenchmark -PgrowthNoEscapeAnalysis --console=plain
+```
+
+`build`/`check` includes the differential task, not the optional benchmark.
+No test framework or dependency is added. Tests execute the actual production
+`AreaCheck`, `BlockGrowthHandler`, `RandomizedBlockPositions`, and
+`WeatheringHelper` classes, using real Mojang position enumeration, block states,
+holder membership, `RuleTest`, and `RandomSource`. Baseline control flow in the
+harness comes from IW commit `56ed3501`, and the unchanged public list helper is
+the position-order oracle.
+
+The initial Windows/Temurin 17.0.20.1 run passed **33182 geometry**, **10230 area**,
+and **10 dispatch** differential cases. Test output counts deterministic geometry
+comparisons (3000 seeded centers per radius, including signed-coordinate
+extremes), randomized and Cartesian area
+cases, and dispatch cases. Coverage includes shipped/unequal/zero radii,
+negative/overflow/large-radius fallback, both cache budgets, y offsets, stochastic
+predicates and their exact RNG draws, includes short-circuit order, -1/0/positive
+amounts, early exits, retained immutable positions, nested calls, changed world
+instances, config/conditional gating, empty groups, callback order, shared biome
+memoization, original arguments, and callback-triggered registration replacement.
+The result and complete world-query/membership/predicate trace must match.
+
+Three test-only classes substitute config initialization, configurable growth's
+possible-block set, and Moonlight reload-listener startup. A constructor-free
+`ServerLevel` fixture overrides only world state/biome queries; constructor-free
+conditional block/state fixtures test the dispatch gate without mutating vanilla
+registries. These fixtures use JDK 17 `Unsafe` only in test code and are never
+packaged. They do **not** verify Fabric lifecycle, codecs/resource reload, chunk
+loading, a real dimension transition, world unload, or in-game growth behavior.
+Registration replacement and separate world instances exercise those isolation
+contracts without pretending to be an actual `/reload` or gameplay reproduction.
+
+The optional benchmark uses `ThreadMXBean` allocated bytes and `nanoTime`, fixed
+512 MiB heap, at least three workload-sized warmup passes and one second of
+warmup per scenario, and seven alternating
+baseline/optimized rounds. It reports medians in ns/op and B/op. Empty dispatch
+and active dispatch use 1000000 operations per round; empty dispatch asserts zero
+optimized allocation. Each of
+the eight shipped radii uses 10000 operations per round for full scan and
+first-query exit, cycling 1024 preallocated centers. Allocation must decrease
+for empty dispatch and every area scenario. Active universal-only, specific-only,
+and combined dispatch (with/without biome reads) are reported separately.
+CPU timings and active-path allocations are observations, not noisy CI thresholds.
+The fixture world is deliberately cheap and tracing is disabled during timing.
+Measure on a quiet host and repeat runs; these numbers are neither whole-game
+TPS/MSPT evidence nor a substitute for controlled Fabric gameplay comparison.
+
+Illustrative seven-round medians from that host (November 1, 2026):
+
+| Scenario | Baseline ns/op | Optimized ns/op | Baseline B/op | Optimized B/op |
+| --- | ---: | ---: | ---: | ---: |
+| Empty dispatch | 41.9 | 22.3 | 40 | 0 |
+| `(2,2,2)` full scan | 6390.2 | 3693.4 | 5776 | 3688 |
+| `(2,2,2)` first-query exit | 4208.5 | 1383.9 | 5776 | 712 |
+
+Across eight shipped radii, full-scan time ratios were 0.556-0.592 and early-exit
+ratios 0.319-0.373 (optimized/baseline); full-scan allocation decreased 34-49%
+and early-exit allocation 83-90%. Active dispatch ratios were 0.670-0.990 in
+this run: effectively unchanged or improved, rather than a promised active-path
+speedup. JIT escape analysis can change absolute allocation counts between JVM
+runs, including small active-path differences (one repeat measured 40 versus
+48 B/op for universal-only biome-reading dispatch despite similar CPU time).
+The optional `-PgrowthNoEscapeAnalysis` run disables that compiler optimization
+for an allocation diagnostic; report it separately, not as normal runtime timing.
+That diagnostic measured 64 to 0 B/op for empty dispatch, 5848 to 3720/744 B/op
+for `(2,2,2)` full/early scans, and lower allocations in all six active cases.
+These are local harness observations with the startup/world fixtures above,
+not vendor benchmarks or verified in-game gains.

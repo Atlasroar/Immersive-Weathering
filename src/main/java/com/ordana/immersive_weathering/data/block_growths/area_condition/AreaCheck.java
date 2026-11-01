@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ordana.immersive_weathering.data.block_growths.growths.ConfigurableBlockGrowth;
 import com.ordana.immersive_weathering.util.StrOpt;
-import com.ordana.immersive_weathering.util.WeatheringHelper;
+import com.ordana.immersive_weathering.util.RandomizedBlockPositions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -49,8 +49,9 @@ record AreaCheck(int rX, int rY, int rZ, int requiredAmount, Optional<Integer> y
         boolean hasRequirement = this.mustHavePredicate.isEmpty();
         //shuffling. provides way better result that iterating through it conventionally
         //if(hasRequirement && requiredAmount == -1)return true;
-        var list = WeatheringHelper.grabBlocksAroundRandomly(pos, rX, rY, rZ);
-        for (BlockPos p : list) {
+        var positions = RandomizedBlockPositions.iterator(pos, rX, rY, rZ);
+        while (positions.hasNext()) {
+            BlockPos p = positions.next();
             BlockState state = level.getBlockState(p);
             if (config.getPossibleBlocks().contains(state.getBlock()) ||
                     (extraIncluded.isPresent() && state.is(extraIncluded.get()))) count += 1;

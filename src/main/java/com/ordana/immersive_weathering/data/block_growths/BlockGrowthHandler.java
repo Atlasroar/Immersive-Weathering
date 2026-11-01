@@ -59,18 +59,29 @@ public class BlockGrowthHandler extends RegistryAccessJsonReloadListener {
         //TODO: move this line to data pack self predicate
         if (state.getBlock() instanceof IConditionalGrowingBlock cb && !cb.canGrow(state)) return;
 
-        Supplier<Holder<Biome>> biome = Suppliers.memoize(() -> level.getBiome(pos));
-
         var universalGroup = UNIVERSAL_GROWTHS.get(source);
+        boolean hasUniversalGrowth = universalGroup != null && !universalGroup.isEmpty();
+        Set<IBlockGrowth> growth = null;
+        if (!hasUniversalGrowth) {
+            var blockGroup = GROWTH_FOR_BLOCK.get(source);
+            growth = blockGroup == null ? null : blockGroup.get(state.getBlock());
+            if (growth == null || growth.isEmpty()) return;
+        }
+
+        Supplier<Holder<Biome>> biome = Suppliers.memoize(() -> level.getBiome(pos));
 
         if (universalGroup != null) {
             for (var config : universalGroup) {
                 config.tryGrowing(pos, state, level, biome);
             }
         }
-        var growth = getBlockGrowths(source, state.getBlock());
-        if (growth.isPresent()) {
-            for (var config : growth.get()) {
+        if (hasUniversalGrowth) {
+            // Universal callbacks may reload the block-specific registrations.
+            var blockGroup = GROWTH_FOR_BLOCK.get(source);
+            growth = blockGroup == null ? null : blockGroup.get(state.getBlock());
+        }
+        if (growth != null) {
+            for (var config : growth) {
                 config.tryGrowing(pos, state, level, biome);
             }
         }
