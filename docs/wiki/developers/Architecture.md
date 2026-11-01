@@ -67,6 +67,36 @@ sky-access growth ticks. `ModEvents.onLightningHit` dispatches lightning growths
 `BlockGrowthHandler` selects universal and block-specific growth sets by source.
 The detailed dispatch/placement rules remain IW code, not Moonlight code.
 
+Dispatch checks the growth config and conditional block hook before checking
+whether either registration group has callbacks. Empty dispatches do not create
+a biome supplier. Active dispatches retain one invocation-local memoized supplier,
+universal-before-specific iteration, and the original state/position arguments.
+When universal callbacks exist, the specific group is looked up after them,
+preserving callback-triggered registration reload behavior without a redundant
+preflight lookup. The public optional lookup API is unchanged.
+
+`AreaCheck` uses
+[`RandomizedBlockPositions`](../../../src/main/java/com/ordana/immersive_weathering/util/RandomizedBlockPositions.java)
+to shuffle invocation-local integer indices over immutable offset templates.
+Templates use vanilla `BlockPos.withinManhattanStream` shell order and a value
+key of three radii; backwards Fisher-Yates uses the same `java.util.Random`
+seed/calls as the existing shuffled-list helper. Absolute immutable positions are
+created only when visited. At most 32 templates and 4096 total positions are
+retained, with synchronized admission/lookup and no eviction. Negative,
+excessive, overflow-prone, or over-budget radii use the original list helper
+without changing its behavior. Only geometry survives calls, reloads, dimension
+changes, and world unloads: no world, biome, block state, predicate result, or
+mutable scratch position is cached. Nested traversals have separate permutations.
+`WeatheringHelper.grabBlocksAroundRandomly` and its mutable-list contract,
+`hasEnoughBlocksAround`, fluid generators, and `PatchSpreader` are unchanged.
+
+The public [Immersive Weathering Tweaks repository](https://github.com/Admany/Immersive-Weathering-Tweaks)
+was non-code research inspiration for independently reducing allocation in IW's
+existing implementation. No add-on source was read or reused for this change,
+and no dependency, library, third-party implementation, or license notice was
+imported. This is not a claim of whole-game TPS/MSPT improvement; see the
+[isolated validation procedure](Development.md#growth-performance-harness).
+
 `BlocksMixin` replaces several vanilla block implementations. Compatibility
 failures may therefore occur on vanilla IDs, not just IW namespaced blocks.
 Check both gameplay and Fabric mixin manifests: a source file existing does

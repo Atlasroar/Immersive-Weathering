@@ -25,6 +25,15 @@ source. Plant growth must respect survival, both halves of double blocks,
 neighbor-shape updates, and waterlogging. Read the placement code before copying
 a definition to a new block type.
 
+The `generate_if_not_too_many` area condition shifts its center by `yOffset`
+before seeding both traversal and predicate randomness. Its optimized traversal
+preserves the original shuffled Manhattan position order, possible-block/includes
+short circuit, `must_have`/`else if must_not_have` predicate order, and early-exit
+rules, including existing `requiredAmount` -1/0 edge cases. This allocation change
+does not reinterpret those values, change JSON/config defaults or chances, skip
+callbacks, throttle ticks, or alter sky-tick RNG/cadence. The geometry budget is
+an implementation detail with baseline fallback, not a datapack radius limit.
+
 ## Example: override weeds
 
 For Minecraft 1.20.1, create a datapack with a root `pack.mcmeta`:
