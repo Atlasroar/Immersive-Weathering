@@ -235,7 +235,9 @@ def wiki_content(root: Path, page: Path, repo_url: str, ref: str) -> str:
     text = page.read_text(encoding="utf-8")
 
     def replace_link(match: re.Match) -> str:
-        target = match[2]
+        if match["inline"] is not None:
+            return match[0]
+        target = match["target"]
         parsed = urlsplit(target)
         if parsed.scheme or parsed.netloc or not parsed.path:
             return match[0]
@@ -249,16 +251,17 @@ def wiki_content(root: Path, page: Path, repo_url: str, ref: str) -> str:
             url = f"{repo_url}/{kind}/{quote(ref, safe='')}/{quote(relative)}"
         if parsed.fragment:
             url += "#" + parsed.fragment
-        return f"{match[1]}({url})"
+        return f"{match['label']}({url})"
 
     # Keep examples intact; only translate links in prose, not fenced/inline code.
     pieces = re.split(r"(?ms)(^ *(`{3,}|~{3,})[^\n]*\n.*?^ *\2[ \t]*$)", text)
     rendered = []
     for index in range(0, len(pieces), 3):
-        prose = re.split(r"(`[^`\n]+`)", pieces[index])
-        for part_index in range(0, len(prose), 2):
-            prose[part_index] = re.sub(r"(\[[^\]]*\])\(([^)\s]+)\)", replace_link, prose[part_index])
-        rendered.append("".join(prose))
+        rendered.append(re.sub(
+            r"(?P<inline>`+)[^\n]*?(?P=inline)|"
+            r"(?P<label>\[[^\]]*\])\((?P<target>[^)\s]+)\)",
+            replace_link, pieces[index],
+        ))
         if index + 1 < len(pieces):
             rendered.append(pieces[index + 1])
     return "".join(rendered)

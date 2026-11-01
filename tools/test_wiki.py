@@ -113,6 +113,21 @@ builder.pop();
             self.assertIn("[example](../../../LICENSE)", rendered)
             self.assertIn("`[inline](../../../LICENSE)`", rendered)
 
+    def test_export_translates_code_formatted_labels_but_not_inline_examples(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            page = root / "docs" / "wiki" / "developers" / "Example.md"
+            page.parent.mkdir(parents=True)
+            (root / "LICENSE").write_text("license", encoding="utf-8")
+            page.write_text(
+                "[`source`](../../../LICENSE)\n[`home`](../README.md)\n"
+                "``[`example`](../../../LICENSE)``\n", encoding="utf-8",
+            )
+            rendered = wiki.wiki_content(root, page, "https://github.com/test/repo", "abc123")
+            self.assertIn("[`source`](https://github.com/test/repo/blob/abc123/LICENSE)", rendered)
+            self.assertIn("[`home`](https://github.com/test/repo/wiki/Home)", rendered)
+            self.assertIn("``[`example`](../../../LICENSE)``", rendered)
+
     def test_export_preserves_unmanaged_pages_and_removes_only_tracked_pages(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory)
