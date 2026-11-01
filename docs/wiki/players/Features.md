@@ -6,6 +6,11 @@ These descriptions cover systems and interactions represented in the current
 source. They are not an exhaustive recipe book or a claim that every modded
 variant works. Settings and datapacks can change availability and probabilities.
 
+For reproducible in-game checks, use the
+[feature test sheet](Feature-testing.md). It separates random growth from tool
+actions, physics, weather, fluid generators, and world generation, and includes
+a dedicated stone-brick comparison matrix.
+
 ## Weathering and restoring builds
 
 | System | Intended behavior and player interaction |

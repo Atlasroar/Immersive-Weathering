@@ -6,6 +6,7 @@
 | --- | --- |
 | [Getting started](Getting-started.md) | Fabric installation, required dependencies, multiplayer, and backups |
 | [Features and interactions](Features.md) | Weathering, leaf piles, bark, soils, frost, and practical controls |
+| [In-game feature test sheet](Feature-testing.md) | Source-backed setups, expected results, controls, and a stone-brick comparison matrix |
 | [Configuration](Configuration.md) | Client versus simulation settings, leaf blacklists, and datapacks |
 | [Troubleshooting](Troubleshooting.md) | Known Fabric reports, safe workarounds, and useful bug-report information |
 

@@ -21,6 +21,13 @@ current status and any verified fixes.
 | [Diagonal Walls compatibility](https://github.com/Atlasroar/Immersive-Weathering/issues/9) | Compare affected and unaffected walls in the same layout. |
 | [Water Erosion property conflict](https://github.com/Atlasroar/Immersive-Weathering/issues/8) | Test the mods separately in copies of the world and capture the full combined stack trace. |
 
+An additional current-fork report,
+[stone-brick growth/spread differences](https://github.com/Atlasroar/Immersive-Weathering/issues/11),
+has not yet established which mechanic or variants fail. Use the
+[feature test sheet](Feature-testing.md), particularly W01-W06 and SB01-SB06,
+to separate natural moss/cracking from manual conversion and record comparable
+controls. The performance beta did not claim to fix this report.
+
 [Browse current Fabric issues](https://github.com/Atlasroar/Immersive-Weathering/issues?q=is%3Aissue+is%3Aopen+label%3Afabric+label%3Aminecraft-1.20.1).
 Do not file Forge/NeoForge support requests against this fork.
 
@@ -34,9 +41,11 @@ the migration broke gameplay. Forge-only Quark integrations and the unfinished
 season-temperature bridge are not offered by this Fabric build; existing
 Fabric behavior never implemented that seasonal adjustment.
 
-The beta's isolated production smoke successfully loaded the IW EMI plugin with
+The **2.0.6-beta.1** isolated production smoke successfully loaded the IW EMI plugin with
 EMI **1.1.24+1.20.1**. That is limited startup/reload evidence, not a verified fix
 for every reproduction of [the EMI report](https://github.com/Atlasroar/Immersive-Weathering/issues/3).
+It is not blanket gameplay verification for **2.0.6-beta.2**; record current-version
+observations with the feature test sheet.
 Developer `runClient` audits have a separate optional-JEI class-loading caveat;
 see [development validation](../developers/Development.md).
 

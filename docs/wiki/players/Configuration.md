@@ -58,3 +58,8 @@ active datapack stack.
 The soot toggle has an open Fabric report and should not be presented as a
 verified complete disable switch. Read [troubleshooting](Troubleshooting.md).
 A workaround is not proof that the underlying bug is fixed.
+
+The [feature test sheet](Feature-testing.md) records additional source caveats
+for advertised settings and icicle vibration behavior. A registered setting is
+not, by itself, proof that every relevant handler consults it; verify effective
+behavior with fresh fixtures and record the exact configuration.
