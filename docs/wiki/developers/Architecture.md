@@ -91,10 +91,10 @@ mutable scratch position is cached. Nested traversals have separate permutations
 `hasEnoughBlocksAround`, fluid generators, and `PatchSpreader` are unchanged.
 
 The public [Immersive Weathering Tweaks repository](https://github.com/Admany/Immersive-Weathering-Tweaks)
-was non-code research inspiration for independently reducing allocation in IW's
-existing implementation. No add-on source was read or reused for this change,
-and no dependency, library, third-party implementation, or license notice was
-imported. This is not a claim of whole-game TPS/MSPT improvement; see the
+is research context only. The implementation was independently authored from
+IW's own LGPL source; no add-on source was copied, ported, or reused, and no
+dependency, library, third-party implementation, or license notice was imported.
+This is not a claim of whole-game TPS/MSPT improvement; see the
 [isolated validation procedure](Development.md#growth-performance-harness).
 
 `BlocksMixin` replaces several vanilla block implementations. Compatibility
