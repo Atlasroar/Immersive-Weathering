@@ -25,6 +25,50 @@ a dedicated stone-brick comparison matrix.
 Not every block has every variant. Tool actions can consume items or durability.
 Do not infer that the mod weathers arbitrary blocks from other mods.
 
+## Standalone snow
+
+The 2.1.0 candidate adds four related mechanics without a separate snow mod:
+snow layers can share a cell with the 12 vanilla fences, 22 vanilla walls,
+grass, fern, tall grass, large fern, sunflower, lilac, rose bush, and peony.
+Place snow into a dry supported host, or place a supported host into partial
+snow (layers 1-7). Host properties and plant halves are retained. Gates, slabs,
+stairs, waterlogged hosts, block entities, and arbitrary modded blocks are not
+snow containers. Existing IW snowy masonry remains a separate, unchanged system.
+
+Right-click a covered host with a shovel to remove its snow and retain the host.
+Survival uses one durability and vanilla snow loot, including Silk Touch;
+Creative produces no cover loot. Bright block light or rain melts the cover
+without deleting the host. Breaking the composite is different: it breaks the
+host, using its mining requirements and loot plus snow loot. Pick-block selects
+the original host item, not an obtainable container item. Invalid plant support
+or a missing partner is resolved on a scheduled tick, preserving snow as a
+plain layer or falling snow rather than moving the plant.
+
+Unsupported snow falls on scheduled ticks. It merges up to eight layers in the
+landing cell; undeposited layers become snow-layer items rather than overwriting
+hosts or spilling into an unlimited stack. Falling snow contacting a **water
+source block** turns that block into ice and is consumed. Flowing water and
+waterlogged solids do not freeze through this path. Ordinary ice formation
+remains separate. Entity/block drop gamerules still apply.
+
+Extra snowfall accumulation defaults to **thunderstorms only**, in cold, exposed,
+dim-enough, ticking columns, capped at eight layers in one cell. Ordinary snowfall
+still creates vanilla's initial snow; extra ordinary-weather layers are opt-in.
+The [snow configuration](Configuration.md#standalone-snow) explains the gamerule
+compatibility sentinel and independent toggles. Any block item can replace plain
+vanilla partial snow layers 1-7 in place; this override does not replace layer 8
+or a nonreplaceable snow-covered fence/wall.
+At layers 1-7, covered plants also retain their raw plant's replacement rules
+when partial-layer replacement is enabled: the same plant item remains rejected.
+Replacing one with another supported dry host retains its snow when mixing is
+enabled; an ordinary solid block replaces the plant and cover together.
+Disabling mixing stops that preservation but does not prevent an otherwise
+eligible ordinary replacement. Full eight-layer covers cannot be replaced this
+way, and snow items still require mixing and room for another layer.
+
+The [snow acceptance matrix](Feature-testing.md#standalone-snow-candidate-retest)
+separates automated fixture evidence from outstanding in-game checks.
+
 ## Trees, bark, and leaves
 
 Stripping eligible logs with an axe can drop their bark, or scales for wood types

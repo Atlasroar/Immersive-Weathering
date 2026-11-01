@@ -39,6 +39,11 @@ public class ImmersiveWeatheringFabric implements ModInitializer {
 
     public static void onSetup() {
         ModWaxables.getValues().forEach(OxidizableBlocksRegistry::registerWaxableBlockPair);
+        var fire = FlammableBlockRegistry.getDefaultInstance();
+        com.ordana.immersive_weathering.snow.SnowHosts.entries().forEach((host, covered) -> {
+            var entry = fire.get(host);
+            if (entry != null) fire.add(covered.get(), entry.getBurnChance(), entry.getSpreadChance());
+        });
     }
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {

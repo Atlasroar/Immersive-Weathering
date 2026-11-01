@@ -104,6 +104,36 @@ The current handler compares the resource path without namespace or `.json`,
 so equal paths in different namespaces are not distinguished by that setting.
 This is a broad existing contract, not a recommendation for new API design.
 
+## Snow host data and persistence
+
+The [snow architecture](Architecture.md#standalone-snow-ownership) defines the
+new deterministic `immersive_weathering:snow_covered_<vanilla_path>` IDs. These
+are ordinary block states with `layers=1..8` and the dry host's property values;
+double plants retain `half`. They do not have block items or block entities.
+Do not remap old `snowy_*` masonry IDs, change their growth JSON, or migrate world
+data into these containers.
+
+`tools/snow_resources.py` derives the explicit host inventory from `SnowHosts`
+and generates static multipart blockstates, eight snow models and IW semantic
+tags. Run it after intentional host/resource changes, then `--check`. Vanilla
+append-only tags reference these IW tags for fences, walls, mining and flowers;
+keep existing tag values. The supported vanilla hosts do not require a raised
+mining tier: do not infer `needs_stone_tool` from a blackstone/deepslate name.
+Original host loot tables remain authoritative and can still be overridden by
+datapacks. The snow half evaluates the vanilla snow table with the current
+player/tool context; unsupported landing overflow instead returns layer items.
+
+The falling entity stores a vanilla `minecraft:snow` block state and its count
+in the existing `BlockState` NBT; it never stores or moves the hidden host.
+Layer 8 remains `minecraft:snow[layers=8]`, not an automatic conversion to the
+snow-block ID. Source-water contact is the one intentional ice-conversion sink.
+No custom per-cell network payload or new migration/data-fixer schema is added.
+
+Common `snow.*` settings are not datapack growth definitions. Extra accumulation
+uses only vanilla's sampled server chunk hook, not a second block-growth entry.
+The [configuration contract](../players/Configuration.md#standalone-snow) explains
+the bounded column cap and gamerule-1 sentinel. Existing growths remain independent.
+
 ## Generated resources
 
 Moonlight discovers wood/leaf families before IW dynamically registers related

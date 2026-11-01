@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.0.6-beta.3** is a prerelease following IW 2.0.5, with a single root
+**2.1.0-beta.1** is an unreleased feature candidate, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,7 +31,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.0.6-beta.3.jar`; the matching
+`build\libs\immersive_weathering-2.1.0-beta.1.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Beta installation
@@ -42,14 +42,17 @@ Moonlight Lib **1.20-2.12.11** build (CurseForge file **5619072**).
 Install only the remapped IW jar, replacing any older IW jar rather than keeping
 both. Dependencies are not bundled. Optional client integrations are EMI,
 Mod Menu, and Cloth Config; see [installation](docs/wiki/players/Getting-started.md).
-Beta.3 corrects paired plant placement (grass, fern, seagrass and double flowers)
+This candidate adds standalone snow mixing, falling, storm accumulation, and
+partial-layer replacement without SnowRealMagic or Kiwi. See the
+[snow controls](docs/wiki/players/Configuration.md#standalone-snow).
+It also retains beta.3's paired plant placement correction (grass, fern, seagrass and double flowers)
 without changing growth chances. A fresh in-game G07 retest is still required;
 this is not a blanket fix for the existing gameplay issue catalog.
 
 ## Versioning
 
 Mod releases follow [Semantic Versioning 2.0.0](https://semver.org/):
-`MAJOR.MINOR.PATCH`, with prereleases such as `2.0.6-beta.3`. Minecraft
+`MAJOR.MINOR.PATCH`, with prereleases such as `2.1.0-beta.1`. Minecraft
 compatibility is declared separately in Fabric metadata and release notes.
 Published versions and assets are immutable; the historical
 `1.20.1-2.0.6-beta.1` release retains its original name and contents.

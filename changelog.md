@@ -1,3 +1,28 @@
+## 2.1.0-beta.1 (unreleased candidate)
+
+- Added snow cohabitation with explicitly supported vanilla fences, walls,
+  grass/ferns and double plants, including both placement orders and host-state
+  restoration on shovel use, melt and snow detachment.
+- Added scheduled unsupported-snow falling, layer-conserving bounded landing,
+  and ice conversion only on contact with a source WATER block.
+- Added one vanilla-sampled accumulation path: thunderstorms by default,
+  ordinary snowfall opt-in, maximum eight weather layers in one cell.
+  Gamerule 0 disables deposition; default 1 uses IW's cap; other positive values
+  intersect that cap. Vanilla initial snow remains in ordinary snowfall.
+- Allowed ordinary block items to replace plain snow layers 1-7 in place,
+  excluding layer 8 and nonreplaceable covered hosts. Partial covered plants
+  retain raw-host replacement restrictions; supported replacements preserve snow
+  while mixing is enabled, and ordinary solids replace plant and cover together.
+- Added English display names for all 42 snow-covered host states.
+- Kept existing snowy masonry, leaf/sand physics, growth cadence, Moonlight,
+  Fabric API and all existing IDs; no snow-mod or renderer dependency.
+- Added real-production transition/state/loot fixtures, static composite resources,
+  artifact guards and a separate pending manual acceptance matrix.
+
+No release, tag, deployment or Wiki-mirror publication is part of this candidate.
+Use backed-up/disposable worlds. Fixtures and launch logs are not complete
+gameplay, dedicated-client synchronization or Sodium visual acceptance.
+
 ## 2.0.6-beta.3
 
 - Corrected paired double-plant placement: do not normalize a lower half against

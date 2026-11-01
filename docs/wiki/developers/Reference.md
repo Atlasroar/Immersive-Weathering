@@ -18,7 +18,7 @@ The build is a single root Fabric Loom project for Minecraft 1.20.1.
 | `maven_group` | `com.ordana` |
 | `minecraft_version` | `1.20.1` |
 | `mod_id` | `immersive_weathering` |
-| `mod_version` | `2.0.6-beta.3` |
+| `mod_version` | `2.1.0-beta.1` |
 | `modmenu_version` | `7.2.2` |
 | `moonlight_file_id` | `5619072` |
 | `moonlight_min_version` | `1.20-2.12.11` |
@@ -96,6 +96,11 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.ServerLevelMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowballMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowLayerBlockMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowHostPlacementMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowHostReplaceMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowDoublePlantMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowPlantLootPredicateMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowWallPostMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.StemBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SugarCaneBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SweetBerryBushMixin` |
@@ -163,6 +168,12 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.jav
 | `leaf_piles.max_pile_height` | `3, 1, 8` | `LEAF_PILE_MAX_HEIGHT` |
 | `leaf_piles.leaf_piles_blacklist` | `List.of()` | `LEAF_PILES_BLACKLIST` |
 | `thin_ice.natural_melting` | `false` | `THIN_ICE_MELTING` |
+| `snow.host_mixing` | `true` | `SNOW_HOSTS` |
+| `snow.falling` | `true` | `FALLING_SNOW` |
+| `snow.replace_partial_layers` | `true` | `REPLACE_PARTIAL_SNOW` |
+| `snow.accumulation` | `true` | `SNOW_ACCUMULATION` |
+| `snow.accumulate_without_thunder` | `false` | `SNOW_ACCUMULATION_WITHOUT_THUNDER` |
+| `snow.column_cap` | `8, 1, 8` | `SNOW_COLUMN_CAP` |
 | `lightning_growths.vitrified_lightning` | `true` | `VITRIFIED_LIGHTNING` |
 | `lightning_growths.fulgurite_chance` | `0.4, 0, 1` | `FULGURITE_CHANCE` |
 | `rusting.rusting` | `true` | `RUSTING` |

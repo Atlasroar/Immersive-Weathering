@@ -18,6 +18,7 @@ import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -28,6 +29,13 @@ import java.util.function.Supplier;
 public abstract class ServerLevelMixin extends Level {
     protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
         super(levelData, dimension, registryAccess, dimensionTypeRegistration, profiler, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
+    }
+
+    @Redirect(method = "tickChunk", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/biome/Biome;shouldSnow(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z"))
+    private boolean sampledSnow(net.minecraft.world.level.biome.Biome biome,
+                                 net.minecraft.world.level.LevelReader level, BlockPos pos) {
+        return com.ordana.immersive_weathering.snow.SnowWeather.sample(biome, (ServerLevel) level, pos);
     }
 
 

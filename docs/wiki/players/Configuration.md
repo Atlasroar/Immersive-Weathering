@@ -25,6 +25,7 @@ source expressions rather than guessing what a setting's name means.
 | Control moss/crack spread | Common `mossy_blocks` and `cracked_blocks` sections |
 | Control natural rust | Common `rusting` section |
 | Control leaf piles | Common `leaf_piles` section |
+| Control standalone snow | Common `snow` section; independent of `general.block_growths` |
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
 
@@ -38,6 +39,41 @@ installed mod rather than assuming this example exists.
 Blacklisting future pile creation does not remove piles already in the world.
 Do not assume a particles toggle controls pile entities or ambient vanilla
 falling-block particles.
+
+## Standalone snow
+
+The common `snow` section is server-authoritative and synchronized by Moonlight.
+Restart after file edits, and test fresh fixtures with the effective server config.
+
+| Key | Default | Effect |
+| --- | --- | --- |
+| `host_mixing` | `true` | Allows new snow/host combinations and snow-item additions. Existing covered states remain registered/removable when disabled. |
+| `falling` | `true` | Detaches unsupported snow into falling entities. When disabled, newly unsupported covered hosts lose the cover rather than the host; plain snow follows vanilla neighbor removal. |
+| `replace_partial_layers` | `true` | Widens ordinary block-item replacement of plain snow to layers 1-7 and allows raw-plant-eligible replacement of partial covered plants. Same-plant items, layer 8 and covered nonreplaceable hosts are excluded. |
+| `accumulation` | `true` | Enables extra weather layers and weather mixing. Disabling it retains vanilla initial snow, not extra layering. |
+| `accumulate_without_thunder` | `false` | Opts into extra layers during ordinary snowfall; clear weather and warm rain still cannot accumulate snow. |
+| `column_cap` | `8` (1-8) | Maximum weather-deposited layers, in one cell. Lowering it does not delete existing snow. |
+
+`snowAccumulationHeight = 0` disables weather snow. The vanilla default value
+**1 is a compatibility sentinel**: IW uses `snow.column_cap` so default storms
+can reach eight layers without a gamerule command. Other positive gamerule values
+are hard limits intersected with the IW cap (for example 2 caps at two; 24 still
+caps at eight). An explicitly set value of 1 is indistinguishable from the vanilla
+default; set **`snow.column_cap = 1`** for a one-layer maximum. This does not
+change the gamerule itself or unrelated gamerules.
+
+Manual placement is not weather deposition. Falling piles also never spill
+overflow into a new cell; recover their excess as snow-layer items. Weather uses
+vanilla's existing chunk sample, not the block-growth dispatcher. Changing
+`randomTickSpeed` or disabling IW block growths is not a snow-weather off switch;
+use the snow config and gamerule. Cold temperature, actual weather, heightmap
+exposure, block light at most 11, and normal ticking-chunk limits still matter.
+
+Replacing a partial covered plant with another supported dry host retains its
+layer count only while `host_mixing` is enabled. Ordinary solid replacement
+removes the old plant and snow together through normal item placement. Turning
+off `replace_partial_layers` blocks these covered-plant replacements; snow-item
+addition remains controlled independently by `host_mixing`.
 
 ## Growth blacklist and datapacks
 

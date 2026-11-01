@@ -27,6 +27,7 @@ jobs:
       - name: Check Fabric-only sources and wiki
         run: |
           python tools/fabric.py --check
+          python tools/snow_resources.py --check
           python tools/wiki.py --check
           python -B -m unittest discover -s tools -p "test_*.py"
       - name: make gradle wrapper executable

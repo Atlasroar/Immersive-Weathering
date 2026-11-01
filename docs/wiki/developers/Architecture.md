@@ -57,6 +57,7 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 | User interactions | [`ModEvents`](../../../src/main/java/com/ordana/immersive_weathering/events/ModEvents.java) | Ordered handlers; Fabric `UseBlockCallback`; durability, drops, stats, client effects |
 | Soils and plants | [`blocks/soil_types`](../../../src/main/java/com/ordana/immersive_weathering/blocks/soil_types), [`CropBlockMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/CropBlockMixin.java) | Fertile tags, placement/survival, plant-specific mixins, growth speed |
 | Cold and fire | [`blocks/frosted`](../../../src/main/java/com/ordana/immersive_weathering/blocks/frosted), [`blocks/charred`](../../../src/main/java/com/ordana/immersive_weathering/blocks/charred), [`TemperatureManager`](../../../src/main/java/com/ordana/immersive_weathering/util/TemperatureManager.java) | Biome/weather predicates, thin ice, icicles, freezing, smoldering, fire/lightning events |
+| Standalone snow | [`snow`](../../../src/main/java/com/ordana/immersive_weathering/snow) | Explicit vanilla host schemas, placement hooks, scheduled falling, one sampled weather hook, static multipart models |
 | Entities and visuals | [`entities`](../../../src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
 | Compatibility | [`integrations`](../../../src/main/java/com/ordana/immersive_weathering/integrations) | Fabric EMI and Mod Menu entrypoints; external integrations must be verified individually |
 
@@ -106,6 +107,96 @@ not mean its mixin is actually registered. Registered mixins appear in the
 Do not conflate logical server authority with physical client initialization.
 Verify side-safe class loading, authoritative world mutation, packet handling,
 and dedicated-server behavior when touching shared code.
+
+## Standalone snow ownership
+
+`SnowHosts` explicitly registers 42 `snow_covered_<vanilla_path>` blocks: 12 fences,
+22 walls and eight plants. This does not replace existing `snowy_*` masonry IDs,
+`SnowGrowth`, their datapacks/configs, or leaf/sand mechanics. No automatic
+modded-host discovery or dependency is added. `register` is an explicit startup
+integration point: register a block/supplier before registry freeze, preserve
+the host schema and supply matching resources/semantics. Block entities,
+wet hosts, nested wrappers and mappings that lose host properties are rejected.
+
+The evaluated inheritance approach cannot safely pass a `LAYERS`-extended state
+to vanilla `WallBlock`'s exact-state shape maps. Instead, the four schema classes
+inside `SnowCoveredBlock` share a deterministic delegating implementation:
+vanilla methods receive a reconstructed **raw host state**, never a composite.
+Every property except `WATERLOGGED` is stored with its original property object;
+only dry hosts are eligible, so raw restoration always retains false waterlogging.
+There is no per-cell block entity, NBT payload, packet, render attachment, mutable
+world cache or global scratch position. Ordinary block-state persistence and
+vanilla block updates provide save/client synchronization.
+
+Shapes union raw host and vanilla snow outline/collision/support shapes.
+Vanilla block-state caches retain these position-independent shapes. Raw wall
+post detection additionally recognizes wrapped upper walls through the narrow
+`SnowWallPostMixin`; fence/wall/mining tags and copied Fabric fire entries preserve
+their relevant semantics. Rotation/mirroring, cloning, bonemeal and interaction
+delegate through raw states. Wrapped plants omit vanilla's visual XZ jitter so
+their snow plane stays aligned with the cell; biome tint is delegated to the raw
+plant, while snow quads are untinted.
+
+`tools/snow_resources.py` emits reviewable, checked-in multipart blockstates,
+eight ordinary snow models and IW semantic tags. Host parts reference vanilla
+models, including bamboo's four special side models. Snow references the vanilla
+sprite; a 1/1024-block depth bias separates coplanar post/arm surfaces from snow.
+There is no FRAPI custom model, Kiwi/Indium requirement, copied SnowRealMagic
+model/texture, or client import in shared snow code. Actual alternate-pack/Sodium
+visual acceptance remains required.
+
+`SnowHostReplaceMixin`, `SnowLayerBlockMixin` and `SnowHostPlacementMixin` cooperate
+with normal `BlockPlaceContext`/`BlockItem` placement rather than reimplementing
+permissions, collision tests, callbacks, advancements, sounds or stack consumption.
+Partial covered plants permit ordinary block-item replacement only when
+`replace_partial_layers` is enabled and their reconstructed raw host accepts
+the item. Same-host items, full eight-layer covers, fences/walls and non-block
+items are not widened. A supported dry replacement keeps the old layer count
+through the same placement injection while mixing is enabled; unsupported
+solids or mixing-disabled replacements consume the cover normally. Snow items
+remain a separate mixing/add-layer path.
+The normal double-plant placement callback applies the same eligibility check
+to a covered upper cell, preserving its independent layer count too.
+`SnowDoublePlantMixin` recognizes raw/wrapped partners and preserves an existing
+partial-snow upper cell. The location-predicate fallback is restricted to explicit
+vanilla double-plant block-ID predicates against wrapped counterparts, with their
+state/tag checks and no NBT predicate. This retains paired grass/fern loot checks
+without replacing vanilla loot tables or ignoring datapack overrides.
+
+Shovel **use** restores the raw host and evaluates vanilla snow loot with the
+player/tool. Breaking the composite is host destruction and uses host mining
+requirements plus host/snow loot; double plants take their pre-removal loot
+snapshot once. Creative upper destruction suppresses partner drops. An invalid
+host remains until its two-tick scheduled resolution, then host loot is evaluated
+and snow becomes a plain layer or falls. Melt restores the host without loot.
+Disabling mixing does not unregister existing states.
+
+`SnowPhysics` detaches only the snow state into the existing falling-layer entity
+type; the leaf/sand branch is unchanged. The snow branch advances its own time,
+ray-checks source water on every move, and lands without overwriting blocked/wet
+cells. Deposits return an explicit remainder; at most eight layers enter one cell,
+and overflow becomes snow-layer items under the drop gamerules. Source WATER is
+the deliberate material-conversion sink; flowing/waterlogged blocks do not freeze.
+
+`ServerLevelMixin` redirects only `Biome.shouldSnow` in vanilla's existing
+`tickChunk` sample. `SnowWeather` is the sole extra-accumulation authority:
+current rain/thunder, biome snow temperature, heightmap identity, loaded position,
+block light <= 11, snow support, config and one-cell cap are checked. Ordinary
+initial air-cell snow still uses vanilla `Biome.shouldSnow`. No RNG draw, extra
+tick source, scan, asynchronous world access or `BlockGrowthHandler` cadence
+change is introduced. Gamerule 0 disables deposition; 1 is the user-selected
+default-compatibility sentinel; other positives intersect the bounded IW cap.
+No getter or unrelated gamerule is changed.
+
+Research context:
+[Snownee/SnowRealMagic at ef40d3319a6f9a98673816e0781cfdbb8e8caaea](https://github.com/Snownee/SnowRealMagic/tree/ef40d3319a6f9a98673816e0781cfdbb8e8caaea).
+Source was inspected during research; this is not a clean-room/source-unread
+claim. The implementation and static resources here are independently authored
+against IW/Mojang behavior; no SnowRealMagic source or assets were ported.
+
+English `block.immersive_weathering.snow_covered_*` display names cover all 42
+registered hosts; the resource tests enforce exact inventory coverage without
+rewriting existing translations or other locales.
 
 ## Branch policy and historical reference
 

@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "immersive_weathering:snow_covered_oak_fence",
+    "immersive_weathering:snow_covered_spruce_fence",
+    "immersive_weathering:snow_covered_birch_fence",
+    "immersive_weathering:snow_covered_jungle_fence",
+    "immersive_weathering:snow_covered_acacia_fence",
+    "immersive_weathering:snow_covered_dark_oak_fence",
+    "immersive_weathering:snow_covered_mangrove_fence",
+    "immersive_weathering:snow_covered_cherry_fence",
+    "immersive_weathering:snow_covered_bamboo_fence",
+    "immersive_weathering:snow_covered_crimson_fence",
+    "immersive_weathering:snow_covered_warped_fence",
+    "immersive_weathering:snow_covered_nether_brick_fence"
+  ]
+}
