@@ -12,9 +12,10 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 
 ## Scope and accuracy
 
-The maintenance target is **Minecraft 1.20.1, Fabric only**. The inherited
-multiloader layout is still present. Neither this documentation nor the bug
-catalog means Forge removal or bug fixes have already happened.
+The maintenance target is **Minecraft 1.20.1, Fabric only**. The
+**1.20.1-2.0.6-beta.1** migration uses one root Fabric build and removes IW-owned
+multiloader code. Moonlight remains required. The migration is not a claim that
+the independent gameplay reports in the bug catalog have been fixed.
 
 The [generated reference](developers/Reference.md) records source-derived
 versions, settings, entrypoints, mixins, Moonlight imports, and datapack IDs.

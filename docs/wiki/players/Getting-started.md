@@ -5,7 +5,8 @@
 ## Install
 
 1. Back up existing worlds and configuration.
-2. Create a Minecraft 1.20.1 instance using Fabric Loader and Java 17.
+2. Create a Minecraft 1.20.1 instance using Fabric Loader **0.16.14 or newer**
+   and Java 17.
 3. Install the Fabric build of Immersive Weathering, Fabric API for 1.20.1, and
    Moonlight Lib for the same Minecraft version and loader. Do not substitute a
    Forge or NeoForge jar.
@@ -14,10 +15,19 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
+The current prerelease is **1.20.1-2.0.6-beta.1**. The development dependency set
+uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
+(CurseForge file **5619072**). Moonlight and Fabric API must be installed
+separately; neither is bundled. Replace the previous IW jar, and never install
+the `-sources.jar` or development jar. This beta changes the build/loader layout,
+not world IDs or a promise to fix every catalogued gameplay report.
+
 Moonlight is required for core registration, configuration, generated bark/leaf
 content, and gameplay hooks. It is not an optional visual enhancement.
 
-Mod Menu provides access to the mod's configuration screen. EMI is optional and
+Mod Menu **7.2.2** provides access to the mod's configuration screen. Cloth
+Config **11.1.136** and EMI **1.1.24+1.20.1** are optional development companions.
+EMI is optional and
 can display recipes/interactions, but has a [reported integration issue](Troubleshooting.md).
 Consult each optional mod's own dependency requirements.
 

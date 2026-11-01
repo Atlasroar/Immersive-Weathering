@@ -31,21 +31,3 @@ bin/
 # fabric
 
 run/
-/.gradle/
-/fabric/.gradle/
-/fabric/build/
-/forge/.gradle/
-/forge/build/
-/common/.gradle/
-/common/build/
-/.idea/
-/build/
-/build/
-/common/.gradle/
-/common/build/
-/common/run/
-/forge/build/
-/forge/.gradle/
-/forge/build/
-/forge/run/
-forge/build/tmp/compileJava/previous-compilation-data.bin

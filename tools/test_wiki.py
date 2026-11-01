@@ -12,7 +12,7 @@ class WikiTests(unittest.TestCase):
     def test_coordinates_exclude_resource_expansion_properties(self):
         source = '''
 modImplementation("curse.maven:selene-499980:5619072")
-inputs.property "moonlight_version", rootProject.moonlight_version
+inputs.property "moonlight_min_version", project.moonlight_min_version
 '''
         self.assertEqual(wiki.moonlight_coordinates(source), ["curse.maven:selene-499980:5619072"])
 
@@ -65,6 +65,15 @@ builder.pop();
         generated = wiki.generate(wiki.ROOT)
         self.assertEqual(generated, wiki.generate(wiki.ROOT))
         self.assertEqual(wiki.check(wiki.ROOT, generated), [])
+
+    def test_reference_uses_root_layout_and_expanded_runtime_requirements(self):
+        generated = wiki.generate(wiki.ROOT)
+        self.assertIn("Build project: root only (no subprojects).", generated)
+        self.assertIn("src/main/resources/fabric.mod.json", generated)
+        self.assertIn("| `moonlight` | `>=1.20-2.12.11` |", generated)
+        self.assertNotIn("common/src", generated)
+        self.assertNotIn("fabric/src", generated)
+        self.assertNotIn("${fabric_loader_version}", generated)
 
     def test_stale_reference_is_detected(self):
         errors = wiki.check(wiki.ROOT, wiki.generate(wiki.ROOT) + "\nchanged")

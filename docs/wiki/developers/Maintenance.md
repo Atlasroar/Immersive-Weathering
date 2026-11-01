@@ -44,6 +44,13 @@ The documentation workflow runs those checks plus standard-library unit tests on
 every push/pull request. There is no date stamp or network/API dependency in the
 generated page; identical source produces identical output.
 
+`python tools\fabric.py --check` rejects IW-owned platform residue in active
+source/build surfaces, legacy source modules, and bundled historical binaries.
+After building, add `--jar` and `--sources` paths to verify names, expanded Fabric
+metadata, mixin membership, remapped access widening, forbidden classes/metadata,
+and byte-identical license notices. Historical prose and retained Moonlight API
+names are intentionally not rejected.
+
 ## Limits
 
 Automation does not determine whether prose is true, whether a new feature needs

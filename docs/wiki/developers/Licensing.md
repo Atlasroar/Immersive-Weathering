@@ -32,6 +32,13 @@ attribution material. Audit packaged artifacts as well as the repository: adding
 license documents to the repository is not proof that every build artifact
 already embeds them.
 
+The beta's remapped jar and sources jar both embed the exact repository
+`LICENSE`, `COPYING`, and `ATTRIBUTIONS`; `tools/fabric.py` compares their bytes.
+Moonlight **1.20-2.12.11** declares `gplv3` in its artifact metadata and is
+resolved as an external Fabric
+dependency, not redistributed inside IW. Historical binary copies are removed
+from the active source tree; archive tags retain the historical repository.
+
 Check licenses before introducing dependency code, textures, audio, translations,
 or other third-party material. Prefer referring to an external dependency over
 copying its implementation without a license review.

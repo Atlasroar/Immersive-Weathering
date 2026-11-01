@@ -2,46 +2,60 @@
 
 [Wiki home](../README.md) | [Players](../players/README.md) | [Developers](README.md)
 
-Java source links below use the common package root
-[`com.ordana.immersive_weathering`](../../../common/src/main/java/com/ordana/immersive_weathering).
+Java source links below use the root package
+[`com.ordana.immersive_weathering`](../../../src/main/java/com/ordana/immersive_weathering).
 
 ## Startup and ownership
 
 | Location | Responsibility |
 | --- | --- |
-| [`common`](../../../common) | Gameplay, registries, data codecs, generated packs, client setup, configuration, and shared mixins |
-| [`fabric`](../../../fabric) | Loader entrypoint, Fabric events/registries, platform implementations, and Fabric-specific mixins |
-| [`forge`](../../../forge) | Inherited legacy module; not a maintenance target |
-| [`gradle.properties`](../../../gradle.properties), [`settings.gradle`](../../../settings.gradle) | Versions and project inclusion; still declare the inherited layout |
+| [`src/main/java`](../../../src/main/java) | Gameplay, registries, data codecs, generated packs, client setup, configuration, networking, and mixins |
+| [`fabric` package](../../../src/main/java/com/ordana/immersive_weathering/fabric) | Fabric entrypoint, interaction callbacks, wax pairs, and ceiling/wall item placement |
+| [`src/main/resources`](../../../src/main/resources) | Fabric metadata, two registered mixin manifests, access widener, assets, data, and optional resource packs |
+| [`build.gradle`](../../../build.gradle), [`gradle.properties`](../../../gradle.properties), [`settings.gradle`](../../../settings.gradle) | One root Fabric Loom build, Java 17, versions, and external dependencies; no subprojects |
 
 Fabric metadata loads
-[`ImmersiveWeatheringFabric`](../../../fabric/src/main/java/com/ordana/immersive_weathering/fabric/ImmersiveWeatheringFabric.java).
+[`ImmersiveWeatheringFabric`](../../../src/main/java/com/ordana/immersive_weathering/fabric/ImmersiveWeatheringFabric.java).
 Its `onInitialize` calls
-[`ImmersiveWeathering.commonInit`](../../../common/src/main/java/com/ordana/immersive_weathering/ImmersiveWeathering.java),
+[`ImmersiveWeathering.commonInit`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeathering.java),
 then registers Fabric interaction callbacks and waxable pairs.
 Common initialization constructs config specs, initializes client setup only on
 the physical client, registers the generated server pack and reload listeners,
 hooks fire/lightning/loot events, and initializes registry classes.
 
 Client initialization is reached through common initialization and Moonlight's
-side/lifecycle helpers; the empty Fabric `client` entrypoint list does not mean
-there is no client setup.
+side/lifecycle helpers. There is deliberately no separate Fabric `client`
+entrypoint: adding one would run setup twice. Dedicated servers must never load
+the client initialization branch.
+
+`ModFeatures` calls Fabric `BiomeModifications` with the existing biome tags,
+generation steps, and placed feature IDs. `LiquidBlockMixin` reads its shadowed
+`FlowingFluid` field directly. Empty extra moss/cracking hooks are removed without
+changing the vanilla/IW transition pairs. Moonlight's flammability registration
+remains in leaf-pile/weed constructors; dead loader-specific fire methods are not
+needed on Fabric.
+
+IW-owned platform bridge classes/annotations, Forge resources and overrides,
+Quark-only optional pairs, and the unused/unimplemented Serene Seasons bridge
+are removed. Fabric never adjusted temperature through that seasonal stub.
+EMI and Mod Menu entrypoints remain optional; Moonlight continues to supply the
+config screen, lifecycle, registries, events, networking, and generated packs.
 
 ## System map
 
 | System | Start reading here | Coupled surfaces |
 | --- | --- | --- |
-| Registration | [`reg`](../../../common/src/main/java/com/ordana/immersive_weathering/reg) | Items/blocks, tags, creative visibility, recipes, loot, dynamic wood/leaf registration |
-| Moss and cracking | [`Weatherable`](../../../common/src/main/java/com/ordana/immersive_weathering/util/Weatherable.java), [`PatchSpreader`](../../../common/src/main/java/com/ordana/immersive_weathering/util/PatchSpreader.java), [`blocks/mossy`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/mossy), [`blocks/cracked`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/cracked) | Placement, neighbor updates, scheduled/random ticks, config influences, state transitions |
-| Rust | [`blocks/rusty`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/rusty), [`ModWaxables`](../../../common/src/main/java/com/ordana/immersive_weathering/reg/ModWaxables.java) | Weathering stages, wax pairs, door halves, scraping/sponging, recipes and tags |
-| Growths | [`BlockGrowthHandler`](../../../common/src/main/java/com/ordana/immersive_weathering/data/block_growths/BlockGrowthHandler.java), [`ConfigurableBlockGrowth`](../../../common/src/main/java/com/ordana/immersive_weathering/data/block_growths/growths/ConfigurableBlockGrowth.java) | Tick sources, owners, predicates, area conditions, placement/survival, datapack reload |
-| Fluid generators | [`FluidGeneratorsHandler`](../../../common/src/main/java/com/ordana/immersive_weathering/data/fluid_generators/FluidGeneratorsHandler.java), [`LiquidBlockMixin`](../../../common/src/main/java/com/ordana/immersive_weathering/mixins/LiquidBlockMixin.java) | Still/flowing fluid, prioritized generator lists, neighbors, generated state |
-| Leaves and bark | [`WeatheringHelper`](../../../common/src/main/java/com/ordana/immersive_weathering/util/WeatheringHelper.java), [`LeafPileBlock`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/LeafPileBlock.java) | Moonlight type relationships, decay, piles, rebarking, generated resources, colors |
-| User interactions | [`ModEvents`](../../../common/src/main/java/com/ordana/immersive_weathering/events/ModEvents.java) | Ordered handlers; Fabric `UseBlockCallback`; durability, drops, stats, client effects |
-| Soils and plants | [`blocks/soil_types`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/soil_types), [`CropBlockMixin`](../../../common/src/main/java/com/ordana/immersive_weathering/mixins/CropBlockMixin.java) | Fertile tags, placement/survival, plant-specific mixins, growth speed |
-| Cold and fire | [`blocks/frosted`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/frosted), [`blocks/charred`](../../../common/src/main/java/com/ordana/immersive_weathering/blocks/charred), [`TemperatureManager`](../../../common/src/main/java/com/ordana/immersive_weathering/util/TemperatureManager.java) | Biome/weather predicates, thin ice, icicles, freezing, smoldering, fire/lightning events |
-| Entities and visuals | [`entities`](../../../common/src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../common/src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../common/src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
-| Compatibility | [`integrations`](../../../common/src/main/java/com/ordana/immersive_weathering/integrations) | EMI, optional-mod checks, inherited integrations; availability on Fabric must be checked individually |
+| Registration | [`reg`](../../../src/main/java/com/ordana/immersive_weathering/reg) | Items/blocks, tags, creative visibility, recipes, loot, dynamic wood/leaf registration |
+| Moss and cracking | [`Weatherable`](../../../src/main/java/com/ordana/immersive_weathering/util/Weatherable.java), [`PatchSpreader`](../../../src/main/java/com/ordana/immersive_weathering/util/PatchSpreader.java), [`blocks/mossy`](../../../src/main/java/com/ordana/immersive_weathering/blocks/mossy), [`blocks/cracked`](../../../src/main/java/com/ordana/immersive_weathering/blocks/cracked) | Placement, neighbor updates, scheduled/random ticks, config influences, state transitions |
+| Rust | [`blocks/rusty`](../../../src/main/java/com/ordana/immersive_weathering/blocks/rusty), [`ModWaxables`](../../../src/main/java/com/ordana/immersive_weathering/reg/ModWaxables.java) | Weathering stages, wax pairs, door halves, scraping/sponging, recipes and tags |
+| Growths | [`BlockGrowthHandler`](../../../src/main/java/com/ordana/immersive_weathering/data/block_growths/BlockGrowthHandler.java), [`ConfigurableBlockGrowth`](../../../src/main/java/com/ordana/immersive_weathering/data/block_growths/growths/ConfigurableBlockGrowth.java) | Tick sources, owners, predicates, area conditions, placement/survival, datapack reload |
+| Fluid generators | [`FluidGeneratorsHandler`](../../../src/main/java/com/ordana/immersive_weathering/data/fluid_generators/FluidGeneratorsHandler.java), [`LiquidBlockMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/LiquidBlockMixin.java) | Still/flowing fluid, prioritized generator lists, neighbors, generated state |
+| Leaves and bark | [`WeatheringHelper`](../../../src/main/java/com/ordana/immersive_weathering/util/WeatheringHelper.java), [`LeafPileBlock`](../../../src/main/java/com/ordana/immersive_weathering/blocks/LeafPileBlock.java) | Moonlight type relationships, decay, piles, rebarking, generated resources, colors |
+| User interactions | [`ModEvents`](../../../src/main/java/com/ordana/immersive_weathering/events/ModEvents.java) | Ordered handlers; Fabric `UseBlockCallback`; durability, drops, stats, client effects |
+| Soils and plants | [`blocks/soil_types`](../../../src/main/java/com/ordana/immersive_weathering/blocks/soil_types), [`CropBlockMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/CropBlockMixin.java) | Fertile tags, placement/survival, plant-specific mixins, growth speed |
+| Cold and fire | [`blocks/frosted`](../../../src/main/java/com/ordana/immersive_weathering/blocks/frosted), [`blocks/charred`](../../../src/main/java/com/ordana/immersive_weathering/blocks/charred), [`TemperatureManager`](../../../src/main/java/com/ordana/immersive_weathering/util/TemperatureManager.java) | Biome/weather predicates, thin ice, icicles, freezing, smoldering, fire/lightning events |
+| Entities and visuals | [`entities`](../../../src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
+| Compatibility | [`integrations`](../../../src/main/java/com/ordana/immersive_weathering/integrations) | Fabric EMI and Mod Menu entrypoints; external integrations must be verified individually |
 
 ## Important execution paths
 
@@ -52,7 +66,7 @@ The detailed dispatch/placement rules remain IW code, not Moonlight code.
 
 `BlocksMixin` replaces several vanilla block implementations. Compatibility
 failures may therefore occur on vanilla IDs, not just IW namespaced blocks.
-Check both the common and Fabric mixin manifests: a source file existing does
+Check both gameplay and Fabric mixin manifests: a source file existing does
 not mean its mixin is actually registered. Registered mixins appear in the
 [generated reference](Reference.md).
 
@@ -90,6 +104,8 @@ to inspect retired tips. Do not remove them or recreate retired maintenance
 branches without an explicit decision. Existing local checkouts can still hold
 old local branch names; deleting remote branches does not switch those checkouts.
 
-Branch cleanup did not remove the `forge` source module or change the build's
-multiloader configuration. The GitHub Wiki has its own `.wiki.git` repository and
-is unaffected by source-repository branch deletion.
+Branch cleanup preserved history independently of the later Fabric-only beta
+migration. The migration removes obsolete source modules, transformer output,
+and bundled historical jars from the active tree; archive tags are unchanged.
+The GitHub Wiki has its own `.wiki.git` repository and is unaffected by
+source-repository branch deletion.
