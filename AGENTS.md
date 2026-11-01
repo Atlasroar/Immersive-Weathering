@@ -2,6 +2,9 @@
 
 - Maintenance targets Minecraft 1.20.1 and Fabric. Do not add Forge, NeoForge,
   or multiloader obligations. Existing legacy projects have not yet been removed.
+- The GitHub default branch is `atlasroar-fabric-1-20-1-bugs`. Retired branch
+  history is preserved under `archive/2026-11-01/*` tags. Do not remove archive
+  tags or recreate retired support branches without explicit user direction.
 - Keep Moonlight unless a separately scoped change replaces its required
   behavior; it is not merely a multiloader bridge.
 - Keep the version-controlled wiki in `docs/wiki` current in the same change

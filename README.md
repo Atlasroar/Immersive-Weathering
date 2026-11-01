@@ -7,6 +7,10 @@ This fork's maintenance target is **Minecraft 1.20.1 on Fabric**. The inherited
 `common`, `fabric`, and `forge` projects are still present; removing multiloader
 support is planned, not completed. Moonlight Lib remains a required dependency.
 
+The default development branch is `atlasroar-fabric-1-20-1-bugs`. Historical
+branches were retired after preserving their tips as `archive/2026-11-01/*` tags;
+see the [branch policy](docs/wiki/developers/Architecture.md).
+
 ## Wiki
 
 | Players: features and instructions | Developers: architecture and contribution |

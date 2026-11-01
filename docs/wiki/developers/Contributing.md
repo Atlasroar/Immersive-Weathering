@@ -9,6 +9,10 @@ and [player troubleshooting](../players/Troubleshooting.md) to find existing
 reports. Record exact versions and minimize the Fabric reproduction. Distinguish
 observed behavior, intended design, hypotheses, and measured results.
 
+Base new work on the GitHub default branch, currently
+`atlasroar-fabric-1-20-1-bugs`. The old version/support branches are archived tags,
+not active contribution targets; see the [branch policy](Architecture.md).
+
 Do not import Forge-only reports as confirmed Fabric bugs. Shared code may
 justify investigation, but it does not replace a Fabric reproduction.
 

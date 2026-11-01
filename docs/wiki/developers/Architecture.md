@@ -59,3 +59,37 @@ not mean its mixin is actually registered. Registered mixins appear in the
 Do not conflate logical server authority with physical client initialization.
 Verify side-safe class loading, authoritative world mutation, packet handling,
 and dedicated-server behavior when touching shared code.
+
+## Branch policy and historical reference
+
+The GitHub default development branch is `atlasroar-fabric-1-20-1-bugs`.
+Despite its task-oriented name, it is now the active Fabric 1.20.1 line.
+Use the repository's default branch as the base for new contributions; do not
+assume a branch literally named `main` exists.
+
+On November 1, 2026, the other 11 remote branches were retired after preserving
+their exact tips as lightweight tags named `archive/2026-11-01/BRANCH_NAME`.
+The archives preserve unique historical commits, not an ongoing support promise.
+
+| Archived branch | Historical role |
+| --- | --- |
+| `1.18.2-Fabric` | Earlier Fabric implementation |
+| `1.18.2-Multiloader` | Earlier multiloader implementation |
+| `1.19.2-multiloader` | Earlier Minecraft version |
+| `1.20.0-multiloader` | Baseline inherited by the active branch |
+| `1.21.1` | Later-version experiment, outside current scope |
+| `forge` | Legacy Forge implementation |
+| `main` | Older upstream default line, not the active 1.20.1 code |
+| `Inferno` | Historical April Fools variant |
+| `weatherite` | Historical variant |
+| `pages` | Historical Pages branch; GitHub Pages was disabled at retirement |
+| `revert-402-1.20.0-multiloader` | Historical revert already included in the active history |
+
+Browse the [archive tags](https://github.com/Atlasroar/Immersive-Weathering/tags)
+to inspect retired tips. Do not remove them or recreate retired maintenance
+branches without an explicit decision. Existing local checkouts can still hold
+old local branch names; deleting remote branches does not switch those checkouts.
+
+Branch cleanup did not remove the `forge` source module or change the build's
+multiloader configuration. The GitHub Wiki has its own `.wiki.git` repository and
+is unaffected by source-repository branch deletion.
