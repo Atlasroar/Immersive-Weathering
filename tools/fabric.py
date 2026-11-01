@@ -23,6 +23,25 @@ FORBIDDEN_CLASS = re.compile(
     rb"dev/architectury/|net/minecraftforge/|net/neoforged/|org/quiltmc/"
     rb"|IWPlatformStuff|QuarkPlugin|SereneSeasonsCompat|transformProduction"
 )
+SEMVER = re.compile(
+    r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
+    r"(?:-(?P<prerelease>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
+    r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
+)
+
+
+def version_errors(version: str, minecraft_version: str) -> list[str]:
+    errors = []
+    match = SEMVER.fullmatch(version)
+    if match is None:
+        errors.append("gradle.properties: mod_version must use Semantic Versioning")
+    elif match["prerelease"]:
+        if any(part.isdigit() and len(part) > 1 and part.startswith("0")
+               for part in match["prerelease"].split(".")):
+            errors.append("gradle.properties: numeric prerelease identifiers must not have leading zeroes")
+    if version.startswith(minecraft_version + "-"):
+        errors.append("gradle.properties: Minecraft compatibility must not prefix the mod version")
+    return errors
 
 
 def tracked_paths(root: Path) -> list[Path]:
@@ -70,7 +89,7 @@ def source_errors(root: Path, paths: list[Path] | None = None) -> list[str]:
 
 def metadata_errors(root: Path, manifest: dict, expanded: bool = True) -> list[str]:
     props = properties((root / "gradle.properties").read_text(encoding="utf-8"))
-    errors = []
+    errors = version_errors(props["mod_version"], props["minecraft_version"])
     expected = {
         "id": props["mod_id"], "version": props["mod_version"] if expanded else "${version}",
         "environment": "*", "license": "LGPLv3",

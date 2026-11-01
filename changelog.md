@@ -1,3 +1,20 @@
+## 2.0.6-beta.2
+
+- Included independently authored growth-dispatch and area-scan optimizations
+  from [PR #12](https://github.com/Atlasroar/Immersive-Weathering/pull/12),
+  without new dependencies or changes to growth timing, seeded traversal,
+  configuration, content IDs, or datapack rules.
+- Avoided biome-supplier allocation for empty growth dispatch and bounded
+  immutable geometry caching for area scans with invocation-local permutations.
+- Added real-code differential checks and an optional allocation benchmark;
+  isolated measurements are not a claim of in-game TPS/MSPT gains.
+- Adopted mod Semantic Versioning: Minecraft 1.20.1 is compatibility metadata,
+  not the mod version prefix. The previous release remains unchanged.
+- Fixed GitHub Wiki source links with code-formatted labels.
+
+Use backed-up or disposable worlds. This beta does not claim to fix the
+catalogued gameplay bugs, including the stone-brick growth/spread report.
+
 ## 1.20.1-2.0.6-beta.1
 
 - Migrated to one root Fabric Loom project for Minecraft 1.20.1 and Java 17.

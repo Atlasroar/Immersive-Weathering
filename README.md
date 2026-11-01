@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**1.20.1-2.0.6-beta.1** is a prerelease following IW 2.0.5, with a single root
+**2.0.6-beta.2** is a prerelease following IW 2.0.5, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,7 +31,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-1.20.1-2.0.6-beta.1.jar`; the matching
+`build\libs\immersive_weathering-2.0.6-beta.2.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Beta installation
@@ -43,6 +43,15 @@ Install only the remapped IW jar, replacing any older IW jar rather than keeping
 both. Dependencies are not bundled. Optional client integrations are EMI,
 Mod Menu, and Cloth Config; see [installation](docs/wiki/players/Getting-started.md).
 This migration does not claim the existing gameplay issue catalog is fixed.
+
+## Versioning
+
+Mod releases follow [Semantic Versioning 2.0.0](https://semver.org/):
+`MAJOR.MINOR.PATCH`, with prereleases such as `2.0.6-beta.2`. Minecraft
+compatibility is declared separately in Fabric metadata and release notes.
+Published versions and assets are immutable; the historical
+`1.20.1-2.0.6-beta.1` release retains its original name and contents.
+See the [versioned compatibility contract](docs/wiki/developers/Development.md#release-versioning).
 
 Documentation checks require Python 3.10 or newer, with no third-party packages:
 

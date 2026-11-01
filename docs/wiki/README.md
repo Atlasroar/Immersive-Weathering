@@ -12,9 +12,9 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 
 ## Scope and accuracy
 
-The maintenance target is **Minecraft 1.20.1, Fabric only**. The
-**1.20.1-2.0.6-beta.1** migration uses one root Fabric build and removes IW-owned
-multiloader code. Moonlight remains required. The migration is not a claim that
+The maintenance target is **Minecraft 1.20.1, Fabric only**. The current beta,
+**2.0.6-beta.2**, includes the Fabric-only migration and standalone growth
+optimizations. Moonlight remains required. These changes are not a claim that
 the independent gameplay reports in the bug catalog have been fixed.
 
 The [generated reference](developers/Reference.md) records source-derived

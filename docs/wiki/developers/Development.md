@@ -16,6 +16,29 @@ when changing the library and verify the artifact's own metadata and license.
 Fabric API is **0.92.12+1.20.1**, Loader **0.16.14**, and the optional development
 mods are EMI **1.1.24+1.20.1**, Mod Menu **7.2.2**, Cloth Config **11.1.136**.
 
+## Release versioning
+
+Mod versions follow [Semantic Versioning 2.0.0](https://semver.org/). The versioned
+compatibility contract covers the mod ID and registered content IDs, documented
+config keys and datapack schemas, and documented external entrypoints/integration
+interfaces. Undocumented implementation classes/helpers are internal, regardless
+of Java visibility. Prereleases remain experimental and require backed-up worlds.
+
+Use `MAJOR.MINOR.PATCH`: incompatible contract changes require a major increment,
+backward-compatible additions a minor increment, and compatible corrections a
+patch increment. Successive candidates for an unreleased version increment the
+prerelease identifier: `2.0.6-beta.1` to `2.0.6-beta.2`. Minecraft compatibility
+belongs in `fabric.mod.json` and release notes, not before the mod's version.
+Historical Minecraft-prefixed releases/tags must not be renamed or overwritten.
+Published artifacts are immutable; every new artifact needs a new version.
+
+Update `mod_version`, changelog, current installation/build examples and generated
+reference together. Fabric source/artifact checks enforce SemVer syntax, numeric
+prerelease identifiers without leading zeroes, and separation from the Minecraft
+prefix. Publish beta tags as GitHub prereleases, with matching binary/source jars
+and checksums pinned to the verified source commit. Replace only the previous IW
+jar when deploying; keep a verified backup outside the profile's `mods` directory.
+
 ## Windows commands
 
 From the repository root:
@@ -23,7 +46,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-1.20.1-2.0.6-beta.1.jar --sources build\libs\immersive_weathering-1.20.1-2.0.6-beta.1-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.0.6-beta.2.jar --sources build\libs\immersive_weathering-2.0.6-beta.2-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -31,7 +54,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-1.20.1-2.0.
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-1.20.1-2.0.6-beta.1.jar`; install that remapped
+`build\libs\immersive_weathering-2.0.6-beta.2.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -55,7 +78,7 @@ mixin audit can force-load EMI's optional JEMI implementation and fail on absent
 JEI `IRecipeExtrasBuilder`. A failing `runClient` audit is not by itself a
 production crash reproduction. Use an isolated production instance with the
 remapped IW jar to distinguish this case; JEI is not an IW runtime requirement.
-The beta's production smoke loaded client/server generated packs, **78** growth
+The original `1.20.1-2.0.6-beta.1` production smoke loaded client/server generated packs, **78** growth
 definitions and **14** fluid generators, joined a disposable integrated world,
 synced the common config, and completed the IW EMI plugin reload. Dedicated
 server initialization was checked only up to the unaccepted EULA gate. Gameplay

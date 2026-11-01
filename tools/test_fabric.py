@@ -22,6 +22,23 @@ class FabricTests(unittest.TestCase):
     def test_current_source_contract(self):
         self.assertEqual(fabric.source_errors(wiki.ROOT), [])
 
+    def test_semver_accepts_stable_prerelease_and_build_metadata(self):
+        for version in ("2.0.6", "2.0.6-beta.2", "2.0.6-0", "2.0.6-beta.2+mc1.20.1",
+                        "2.0.6+001", "0.1.0-alpha"):
+            with self.subTest(version=version):
+                self.assertEqual(fabric.version_errors(version, "1.20.1"), [])
+
+    def test_semver_rejects_invalid_core_and_prerelease_identifiers(self):
+        for version in ("2.0", "v2.0.6", "02.0.6", "2.0.6-beta.02", "2.0.6-",
+                        "2.0.6+", "2.0.6-beta_2", "2.0.6-beta..2", "2.0.6-b\u00e9ta.2"):
+            with self.subTest(version=version):
+                self.assertTrue(fabric.version_errors(version, "1.20.1"))
+
+    def test_semver_rejects_legacy_minecraft_prefix(self):
+        errors = fabric.version_errors("1.20.1-2.0.6-beta.1", "1.20.1")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Minecraft compatibility", errors[0])
+
     def test_source_checks_cover_nonstandard_sources_and_binaries_not_historical_prose(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

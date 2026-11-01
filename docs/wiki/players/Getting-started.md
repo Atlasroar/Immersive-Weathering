@@ -15,12 +15,16 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-The current prerelease is **1.20.1-2.0.6-beta.1**. The development dependency set
+The current prerelease is **2.0.6-beta.2**. Its mod version follows Semantic
+Versioning; Minecraft **1.20.1** is declared separately as compatibility.
+Install `immersive_weathering-2.0.6-beta.2.jar`. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
 (CurseForge file **5619072**). Moonlight and Fabric API must be installed
 separately; neither is bundled. Replace the previous IW jar, and never install
-the `-sources.jar` or development jar. This beta changes the build/loader layout,
-not world IDs or a promise to fix every catalogued gameplay report.
+the `-sources.jar` or development jar. This beta includes the Fabric-only build
+and allocation optimizations, not changed world IDs or a promise to fix every
+catalogued gameplay report. Growth timing and seeded traversal are unchanged
+in differential checks; in-game performance still needs testing.
 
 Moonlight is required for core registration, configuration, generated bark/leaf
 content, and gameplay hooks. It is not an optional visual enhancement.
