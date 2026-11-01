@@ -27,7 +27,7 @@ of Java visibility. Prereleases remain experimental and require backed-up worlds
 Use `MAJOR.MINOR.PATCH`: incompatible contract changes require a major increment,
 backward-compatible additions a minor increment, and compatible corrections a
 patch increment. Successive candidates for an unreleased version increment the
-prerelease identifier: `2.0.6-beta.1` to `2.0.6-beta.2`. Minecraft compatibility
+prerelease identifier: `2.0.6-beta.2` to `2.0.6-beta.3`. Minecraft compatibility
 belongs in `fabric.mod.json` and release notes, not before the mod's version.
 Historical Minecraft-prefixed releases/tags must not be renamed or overwritten.
 Published artifacts are immutable; every new artifact needs a new version.
@@ -46,7 +46,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.0.6-beta.2.jar --sources build\libs\immersive_weathering-2.0.6-beta.2-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.0.6-beta.3.jar --sources build\libs\immersive_weathering-2.0.6-beta.3-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -54,7 +54,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.0.6-beta.
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.0.6-beta.2.jar`; install that remapped
+`build\libs\immersive_weathering-2.0.6-beta.3.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -109,6 +109,48 @@ python -m unittest discover -s tools -p "test_*.py"
 The [documentation workflow](../../../.github/workflows/docs.yml) runs the checks
 on pushes and pull requests independently of the Minecraft build. It does not
 launch Minecraft, validate external URLs, or prove narrative/gameplay accuracy.
+
+## Paired-growth regression harness
+
+```powershell
+.\gradlew.bat pairedGrowthTest --console=plain
+```
+
+`build`/`check` includes this dependency-free Java 17 task. Its separate
+`src/growthTest` source set executes the actual production
+`ConfigurableBlockGrowth`, `BlockPair` codecs, vanilla survival/shape methods,
+weighted selection, seeded replacement tests, and Moonlight area-loaded helper.
+It deliberately does not inherit the performance harness's configurable-growth
+substitute. No test framework or runtime dependency is added or packaged.
+
+The harness decodes all **18 shipped paired entries** from the eight JSON files:
+the three short-to-tall plants, the double flowers, and dark-forest
+fence/carved-pumpkin/jack-o-lantern variants (including duplicate entries).
+Each selected output is isolated at weight 1 to test placement, with self/adjacent
+targeting from its definition. Positive cases use its shipped growth chance and
+replacement probability; the three self-growths also use their decoded real
+area conditions. Biome/owner dispatch and the grass-block definitions' area
+eligibility are intentionally outside these isolated placement fixtures.
+
+The **322 cases** cover six face directions while keeping `above_block` vertical,
+both halves after immediate neighboring shape propagation and repeated six-face
+updates, no transient double-plant removal, lower-then-upper write order,
+blocked/wrong-fluid uppers, unsupported plants, upper/lower build boundaries,
+waterlogged obstruction rejection, paired waterlogging and position-dependent
+fence shapes, area/probability/chance vetoes, and exact world-RNG calls.
+They include **96 single-output differential cases** against the original control
+flow (six directions, self/adjacent, wet/dry, allowed/blocked, destroy on/off),
+comparing world state, placement/destruction trace, and RNG trace.
+
+The explicit fixture binds only the vanilla dirt and water tags it needs, uses
+JDK 17 `Unsafe` to bypass `ServerLevel` construction, and overrides world storage,
+build height, loaded-area status, and scheduled ticks. A `RandomBlockMatchTest`
+subclass implements the accessor that Fabric normally mixes in. The fixture
+propagates actual vanilla `updateShape` calls to neighbors; it is not the chunk
+engine, a real resource reload, a loot/drop simulation, or an in-game tick loop.
+Neither it nor a clean build establishes Fabric lifecycle or a passed manual G07
+retest. See the [placement contract](Data-and-resources.md#paired-output-placement)
+and [manual retest](../players/Feature-testing.md#beta3-paired-growth-retest).
 
 ## Growth performance harness
 

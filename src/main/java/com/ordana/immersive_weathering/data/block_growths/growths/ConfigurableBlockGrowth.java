@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
@@ -222,7 +223,10 @@ public class ConfigurableBlockGrowth implements IBlockGrowth {
                         BlockState target2 = null;
                         boolean db = toPlace.isDouble();
                         if (db) {
-                            targetPos2 = targetPos.relative(dir);
+                            targetPos2 = targetPos.above();
+                            if (level.isOutsideBuildHeight(targetPos) || level.isOutsideBuildHeight(targetPos2)) {
+                                return;
+                            }
                             target2 = level.getBlockState(targetPos2);
                             seed = RandomSource.create(Mth.getSeed(pos));
                             if (!targetPredicate.test(target2, seed)) {
@@ -235,10 +239,14 @@ public class ConfigurableBlockGrowth implements IBlockGrowth {
                             if (destroyTarget) {
                                 level.destroyBlock(targetPos, true);
                             }
-                            level.setBlockAndUpdate(targetPos, getStateToPlace(toPlace.getFirst(), target, level, targetPos));
+                            // Vanilla places the lower half without shape-normalizing against a still-missing upper half.
+                            BlockState first = db && toPlace.getFirst().getBlock() instanceof DoublePlantBlock
+                                    ? DoublePlantBlock.copyWaterloggedFrom(level, targetPos, toPlace.getFirst())
+                                    : getStateToPlace(toPlace.getFirst(), target, level, targetPos);
+                            level.setBlockAndUpdate(targetPos, first);
                             if (db) {
                                 if (destroyTarget) level.destroyBlock(targetPos2, true);
-                                level.setBlockAndUpdate(targetPos2, getStateToPlace(toPlace.getSecond(), target2, level, pos));
+                                level.setBlockAndUpdate(targetPos2, getStateToPlace(toPlace.getSecond(), target2, level, targetPos2));
                             }
                         }
                     }

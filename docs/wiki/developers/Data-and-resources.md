@@ -34,6 +34,50 @@ does not reinterpret those values, change JSON/config defaults or chances, skip
 callbacks, throttle ticks, or alter sky-tick RNG/cadence. The geometry budget is
 an implementation detail with baseline fallback, not a datapack radius limit.
 
+## Paired output placement
+
+[`BlockPair`](../../../src/main/java/com/ordana/immersive_weathering/data/block_growths/BlockPair.java)
+encodes `block` at the selected target and optional `above_block` one block
+**vertically above that target**, not along the growth face. `target_self`
+selects the owner position; otherwise the face chooses the adjacent target.
+The same production placement path handles G07's three plants, biome-specific
+double flowers, and dark-forest fence/pumpkin pairs.
+
+Before beta.3, the lower double-plant state was normalized using
+`Block.updateFromNeighbourShapes` before its upper existed. Vanilla
+`DoublePlantBlock.updateShape` consequently returned air. Independently, the upper
+was normalized at the owner position rather than its actual destination, reading
+the wrong supporting neighbor. Reintroducing either defect alone makes the
+production-class regression fail with actual air writes and missing halves.
+
+Beta.3 follows vanilla's lower-half placement approach:
+`DoublePlantBlock.copyWaterloggedFrom` prepares paired double-plant lowers without
+the premature shape normalization; normal upper preparation occurs at the real
+upper position after the lower is placed. Other paired lowers and all single
+outputs keep their existing shape/waterlogging helper. Writes remain sequential,
+lower then upper, using normal update flags; this is **not an atomic world
+transaction**. Both paired destinations must be inside build height, and the
+existing upper replacement predicate and area condition must pass before any
+write. Shipped seagrass requires a water **block** above, not merely fluid inside
+a waterlogged obstruction. No bundled JSON, chance, weight, biome restriction,
+density logic, or RNG call order changes.
+
+The upstream investigation matched open
+[Silversmith-Mods/Immersive-Weathering#458](https://github.com/Silversmith-Mods/Immersive-Weathering/issues/458).
+The inspected upstream
+[`ConfigurableBlockGrowth` at `1bcc03b6754d6840f3b3ab328744af16e06bdb9a`](https://github.com/Silversmith-Mods/Immersive-Weathering/blob/1bcc03b6754d6840f3b3ab328744af16e06bdb9a/common/src/main/java/com/ordana/immersive_weathering/data/block_growths/growths/ConfigurableBlockGrowth.java#L205-L243)
+and tall-plant definitions retain the same problematic path. Bounded branch,
+history, and PR searches found no ready upstream fix; that is not a guarantee
+about all upstream work. This correction was independently authored in the
+existing LGPL code, not copied from an external patch.
+
+The [regression harness](Development.md#paired-growth-regression-harness) covers
+every bundled paired entry's placement. It does not certify arbitrary modded
+`above_block` combinations, custom neighbor callbacks, chunk writes, loot drops,
+or real biome dispatch; retain normal custom-block survival requirements and
+test datapack overrides in Fabric. The dated beta.2 G07 failure remains in the
+player ledger; beta.3 requires a fresh manual retest.
+
 ## Example: override weeds
 
 For Minecraft 1.20.1, create a datapack with a root `pack.mcmeta`:

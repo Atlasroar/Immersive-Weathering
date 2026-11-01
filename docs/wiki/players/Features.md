@@ -48,6 +48,12 @@ vegetation, roots, or other changes under their configured conditions. Farmland
 support depends on plant type, tags, and mod integration; loamy crop placement
 has a [reported Fabric bug](Troubleshooting.md).
 
+Beta.3 corrects placement of paired tall grass, large ferns, tall seagrass, and
+double flowers. Plants still need valid support and an eligible upper position;
+seagrass requires water, and solid or waterlogged obstructions are not replaced.
+Existing chance, biome, and density rules still apply. The
+[G07 retest](Feature-testing.md#beta3-paired-growth-retest) remains pending in-game.
+
 Cold systems include frost/frosted variants, thin ice, icicles, and freezing
 effects. Icicles have configurable spawning and vibration-related behavior.
 Lightning can create vitrified sand and fulgurite under applicable conditions.
