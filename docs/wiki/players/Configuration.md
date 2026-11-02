@@ -26,8 +26,52 @@ source expressions rather than guessing what a setting's name means.
 | Control natural rust | Common `rusting` section |
 | Control leaf piles | Common `leaf_piles` section |
 | Control standalone snow | Common `snow` section; independent of `general.block_growths` |
+| Control standalone fire | Common `fire` section; independent of `general.block_growths` and existing `charring` settings |
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
+
+## Standalone fire (unreleased source)
+
+Open **Immersive Weathering -> Configs -> Common -> Standalone fire** using the
+existing optional configuration-screen integration. The common/server spec is
+synced by Moonlight; no extra library is required. Stop/restart after manual
+file edits and verify the effective server settings. The implementation reads
+current suppliers on every action/trial rather than caching config or rewriting
+global flammability tables. Disabling features stops new actions, not existing
+fires or prior dirt conversion. Config changes do not replace `/reload`'s
+datapack behavior or alter the existing `charring` controls.
+
+| Key in `fire` | Default (bounds) | Meaning |
+| --- | --- | --- |
+| `entity_spread` | `true` | Known non-sun burning entities may ignite nearby blocks, subject to gamerules. |
+| `torch_attacks` | `true` | Successful direct main-hand torch/soul-torch melee uses ordinary four-second burning; one item outside Creative. |
+| `flammable_grass` | `true` | Adds grass ignition/burn odds 5/20; successful consumption leaves dirt at the same position, without drops. |
+| `spread_interval` | `20` (1-1200) | Ticks between staggered trials per entity. At normal 20 TPS, default is once per second. |
+| `spread_radius` | `1` (1-3) | Cube radius around the carrier for candidate air cells. |
+| `heat_radius` | `2` (0-4) | Cube radius for counting FIRE, SOUL_FIRE, MAGMA_BLOCK and LAVA block cells, including flowing lava. Radius zero checks the carrier cell. |
+| `heat_source_cap` | `8` (1-64) | Stops the heat count early; no unlimited bonus. |
+| `spread_chance` | `0.02` (0-1) | Base probability per trial, not per air cell. Zero disables successful trials. |
+| `projectile_multiplier` | `0.0625` (0-1) | Applied **after** the cap; default is one sixteenth. Zero disables projectile spreading. |
+| `heat_bonus` | `0.125` (0-1) | Adds this amount per counted source to a heat multiplier starting at one. |
+| `temperature_bonus` | `0.5` (0-4) | Adds this amount per degree of biome base temperature above 0.8, up to temperature 2. |
+| `spread_chance_cap` | `0.25` (0-1) | Maximum trial probability **before** projectile reduction. |
+
+Chance is the smaller of the cap and
+`base chance * (1 + counted sources * heat bonus) * (1 + max(0, min(2, temperature) - 0.8) * temperature bonus)`,
+then multiplied by the projectile multiplier for projectiles. With all defaults,
+eight heat cells and temperature 2 give about **6.4% per trial**, or **0.4%**
+for a projectile, not guaranteed spreading near heat. Default cold/temperate
+trials with no heat remain 2%, or 0.125% for projectiles. One successful trial
+chooses uniformly among eligible cells and attempts at most one placement.
+
+`doFireTick` is a hard environmental gate, including grass burning; direct torch
+combat is deliberately independent. Non-player carriers obey `mobGriefing`;
+players and their projectiles do not. Existing external flammability values are
+retained (larger grass values are not reduced); disabling IW grass restores
+native/other-mod behavior rather than removing another mod's registration.
+Grass consumed by IW remains dirt; lowering a setting does not restore grass.
+See [feature rules](Features.md#standalone-fire-unreleased-source) for supported
+ignition sources, wetness and save/reload behavior.
 
 ## Leaf blacklist
 

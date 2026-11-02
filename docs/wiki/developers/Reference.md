@@ -76,25 +76,31 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 
 | Side | Mixin class |
 | --- | --- |
+| `mixins` | `com.ordana.immersive_weathering.mixins.ArrowFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.AttachedStemBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.BeeMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.BaseFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.BlocksMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.BubbleColumnMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.BushBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.CampfireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.CropBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.EatBlockGoalMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.EntityFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.FireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.GrassBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.IceMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.LeavesMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.LiquidBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.MudBlockHitboxMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.MobFireMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PlayerFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitEatGoalMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RootedDirtBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.ServerLevelMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowballMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SmallFireballMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowLayerBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowHostPlacementMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowHostReplaceMixin` |
@@ -106,7 +112,9 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.StemBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SugarCaneBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SweetBerryBushMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.ZombieFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.BiomeAccessor` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.accessors.FireBlockInvoker` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.IceInvoker` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.RandomBlockMatchTestAccessor` |
 
@@ -146,6 +154,18 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.jav
 | `charring.fire_chars_wood` | `0.3, 0, 1` | `FIRE_CHARS_WOOD_CHANCE` |
 | `charring.soot_spawn` | `true` | `SOOT_SPAWN` |
 | `charring.flammable_cobweb` | `true` | `FLAMMABLE_COBWEBS` |
+| `fire.entity_spread` | `true` | `FIRE_ENTITY_SPREAD` |
+| `fire.torch_attacks` | `true` | `FIRE_TORCH_ATTACKS` |
+| `fire.flammable_grass` | `true` | `FIRE_FLAMMABLE_GRASS` |
+| `fire.spread_interval` | `20, 1, 1200` | `FIRE_SPREAD_INTERVAL` |
+| `fire.spread_radius` | `1, 1, 3` | `FIRE_SPREAD_RADIUS` |
+| `fire.heat_radius` | `2, 0, 4` | `FIRE_HEAT_RADIUS` |
+| `fire.heat_source_cap` | `8, 1, 64` | `FIRE_HEAT_SOURCE_CAP` |
+| `fire.spread_chance` | `0.02, 0, 1` | `FIRE_SPREAD_CHANCE` |
+| `fire.projectile_multiplier` | `0.0625, 0, 1` | `FIRE_PROJECTILE_MULTIPLIER` |
+| `fire.heat_bonus` | `0.125, 0, 1` | `FIRE_HEAT_BONUS` |
+| `fire.temperature_bonus` | `0.5, 0, 4` | `FIRE_TEMPERATURE_BONUS` |
+| `fire.spread_chance_cap` | `0.25, 0, 1` | `FIRE_SPREAD_CHANCE_CAP` |
 | `item_interaction.pickaxe_cracking` | `true` | `PICKAXE_CRACKING` |
 | `item_interaction.pickaxe_cracking_shift` | `false` | `PICKAXE_CRACKING_SHIFT` |
 | `item_interaction.brick_breaking` | `true` | `BRICK_REPAIRING` |

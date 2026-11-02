@@ -38,6 +38,24 @@ also remains unresolved despite the reported axe-interaction passes.
 [Browse current Fabric issues](https://github.com/Atlasroar/Immersive-Weathering/issues?q=is%3Aissue+is%3Aopen+label%3Afabric+label%3Aminecraft-1.20.1).
 Do not file Forge/NeoForge support requests against this fork.
 
+## Standalone fire controls
+
+The new fire behavior is currently [unreleased source](Features.md#standalone-fire-unreleased-source),
+not a change to the published 2.1.0 jar. If a carrier does not spread, check
+server/common `fire.entity_spread`, `doFireTick`, and `mobGriefing` before
+increasing probabilities. Sunlight-only or unknown/legacy saved burns are
+intentionally excluded; extinguish and use a supported independent ignition.
+Rain, water, powder snow, occupied air cells, absent fuel and unloaded neighbors
+also prevent placement. Default trials are small; raising `randomTickSpeed`
+does not accelerate them. Campfires/torches do not provide heat bonuses.
+
+Torch consumption requires a successful direct main-hand hit on a supported
+living target; projectiles, blocked hits and offhand torches do not qualify.
+Soul torches deliberately use ordinary fire. Grass turning into dirt is
+intentional surface consumption, not a restoration bug. Review
+[settings and reload rules](Configuration.md#standalone-fire-unreleased-source)
+and record counted trials before reporting a probability defect.
+
 ## Before reporting
 
 For this beta, a missing Moonlight error requires the Fabric

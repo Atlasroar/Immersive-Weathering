@@ -25,6 +25,48 @@ a dedicated stone-brick comparison matrix.
 Not every block has every variant. Tool actions can consume items or durability.
 Do not infer that the mod weathers arbitrary blocks from other mods.
 
+## Standalone fire (unreleased source)
+
+Burning entities can ignite **nearby flammable blocks**, not other entities
+directly. The default is one **2% trial every 20 ticks**, staggered per entity,
+and at most one new fire cell per trial. Burning projectiles have **one sixteenth**
+of that chance. Only loaded, dry air beside flammable blocks is eligible;
+occupied cells are never replaced. Exposed rain, wet carriers and powder snow
+prevent spreading. Entity-created fire does not create Nether portals.
+
+Sunlight-only burning does not spread. Fire contact, lava, lightning, successful
+Fire Aspect attacks (player or mob), burning-arrow/small-fireball hits, and torch
+attacks can authorize spreading, including during an existing sunlight burn.
+Vanilla unarmed burning-zombie melee retains its own ignition behavior; its
+victim may spread only when the zombie's burn had a known non-sun source.
+Unattributed burning from older saves or unsupported mod ignition stays
+ineligible until one of these known events occurs. Extinguishing clears that
+permission; known provenance survives save/reload.
+
+Successful **direct melee** with a main-hand Torch or Soul Torch sets a living
+target on ordinary vanilla fire for four seconds (subject to vanilla fire
+protection), without shortening a longer burn. Survival consumes one torch;
+Creative does not. Failed/blocked attacks, dead, fire-immune, fire-resistant,
+wet/powder-snow targets and unsupported nonliving targets do not consume it.
+Both torches use ordinary fire: no blue renderer or separate soul damage/state.
+
+**Grass Blocks** are fuel and lose their grass surface to become vanilla
+**Dirt at the same position**, without drops. Podzol, mycelium and other soils
+are not converted. Fire still follows vanilla burn trials, not instant ground
+conversion by a burning entity.
+
+`doFireTick=false` stops new entity spread and grass consumption, but not the
+direct torch combat action. `mobGriefing=false` stops non-player carriers,
+including ownerless/mob-owned projectiles; players and player-owned projectiles
+are exempt. Fire, soul fire, magma blocks and lava provide a bounded local heat
+bonus; **torches and campfires do not**. Hotter biome base temperatures increase
+the chance above 0.8, clamped at 2; no season integration is included. This
+adjusts entity spread only, not vanilla fire's global probability.
+See [fire settings](Configuration.md#standalone-fire-unreleased-source) and the
+[manual fire checklist](Feature-testing.md#standalone-fire-unreleased-source).
+These mechanics are independent of `general.block_growths` and do not replace
+existing wood charring, soot, smoldering, snow or datapack mechanics.
+
 ## Standalone snow
 
 Beta 2.1.0-beta.1 adds four related mechanics without a separate snow mod:

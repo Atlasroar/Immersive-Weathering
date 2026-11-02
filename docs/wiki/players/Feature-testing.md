@@ -10,6 +10,25 @@ their `Not run` cells are template defaults, not the current test-round verdicts
 Use the dated ledger for recorded outcomes.
 Datapacks, configuration, other mods, and later releases can change expectations.
 
+## Standalone fire (unreleased source)
+
+These are **unrun manual acceptance cases**, not a claim that the published
+2.1.0 contains the new fire features. Automated fixtures and vanilla hook checks
+are described in the [fire harness](../developers/Development.md#fire-mechanics-harness).
+Use a disposable world only after separately authorizing its test build; record
+the source SHA, server config, gamerules, difficulty, weather and biome.
+Probabilistic controls need counted trials, not a short wait or accelerated
+`randomTickSpeed`; the entity interval uses ordinary entity ticks.
+
+| Case | Setup and controls | Required result | Manual verdict |
+| --- | --- | --- | --- |
+| F01 | Sun-burning zombie/skeleton/phantom beside dry wood/grass; then independently ignite the same burn with fire, lava, lightning, player/mob Fire Aspect, burning arrow or small fireball | Sun-only never spreads; each supported later source can authorize; owner-attributed projectiles never consume held torches | Not run |
+| F02 | Successful, blocked, failed and repeated direct torch/soul-torch melee; Survival/Creative, offhand, long existing burn, wet/dead/fire-immune/fire-resistant targets | Four seconds ordinary burning subject to vanilla protection, no shortening; exactly one Survival item only on supported successful ignition; no soul state/renderer | Not run |
+| F03 | Same fixtures in temperate/hot biomes, zero/eight/excess heat cells; FIRE/SOUL_FIRE/MAGMA_BLOCK/LAVA versus torches/campfires; ordinary carrier versus projectile | Measured low per-interval chance, bounded heat/temperature and one-sixteenth projectile reduction; at most one cell per trial | Not run |
+| F04 | Rain/exposed neighbors/roof, water/waterlogged/occupied cells, chunk edge, build limits, border, obsidian portal frame; change doFireTick/mobGriefing and all fire controls | Dry supported air and loaded neighbors only; no overwrite, chunk forcing or portal creation; documented gamerule/player exemptions and live settings | Not run |
+| F05 | Burn exact grass versus dirt/podzol/mycelium; toggle grass/firetick; add external flammability; preserve adjacent snow-covered plants and native wood/soot behavior | Successful vanilla grass consumption leaves dirt at same position, no drops; unrelated soils/config/host flammability and charring/soot remain unchanged | Not run |
+| F06 | Save/reopen while authorized or sun-only burning; extinguish by expiry/water/rain/powder snow then sun-ignite again; vanilla zombie melee from sun-only versus known fire | Provenance persists only for active known burns; extinguishing clears it; natural zombie melee cannot launder sunlight into spread permission; dedicated clients agree | Not run |
+
 ## Standalone snow candidate retest
 
 Use a new backed-up/disposable test area. Automated production-code fixtures and client/server launch evidence

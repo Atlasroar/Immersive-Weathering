@@ -1,3 +1,16 @@
+## Unreleased
+
+- Independently authored standalone fire mechanics for Fabric 1.20.1: low-chance
+  burning-entity block ignition, reduced projectile probability, bounded local
+  heat and hot-biome bonuses, and server/common controls.
+- Successful direct main-hand torch/soul-torch attacks use ordinary vanilla
+  burning and consume one Survival item. Sunlight-only burns do not spread;
+  legitimate later ignition can authorize the same burn.
+- Exact grass blocks burn into vanilla dirt without removing the ground or
+  dropping items. Existing charring, soot, snow and datapack mechanics remain.
+- This is development source, not a second release of the immutable 2.1.0
+  artifacts. No new dependency, soul-burning renderer/state or season integration.
+
 ## 2.1.0
 
 Stable release consolidating the Fabric-only fork and all prerelease changes.

@@ -134,6 +134,10 @@ sourceSets {
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
         runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
     }
+    fireTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
 }
 
 tasks.register("pairedGrowthTest", JavaExec) {
@@ -148,7 +152,7 @@ tasks.register("pairedGrowthTest", JavaExec) {
 }
 
 tasks.named("check") {
-    dependsOn growthPerformanceTest, pairedGrowthTest, "snowMechanicsTest"
+    dependsOn growthPerformanceTest, pairedGrowthTest, "snowMechanicsTest", "fireMechanicsTest"
 }
 
 tasks.register("snowMechanicsTest", JavaExec) {
@@ -159,5 +163,15 @@ tasks.register("snowMechanicsTest", JavaExec) {
     mainClass = "com.ordana.immersive_weathering.snow.SnowMechanicsTest"
     args file("src/main/resources").absolutePath
     workingDir layout.buildDirectory.dir("snow-harness")
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register("fireMechanicsTest", JavaExec) {
+    group = "verification"
+    description = "Exercise production fire rules with vanilla states and bounded world fixtures."
+    dependsOn fireTestClasses
+    classpath = sourceSets.fireTest.runtimeClasspath
+    mainClass = "com.ordana.immersive_weathering.fire.FireMechanicsTest"
+    workingDir layout.buildDirectory.dir("fire-harness")
     doFirst { workingDir.mkdirs() }
 }
