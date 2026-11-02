@@ -130,7 +130,8 @@ gameplay. Its test-only bridge supplies access to private vanilla fire queries
 and applies production grass rules; it is not shipped in the jar. Development
 server `runServer --args="--initSettings nogui"` can check initialization and
 Mixin loading without accepting the EULA or opening a world. Neither check
-replaces the [unrun manual F01-F06 run checklist](../players/Feature-testing.md#standalone-fire).
+replaces the [manual F01-F06 run checklist](../players/Feature-testing.md#standalone-fire);
+the tester's broad 2.2.0 pass does not itemize its variants.
 No external profile/world or published 2.1.0 artifact is changed by these tasks.
 
 ## Snow mechanics harness

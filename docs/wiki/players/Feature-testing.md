@@ -12,9 +12,16 @@ Datapacks, configuration, other mods, and later releases can change expectations
 
 ## Standalone fire
 
-All F01-F06 cases below are **Not run** for 2.2.0. They are runnable acceptance
-instructions, not a claim that the immutable 2.1.0 contains these features or that
-stable versioning establishes gameplay acceptance. Automated fixtures and hook checks
+The tester reported on November 2, 2026 that the deployed 2.2.0 features
+"work as expected". This is a **user-reported broad fire-feature pass**, not
+an independently reproduced or itemized F01-F06 result. Exact variants, counts,
+negative controls, configuration and multiplayer coverage were not specified.
+The reusable F01-F06 rows below retain **Not run** template cells until an
+itemized round is recorded; they do not negate that broad reported pass.
+
+These are runnable acceptance instructions, not a claim that the immutable
+2.1.0 contains these features or that stable versioning establishes gameplay
+acceptance. Automated fixtures and hook checks
 are described in the [fire harness](../developers/Development.md#fire-mechanics-harness).
 Use a new disposable Creative flat world with cheats, the remapped 2.2.0 jar and
 matching server/client dependencies. Back up the instance configuration first.

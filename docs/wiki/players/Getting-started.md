@@ -41,7 +41,8 @@ reduced projectile spreading, bounded local heat/hot-biome bonuses, ordinary
 torch combat ignition and grass-to-dirt burning, without a new dependency.
 Review [fire controls](Configuration.md#standalone-fire) before opening a world:
 they are enabled by default, and environmental spreading requires `doFireTick`.
-The [F01-F06 checklist](Feature-testing.md#standalone-fire) remains **Not run**.
+The tester reported a broad 2.2.0 fire-feature pass; individual
+[F01-F06 variants](Feature-testing.md#standalone-fire) remain unreported.
 Earlier prerelease downloads are unchanged; install only one active IW jar.
 The recorded N01-N11 passes were on beta.2, not a new complete stable-version
 acceptance run; N12-N14 and the final fern appearance remain unreported.

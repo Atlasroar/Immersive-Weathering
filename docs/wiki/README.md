@@ -17,8 +17,9 @@ and stable release target is **2.2.0**, adding
 [standalone fire](players/Features.md#standalone-fire) to standalone snow features,
 the Fabric-only migration, growth optimizations, and a paired-plant placement correction.
 Moonlight remains required; no snow-mod dependency is added.
-Fire adds no dependency either. Its [F01-F06 run checklist](players/Feature-testing.md#standalone-fire)
-remains **Not run**; automated rule checks are not manual acceptance.
+Fire adds no dependency either. The tester reported a broad 2.2.0 fire-feature
+pass; individual [F01-F06 variants](players/Feature-testing.md#standalone-fire)
+remain unreported. Automated rule checks are not manual acceptance.
 Consult [published releases](https://github.com/Atlasroar/Immersive-Weathering/releases)
 for available binaries rather than inferring publication from source version.
 It includes expanded dry-plant snow sharing and temporary frosty appearances

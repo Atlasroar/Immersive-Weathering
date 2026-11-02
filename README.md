@@ -69,8 +69,9 @@ removing the ground. Environmental changes obey `doFireTick`, and non-player
 carriers respect `mobGriefing` with a player-projectile exemption.
 See [fire controls](docs/wiki/players/Configuration.md#standalone-fire) and the
 [F01-F06 runnable checklist](docs/wiki/players/Feature-testing.md#standalone-fire).
-Those manual fire cases remain **Not run**; automated checks are not gameplay
-acceptance. The immutable 2.1.0 release and historical results are unchanged.
+The tester reported the deployed 2.2.0 features work as expected; individual
+F01-F06 variants remain unreported. Automated checks are not gameplay acceptance.
+The immutable 2.1.0 release and historical results are unchanged.
 
 ## Versioning
 
