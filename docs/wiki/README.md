@@ -17,10 +17,12 @@ The maintenance target is **Minecraft 1.20.1, Fabric only**. The current beta,
 the Fabric-only migration, growth optimizations, and a paired-plant placement correction.
 Moonlight remains required; no snow-mod dependency is added.
 The **2.1.0-beta.2** follow-up extends snow sharing to
-more dry plants and giving covered short grass a temporary frosty appearance.
+more dry plants and gives covered short grass a temporary frosty appearance.
 Published beta.1 is unchanged; see the [new plant retests](players/Feature-testing.md#standalone-snow-candidate-retest).
-The [G07 retest](players/Feature-testing.md#beta3-paired-growth-retest) is still
-needed; this is not a claim that all independent gameplay reports are fixed.
+The tester reported **N01-N11 Pass** after the beta.2 deployment; **N12-N14 remain
+unreported**. The [G07 retest](players/Feature-testing.md#beta3-paired-growth-retest)
+has a broad N11 follow-up, not separately itemized transitions. This is not a
+claim that all independent gameplay reports are fixed.
 
 The [generated reference](developers/Reference.md) records source-derived
 versions, settings, entrypoints, mixins, Moonlight imports, and datapack IDs.

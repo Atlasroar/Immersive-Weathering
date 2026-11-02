@@ -11,15 +11,33 @@ Datapacks, configuration, other mods, and later releases can change expectations
 
 ## Standalone snow candidate retest
 
-Use a new backed-up/disposable test area. These are **not recorded in-game
-passes**. Automated production-code fixtures and client/server launch evidence
+Use a new backed-up/disposable test area. Automated production-code fixtures and client/server launch evidence
 are described in [development validation](../developers/Development.md#snow-mechanics-harness).
-Keep the beta.2 ledger below unchanged.
+Keep the historical 2.0.6-beta.2 ledger below unchanged.
+
+**Reported snow results: November 1, 2026, following the 2.1.0-beta.2 test-profile deployment**
+
+| Cases | Reported manual verdict | Coverage |
+| --- | --- | --- |
+| N01-N11 | **Pass** | The tester explicitly reported all eleven cases passing. |
+| N12-N14 | **Not reported** | The expanded dry-plant, native-growth and common-config cases remain unreported, not failed. |
+
+These are user-reported in-game results, not an independent agent reproduction.
+No new per-control inventory, exact settings, logs, screenshots or complete
+mod/resource-pack versions were supplied. Preserve the reported passes without
+assuming every variant within a combined row was individually exercised.
+N11 includes the paired-growth regression controls, but the report does not
+itemize separate grass/fern/seagrass transitions or replace the historical G07
+failure with a separate G07 pass.
 
 **November 1 follow-up on 2.1.0-beta.1:** the tester reported that the jar seems
 to work overall, then reported flowers replacing snow and requested shared weeds,
 more dry plants, common-config controls and frosty-looking covered grass.
-This is not a per-case N01-N11 pass. The expanded behavior below awaits testing.
+That earlier report was not a per-case N01-N11 pass; the later beta.2 report
+above explicitly supplies those passes. N12-N14 still need individual results.
+
+**Reusable snow checklist:** the `Not run` cells below are blank template
+defaults; the dated results above are the current recorded verdicts.
 
 | Case | Setup and controls | Required result | Manual verdict |
 | --- | --- | --- | --- |
@@ -95,9 +113,12 @@ does not validate absent steel-wool interactions.
 
 The beta.2 ledger above is historical and remains unchanged. Beta.3 corrects
 paired placement in the implementation; deterministic production-code fixtures
-now retain both halves. This is **not** a new in-game pass for G07, and does not
-change its recorded beta.2 failure. No fresh client/server game-loop smoke is
-claimed.
+now retain both halves. That implementation evidence alone was **not** a new
+in-game pass for G07 and did not change its recorded beta.2 failure.
+The later 2.1.0-beta.2 snow round reports **N11 Pass**, including this broad
+regression row, without itemizing separate grass/fern/seagrass outcomes.
+Keep that follow-up distinct from the original failure and from an independent
+agent reproduction.
 
 Retest grass -> tall grass, fern -> large fern, and seagrass -> tall seagrass
 separately, on supported soil with loaded space above. For seagrass, use water

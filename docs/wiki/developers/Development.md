@@ -192,8 +192,10 @@ dependencies) allowed a real client resource bake and integrated-world startup,
 with config sync and 78 growth/14 fluid-generator definitions. Model baking
 caught bamboo's directional side-model naming, subsequently corrected in the
 generator. Observed player actions during the development launches are not an agent-controlled
-acceptance reproduction. Visual correctness, Sodium, alternate packs, multiplayer
-sync and N01-N14 remain explicitly pending in the
+acceptance reproduction. On November 1, after the 2.1.0-beta.2 deployment, the
+tester reported **N01-N11 Pass**, including the combined visual/synchronization
+row. These are user-reported results without a new per-control or mod/resource-pack
+inventory, not independent engine acceptance. **N12-N14 remain unreported** in the
 [manual sheet](../players/Feature-testing.md#standalone-snow-candidate-retest).
 Do not modify an external profile or accept an EULA to make a smoke command pass.
 

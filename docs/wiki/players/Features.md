@@ -110,7 +110,8 @@ Beta.3 corrects placement of paired tall grass, large ferns, tall seagrass, and
 double flowers. Plants still need valid support and an eligible upper position;
 seagrass requires water, and solid or waterlogged obstructions are not replaced.
 Existing chance, biome, and density rules still apply. The
-[G07 retest](Feature-testing.md#beta3-paired-growth-retest) remains pending in-game.
+[G07 retest](Feature-testing.md#beta3-paired-growth-retest) has a later broad
+N11 Pass report on 2.1.0-beta.2; separate transition outcomes were not itemized.
 
 Cold systems include frost/frosted variants, thin ice, icicles, and freezing
 effects. Icicles have configurable spawning and vibration-related behavior.

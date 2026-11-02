@@ -30,8 +30,9 @@ not a new code fix or measured equality of rates. The
 The same round reports double-tall plant growth failing (G07), and icicle
 support-loss falling passing but vibration-triggered falling failing (C08).
 Beta.3 corrects a deterministically reproduced paired-placement failure behind
-G07; its [manual retest](Feature-testing.md#beta3-paired-growth-retest) remains
-pending. C08 vibration is not fixed by that change. Steel-wool availability/use
+G07. The later 2.1.0-beta.2 snow round reports N11's regression checks passing;
+separate transition outcomes in the [manual retest](Feature-testing.md#beta3-paired-growth-retest)
+were not itemized. C08 vibration is not fixed by that change. Steel-wool availability/use
 also remains unresolved despite the reported axe-interaction passes.
 
 [Browse current Fabric issues](https://github.com/Atlasroar/Immersive-Weathering/issues?q=is%3Aissue+is%3Aopen+label%3Afabric+label%3Aminecraft-1.20.1).
@@ -83,5 +84,8 @@ stationary layers adjacent to water.
 
 Rendering uses ordinary multipart models with vanilla host textures and the
 vanilla snow sprite, with no Indium/Kiwi requirement. Alternate resource packs
-and Sodium still need the [manual snow checks](Feature-testing.md#standalone-snow-candidate-retest);
-a model bake or fixture pass is not visual acceptance.
+and Sodium are included in N10's combined row, reported Pass in the
+[2.1.0-beta.2 snow results](Feature-testing.md#standalone-snow-candidate-retest).
+The report did not itemize tested renderer/resource-pack combinations, so do not
+assume arbitrary combinations are verified. A model bake or fixture pass alone
+is not visual acceptance. N12-N14 remain unreported.
