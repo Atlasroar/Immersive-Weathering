@@ -37,7 +37,10 @@ Sources are distributed separately; no new runtime dependency is added.
   rule. All new environmental fire effects respect `doFireTick`.
 - Common `sand` and `fire` controls, generated native-model cover resources,
   production/native regression coverage, and a separate SP01-SP08 manual
-  checklist accompany the changes. Manual acceptance remains **Not run**.
+  checklist accompany the changes. At publication these were **Not run**;
+  on 2026-11-02 the tester reported **SP01-SP07 Pass; SP08 Not applicable**.
+  The report is at test-ID level, without itemized variant evidence or an
+  SP08 multiplayer/coexistence pass.
   Published 2.3.0 and earlier assets remain immutable. A release/deployment
   does not count as a manual gameplay pass.
 

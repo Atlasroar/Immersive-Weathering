@@ -55,7 +55,9 @@ Earlier prerelease downloads are unchanged; install only one active IW jar.
 Version 2.4.0 adds [sand sharing/rain erosion](Features.md#sand-piles) and
 [thunder fire suppression](Configuration.md#standalone-fire), not present in
 the published 2.3.0 jar. Their [SP01-SP08 checklist](Feature-testing.md#sand-and-thunder)
-has no recorded manual results; published release assets must not be overwritten.
+records the tester's **SP01-SP07 Pass; SP08 Not applicable** report dated
+2026-11-02, not itemized variant or multiplayer results. Published release
+assets must not be overwritten.
 The recorded N01-N11 passes were on beta.2, not a new complete stable-version
 acceptance run; N12-N14 and the final fern appearance remain unreported.
 

@@ -18,4 +18,5 @@ in different packs.
 Version 2.4.0's [sand sharing/rain erosion](Features.md#sand-piles) and
 [thunder fire suppression](Configuration.md#standalone-fire) are separate from
 published 2.3.0; see [SP01-SP08](Feature-testing.md#sand-and-thunder).
-Their manual verdicts remain **Not run**.
+The tester reported **SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02.
+See the dated ledger rather than the reusable checklist's blank template cells.

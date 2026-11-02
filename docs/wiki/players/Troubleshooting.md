@@ -20,8 +20,9 @@ positive randomTickSpeed and absence from **both** sandstorm biome tags;
 temperature alone is irrelevant. Thunder fire suppression uses sky exposure,
 not actual rainfall, and requires `doFireTick`. Covered/indoor fire, soul fire,
 torches and campfires are not extinguished by it. See
-[SP01-SP08](Feature-testing.md#sand-and-thunder); no gameplay result
-is implied by automated coverage.
+[SP01-SP08](Feature-testing.md#sand-and-thunder): the tester reported
+**SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02. Automated coverage does
+not itself establish gameplay results, and SP08 is not a compatibility pass.
 
 ## Reported Fabric 1.20.1 problems
 

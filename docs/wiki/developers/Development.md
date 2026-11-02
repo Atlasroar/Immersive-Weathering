@@ -161,9 +161,10 @@ and native host protection, falling merge/remainders/support/NBT/timeout/drop
 rules, real vanilla/IW loot tables, and one-layer rain erosion/tag exemptions.
 The test fixture binds native fence/sand/dead-bush-support tags explicitly;
 it does not substitute a different dead-bush survival rule. The shared snow
-model generator still emits byte-identical snow resources. New
-[SP01-SP08](../players/Feature-testing.md#sand-and-thunder) manual
-acceptance remains **Not run**. Published 2.3.0 artifacts remain immutable.
+model generator still emits byte-identical snow resources. For
+[SP01-SP08](../players/Feature-testing.md#sand-and-thunder), the tester reported
+**SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02, at test-ID level without
+itemized variant notes. Published 2.3.0 artifacts remain immutable.
 Building alone does not deploy; the 2.4.0 release deployment replaces only the
 IW binary in the authorized test profile, retaining configs and other mods.
 
@@ -179,7 +180,9 @@ temporary init script that excluded optional EMI only from `modLocalRuntime`
 for the existing Moonlight/JEMI issue; repository dependencies were unchanged.
 Local integrated-world startup subsequently appeared in that client's log and
 the helper was stopped. This is **not** an in-world placement, rendering,
-weather-rate or multiplayer acceptance result; SP01-SP08 remain Not run.
+weather-rate or multiplayer acceptance result. SP01-SP08 were Not run at
+publication; the subsequent user-reported results are recorded separately
+above and in the dated ledger, without a new SP08 compatibility claim.
 
 Client fixtures exercise weather/biome sampling, camera fluid/blindness/darkness
 guards, stronger-fog clamping, independent cloud toggle, bounded particle emitter

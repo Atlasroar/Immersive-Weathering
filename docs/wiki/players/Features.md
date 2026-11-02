@@ -109,7 +109,9 @@ weather and snowfall preserve sand. Biomes in either
 are exempt, even if a datapack makes one rainy; temperature alone grants no
 exemption. Erosion depends on `randomTickSpeed`; storm deposition does not.
 See [sand controls](Configuration.md#sand-piles) and
-[SP01-SP08](Feature-testing.md#sand-and-thunder), all **Not run**.
+[SP01-SP08](Feature-testing.md#sand-and-thunder). On 2026-11-02 the tester
+reported **SP01-SP07 Pass; SP08 Not applicable**, at test-ID level without
+itemized variant notes. This does not establish a multiplayer/coexistence pass.
 
 ## Standalone fire
 

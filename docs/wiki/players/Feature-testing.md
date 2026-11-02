@@ -12,7 +12,8 @@ Datapacks, configuration, other mods, and later releases can change expectations
 
 ## Sand and thunder
 
-**2.4.0 release round, 2026-11-02: SP01-SP08 are all Not run.**
+**2.4.0 release round, 2026-11-02: SP01-SP07 user-reported Pass;
+SP08 user-reported Not applicable.**
 Use `immersive_weathering-2.4.0.jar`, not the immutable published 2.3.0 jar.
 Record the release tag/merged source revision and jar SHA, not only its filename.
 The deployment uses the published binary; installation itself is not a pass.
@@ -28,9 +29,34 @@ testing the new eight-layer default; deployment does not rewrite it.
 | Deployment target | Modrinth profile `Fabric Test Enviorment 1.20.1`; install only one active IW jar, never sources/dev jars |
 | Existing test dependencies | Fabric API 0.92.12+1.20.1, Moonlight 1.20-2.16.38B, Cloth Config 11.1.136, EMI 1.1.24+1.20.1, Mod Menu 7.2.2; record actual Fabric Loader at launch |
 | Upgrade controls | Keep worlds/configs/other mods; explicitly record the retained weather cap and test 1 versus 8 without assuming default migration |
-| New manual verdicts | **SP01-SP08: Not run** |
+| New manual verdicts | **SP01-SP07: Pass; SP08: Not applicable**, user-reported 2026-11-02 |
 | Storm retest verdicts | **ST01-ST08: Not run**; do not copy old fire/snow results into this release |
 | Regression ledger | Earlier N01-N11 beta.2 passes and broad 2.2.0 fire report remain historical, not 2.4.0 passes |
+
+### User-reported results, 2026-11-02
+
+The tester reported the following outcomes for this 2.4.0 round. These are
+test-ID-level results, not independently observed agent results or itemized
+evidence for every host/configuration variant in the reusable setup below.
+No reason was supplied for SP08 being Not applicable; it must not be treated
+as a reload, coexistence or multiplayer pass. ST01-ST08 and the earlier
+fire/snow ledgers are unchanged.
+
+| Test | Reported result |
+| --- | --- |
+| SP01 | Pass |
+| SP02 | Pass |
+| SP03 | Pass |
+| SP04 | Pass |
+| SP05 | Pass |
+| SP06 | Pass |
+| SP07 | Pass |
+| SP08 | Not applicable |
+
+### Reusable setup checklist
+
+The `Not run` cells below remain blank template defaults for future rounds;
+the dated results above are the current release-round verdicts.
 
 Use a disposable/backed-up cheats-enabled world and restore all settings
 afterward. The commands below intentionally overwrite only this small test

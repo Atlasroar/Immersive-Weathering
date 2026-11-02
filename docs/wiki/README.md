@@ -28,9 +28,10 @@ Consult [published releases](https://github.com/Atlasroar/Immersive-Weathering/r
 for available binaries rather than inferring publication from source version.
 Version 2.4.0 adds [sand-pile sharing and rain erosion](players/Features.md#sand-piles)
 plus configurable [thunder fire suppression](players/Configuration.md#standalone-fire).
-The new
-[SP01-SP08 checklist](players/Feature-testing.md#sand-and-thunder)
-is **Not run**. Published 2.3.0 remains immutable and does not include these additions.
+For the [SP01-SP08 checklist](players/Feature-testing.md#sand-and-thunder),
+the tester reported **SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02.
+These are test-ID-level results, not a multiplayer/coexistence pass.
+Published 2.3.0 remains immutable and does not include these additions.
 It includes expanded dry-plant snow sharing and temporary frosty appearances
 for covered short grass and ferns. Published prereleases remain unchanged;
 see the [plant retests](players/Feature-testing.md#standalone-snow-candidate-retest).
