@@ -15,11 +15,12 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-This source targets stable **2.2.0**. Its mod version follows Semantic Versioning;
+This source targets stable **2.3.0**. Its mod version follows Semantic Versioning;
 Minecraft **1.20.1** is declared separately as compatibility.
-For 2.2.0, install `immersive_weathering-2.2.0.jar` from the
+For 2.3.0, install `immersive_weathering-2.3.0.jar` from the
 [published release assets](https://github.com/Atlasroar/Immersive-Weathering/releases)
-when available; source changes alone are not proof of publication. The immutable
+when available; source changes alone are not proof of publication. Published
+2.2.0 assets and the immutable
 [2.1.0 release](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0)
 and earlier assets are unchanged. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
@@ -34,7 +35,13 @@ This is not a promise to fix every catalogued gameplay report.
 Growth chances and seeded traversal are unchanged; in-game performance and the
 [beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
 
-The current source builds **2.2.0**: `build\libs\immersive_weathering-2.2.0.jar`.
+The current source builds **2.3.0**: `build\libs\immersive_weathering-2.3.0.jar`.
+New standalone sandstorms add original dust/wind assets, guarded fog, 30%
+exposed-entity slowdown and existing IW sand-layer deposition capped at one
+layer by default. Review [sandstorm controls](Configuration.md#standalone-sandstorms)
+before opening a world. No new dependency or cauldron behavior is added.
+[ST01-ST08](Feature-testing.md#standalone-sandstorms) remain **Not run**; stable
+versioning is not visual/audio or multiplayer acceptance.
 It includes temporary frosty appearances for both covered short grass and ferns.
 New standalone fire features add low-chance non-sun entity block spreading,
 reduced projectile spreading, bounded local heat/hot-biome bonuses, ordinary

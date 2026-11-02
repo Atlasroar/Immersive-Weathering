@@ -26,7 +26,7 @@ links. Do not assume every external asset inherits the code's LGPL license.
 
 ## Scorchful sandstorm adaptation
 
-The unreleased storm integration pins
+The 2.3.0 storm integration pins
 [TheDeathlyCow/Scorchful d74712e9b5fc4348aa8ad9c417ce938daf8bc0a1](https://github.com/TheDeathlyCow/scorchful/tree/d74712e9b5fc4348aa8ad9c417ce938daf8bc0a1),
 not a moving branch. Its root LICENSE is LGPLv3; its pinned manifest's ARR value
 is stale according to the integrating maintainer's explicit clarification that

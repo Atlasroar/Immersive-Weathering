@@ -27,7 +27,7 @@ Do not infer that the mod weathers arbitrary blocks from other mods.
 
 ## Standalone sandstorms
 
-**Unreleased source feature**, adapted with original dust sprites and nine wind
+**Added in 2.3.0**, adapted with original dust sprites and nine wind
 sounds from [Scorchful](../developers/Licensing.md#scorchful-sandstorm-adaptation).
 Requires only IW's existing Fabric API/Moonlight dependencies, not Scorchful,
 Thermoo, CCA or another library. The [ST01-ST08 checklist](Feature-testing.md#standalone-sandstorms)

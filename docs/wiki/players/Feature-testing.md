@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.2.0**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.3.0**, Minecraft **1.20.1**, Fabric.
 The latest recorded snow round below is **2.1.0-beta.2**, not a new stable-version pass.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
@@ -12,10 +12,11 @@ Datapacks, configuration, other mods, and later releases can change expectations
 
 ## Standalone sandstorms
 
-**Unreleased source-only integration; ST01-ST08 are all Not run.** The broad
+**2.3.0 sandstorm integration; ST01-ST08 are all Not run.** The broad
 reported 2.2.0 fire pass and earlier snow ledger below are preserved and do not
-cover these storms. Build from the recorded candidate commit, not the immutable
-published 2.2.0 jar. Do not overwrite that release or an external profile.
+cover these storms. Use the remapped 2.3.0 jar from a recorded source commit,
+not the immutable published 2.2.0 jar. Source version alone does not establish
+publication. Do not overwrite historical release assets or an external profile.
 Record source/jar SHA, dependencies, effective config, packs, biome, weather,
 simulation distance, real time/game ticks and client/server setup. Automated
 [native fixtures](../developers/Development.md#sandstorm-mechanics-harness) are
@@ -88,7 +89,8 @@ These are runnable acceptance instructions, not a claim that the immutable
 2.1.0 contains these features or that stable versioning establishes gameplay
 acceptance. Automated fixtures and hook checks
 are described in the [fire harness](../developers/Development.md#fire-mechanics-harness).
-Use a new disposable Creative flat world with cheats, the remapped 2.2.0 jar and
+Use a new disposable Creative flat world with cheats, the remapped target-version
+jar (2.3.0 for current checks) and
 matching server/client dependencies. Back up the instance configuration first.
 Record the release/source SHA, jar SHA-256, server config, gamerules, difficulty,
 weather, biome, trial count and singleplayer/dedicated-client setup.

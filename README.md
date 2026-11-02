@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.2.0** is the stable release target, with a single root
+**2.3.0** is the stable release target, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,7 +31,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.2.0.jar`; the matching
+`build\libs\immersive_weathering-2.3.0.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Installation
@@ -59,7 +59,19 @@ chances. N01-N11 were reported Pass on 2.1.0-beta.2; N12-N14 and the final fern
 appearance remain unreported. Stable release status does not imply that every
 catalogued gameplay report is fixed; see the [test ledger](docs/wiki/players/Feature-testing.md).
 
-**New in 2.2.0:** standalone fire mechanics without another fire mod or library.
+**New in 2.3.0:** standalone sandstorms with imported Scorchful dust sprites and
+nine wind sounds, guarded weather/biome-blended fog, exposed-entity slowdown
+and existing IW sand/red-sand layer deposition. No new dependencies, thirst,
+temperature or cauldron changes. Default slowdown is 30%; default pile cap is
+one layer, configurable to eight without trimming existing piles. Client effects
+have independent controls, and new IW storms yield to installed Scorchful.
+See [sandstorm settings](docs/wiki/players/Configuration.md#standalone-sandstorms),
+[asset licensing/provenance](docs/wiki/developers/Licensing.md#scorchful-sandstorm-adaptation)
+and the [ST01-ST08 runnable checklist](docs/wiki/players/Feature-testing.md#standalone-sandstorms).
+All manual storm cases remain **Not run**; builds and isolated resource loading
+are not in-world visual/audio or multiplayer acceptance.
+
+**Introduced in 2.2.0:** standalone fire mechanics without another fire mod or library.
 Known non-sun burning entities can ignite nearby flammable blocks with a small
 configurable chance; projectiles default to one sixteenth the ordinary rate.
 Bounded fire/soul-fire/magma/lava heat and hot-biome bonuses increase that chance.

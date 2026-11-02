@@ -13,8 +13,12 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 ## Scope and accuracy
 
 The maintenance target is **Minecraft 1.20.1, Fabric only**. The current source
-and stable release target is **2.2.0**, adding
-[standalone fire](players/Features.md#standalone-fire) to standalone snow features,
+and stable release target is **2.3.0**, adding
+[standalone sandstorms](players/Features.md#standalone-sandstorms) with original
+dust/wind assets, fog, slowdown and IW sand-layer deposition without new
+dependencies or cauldron changes. The [ST01-ST08 checklist](players/Feature-testing.md#standalone-sandstorms)
+remains **Not run**. Prior contents include
+[standalone fire](players/Features.md#standalone-fire), standalone snow features,
 the Fabric-only migration, growth optimizations, and a paired-plant placement correction.
 Moonlight remains required; no snow-mod dependency is added.
 Fire adds no dependency either. The tester reported a broad 2.2.0 fire-feature

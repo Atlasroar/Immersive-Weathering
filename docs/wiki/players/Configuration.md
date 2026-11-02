@@ -33,7 +33,7 @@ source expressions rather than guessing what a setting's name means.
 
 ## Standalone sandstorms
 
-Unreleased source feature. In Mod Menu open **Immersive Weathering -> Configs ->
+Added in 2.3.0. In Mod Menu open **Immersive Weathering -> Configs ->
 Common/Client -> Standalone sandstorms**. The common/server spec is synchronized
 by the existing Moonlight config system. No new library is required.
 Stop/restart for manual file edits, then verify the effective server config.

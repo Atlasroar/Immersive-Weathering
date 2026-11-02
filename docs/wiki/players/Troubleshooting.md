@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-For the **unreleased standalone sandstorms**, check vanilla rain first, then the
+For the **2.3.0 standalone sandstorms**, check vanilla rain first, then the
 new dry-biome subtype tags and common/client `sandstorms` settings. Thunder is
 unnecessary; wet-biome `has_sandstorm` legacy growth does not imply new dust/fog
 or layer deposition. A roof shelters slowdown/deposition, not biome fog/clouds.
