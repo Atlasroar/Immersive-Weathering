@@ -27,7 +27,7 @@ Do not infer that the mod weathers arbitrary blocks from other mods.
 
 ## Standalone snow
 
-The 2.1.0 candidate adds four related mechanics without a separate snow mod:
+Beta 2.1.0-beta.1 adds four related mechanics without a separate snow mod:
 snow layers can share a cell with the 12 vanilla fences, 22 vanilla walls,
 grass, fern, tall grass, large fern, sunflower, lilac, rose bush, and peony.
 Place snow into a dry supported host, or place a supported host into partial

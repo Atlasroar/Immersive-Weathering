@@ -15,9 +15,10 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-The current source prepares **2.1.0-beta.1**, an unreleased candidate. Its mod version follows Semantic
-Versioning; Minecraft **1.20.1** is declared separately as compatibility.
-Build/install `immersive_weathering-2.1.0-beta.1.jar`. The development dependency set
+The current beta is [**2.1.0-beta.1**](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0-beta.1).
+Its mod version follows Semantic Versioning; Minecraft **1.20.1** is declared
+separately as compatibility. Install `immersive_weathering-2.1.0-beta.1.jar`
+from the release assets. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
 (CurseForge file **5619072**). Moonlight and Fabric API must be installed
 separately; neither is bundled. Replace the previous IW jar, and never install

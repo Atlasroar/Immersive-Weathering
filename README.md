@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.1.0-beta.1** is an unreleased feature candidate, with a single root
+**2.1.0-beta.1** is a feature prerelease, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -42,7 +42,7 @@ Moonlight Lib **1.20-2.12.11** build (CurseForge file **5619072**).
 Install only the remapped IW jar, replacing any older IW jar rather than keeping
 both. Dependencies are not bundled. Optional client integrations are EMI,
 Mod Menu, and Cloth Config; see [installation](docs/wiki/players/Getting-started.md).
-This candidate adds standalone snow mixing, falling, storm accumulation, and
+This beta adds standalone snow mixing, falling, storm accumulation, and
 partial-layer replacement without SnowRealMagic or Kiwi. See the
 [snow controls](docs/wiki/players/Configuration.md#standalone-snow).
 It also retains beta.3's paired plant placement correction (grass, fern, seagrass and double flowers)

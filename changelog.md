@@ -1,4 +1,4 @@
-## 2.1.0-beta.1 (unreleased candidate)
+## 2.1.0-beta.1
 
 - Added snow cohabitation with explicitly supported vanilla fences, walls,
   grass/ferns and double plants, including both placement orders and host-state
@@ -19,7 +19,7 @@
 - Added real-production transition/state/loot fixtures, static composite resources,
   artifact guards and a separate pending manual acceptance matrix.
 
-No release, tag, deployment or Wiki-mirror publication is part of this candidate.
+This is a SemVer feature prerelease; previous releases remain unchanged.
 Use backed-up/disposable worlds. Fixtures and launch logs are not complete
 gameplay, dedicated-client synchronization or Sodium visual acceptance.
 

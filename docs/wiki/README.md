@@ -13,7 +13,7 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 ## Scope and accuracy
 
 The maintenance target is **Minecraft 1.20.1, Fabric only**. The current beta,
-**2.1.0-beta.1** (unreleased candidate), includes standalone snow features,
+**2.1.0-beta.1**, includes standalone snow features,
 the Fabric-only migration, growth optimizations, and a paired-plant placement correction.
 Moonlight remains required; no snow-mod dependency is added.
 The [G07 retest](players/Feature-testing.md#beta3-paired-growth-retest) is still
