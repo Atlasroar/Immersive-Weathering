@@ -15,6 +15,11 @@ read troubleshooting before depending on them in an existing world. Modpacks
 can override settings, tags, and recipes, so the same mod may behave differently
 in different packs.
 
+Version 2.5.0's [freezing wind and thunder snowstorms](Features.md#freezing-wind-and-thunder-snowstorms)
+have a separate [FW01-FW08 checklist](Feature-testing.md#freezing-wind-and-thunder-snowstorms),
+all **Not run**. Source version does not prove publication or deployment;
+the already-published 2.4.0 binary does not contain these features.
+
 Version 2.4.0's [sand sharing/rain erosion](Features.md#sand-piles) and
 [thunder fire suppression](Configuration.md#standalone-fire) are separate from
 published 2.3.0; see [SP01-SP08](Feature-testing.md#sand-and-thunder).

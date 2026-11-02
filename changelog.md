@@ -1,3 +1,36 @@
+## 2.5.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Install only `immersive_weathering-2.5.0.jar` when published, replacing the
+previous IW jar after backing up worlds/configuration. Fabric Loader
+**0.16.14+**, Fabric API **0.92.12+1.20.1** and Fabric Moonlight
+**1.20-2.12.11** remain required. No runtime dependency is added. Source version
+and build output do not establish publication, deployment or manual acceptance.
+
+- Standalone traveling freezing wind adapted from pinned Frostiful source and
+  six original particle frames, without Frostiful/Thermoo or player temperature,
+  freeze ticks, damage, wetness, armor or heart systems. Ambient wind is
+  night-only in all biomes; independent cold/altitude bonuses favor cold mountains.
+- Gusts push and apply configurable vanilla Slowness, extinguish open flames
+  (including normal/soul torches left unlit in place and relightable), freeze
+  eligible source water into existing thin ice, and grow native-survival
+  underside icicles without restricting support materials. Block changes require
+  mobGriefing; existing thin-ice light rules and disable_icicles remain.
+- Relighting and wind extinguishing honor rejected world writes: failure leaves
+  state/inventory unchanged, without success sounds/events/particles or campfire
+  bookkeeping. Successful candles retain native wick offsets and campfires their
+  native dowse effects; normal/soul/wall orientation remains unchanged.
+- Cold vanilla thunder snowstorms run day or night, add a capped bonus through
+  the existing single sampled snow deposition authority, and generate more wind.
+  Guarded white fog, shared upstream grain artwork, cloud hiding and intermittent
+  existing IW wind audio are independently configurable. No new audio recordings
+  or modern Immersive Storms APIs/dependencies imported.
+- Pinned LGPLv3 provenance, packaged-source/resource guards and a separate
+  FW01-FW08 acceptance checklist accompany the work. All new manual scenarios
+  remain **Not run**; previous 2.4.0 SP01-SP07 Pass/SP08 N/A and ST01-ST08
+  Not run records are unchanged. Published 2.4.0 and earlier artifacts remain
+  immutable and do not contain this feature.
+
 ## 2.4.0
 
 Stable release for Minecraft **1.20.1**, **Fabric** and **Java 17**.

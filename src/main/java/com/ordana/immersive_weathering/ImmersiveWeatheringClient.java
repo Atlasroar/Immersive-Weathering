@@ -32,6 +32,7 @@ public class ImmersiveWeatheringClient {
 
     public static void init() {
         com.ordana.immersive_weathering.client.SandstormEffects.init();
+        com.ordana.immersive_weathering.client.SnowstormEffects.init();
         ClientHelper.addClientSetup(ImmersiveWeatheringClient::setup);
         ClientDynamicResourcesHandler.INSTANCE.register();
 
@@ -85,6 +86,10 @@ public class ImmersiveWeatheringClient {
         ClientHelper.registerRenderType(ModBlocks.WAXED_RUSTED_IRON_BARS.get(), RenderType.cutoutMipped());
 
         ClientHelper.registerRenderType(ModBlocks.ICICLE.get(), RenderType.cutout());
+        ClientHelper.registerRenderType(ModBlocks.UNLIT_TORCH.get(), RenderType.cutout());
+        ClientHelper.registerRenderType(ModBlocks.UNLIT_SOUL_TORCH.get(), RenderType.cutout());
+        ClientHelper.registerRenderType(ModBlocks.UNLIT_WALL_TORCH.get(), RenderType.cutout());
+        ClientHelper.registerRenderType(ModBlocks.UNLIT_SOUL_WALL_TORCH.get(), RenderType.cutout());
         ClientHelper.registerRenderType(ModBlocks.FULGURITE.get(), RenderType.cutout());
 
         ModBlocks.LEAF_PILES.values().forEach(b -> ClientHelper.registerRenderType(b, RenderType.cutoutMipped()));
@@ -116,12 +121,16 @@ public class ImmersiveWeatheringClient {
 
 
     private static void registerEntityRenderers(ClientHelper.EntityRendererEvent event) {
+        event.register(ModEntities.FREEZING_WIND.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.register(ModEntities.FALLING_ICICLE.get(), FallingBlockRendererGeneric::new);
         event.register(ModEntities.FALLING_LAYER.get(), FallingBlockRendererGeneric::new);
         event.register(ModEntities.FALLING_PROPAGULE.get(), FallingBlockRendererGeneric::new);
     }
 
     private static void registerParticles(ClientHelper.ParticleEvent event) {
+        event.register(ModParticles.SNOWSTORM_GRAIN.get(), com.ordana.immersive_weathering.client.particles.SnowstormGrainParticle.Provider::new);
+        event.register(ModParticles.FREEZING_WIND.get(), com.ordana.immersive_weathering.client.particles.FreezingWindParticle.Provider::new);
+        event.register(ModParticles.FREEZING_WIND_FLIPPED.get(), com.ordana.immersive_weathering.client.particles.FreezingWindParticle.Provider::new);
         event.register(ModParticles.DUST_GRAIN.get(), com.ordana.immersive_weathering.client.particles.DustGrainParticle.Provider::new);
         event.register(ModParticles.EMBERSPARK.get(), EmberParticle.EmberFactory::new);
         event.register(ModParticles.SCRAPE_RUST.get(), ScrapeRustFactory::new);

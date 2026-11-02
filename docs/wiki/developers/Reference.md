@@ -18,7 +18,7 @@ The build is a single root Fabric Loom project for Minecraft 1.20.1.
 | `maven_group` | `com.ordana` |
 | `minecraft_version` | `1.20.1` |
 | `mod_id` | `immersive_weathering` |
-| `mod_version` | `2.4.0` |
+| `mod_version` | `2.5.0` |
 | `modmenu_version` | `7.2.2` |
 | `moonlight_file_id` | `5619072` |
 | `moonlight_min_version` | `1.20-2.12.11` |
@@ -122,6 +122,8 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.RandomBlockMatchTestAccessor` |
 | `client` | `com.ordana.immersive_weathering.mixins.client.SandstormFogMixin` |
 | `client` | `com.ordana.immersive_weathering.mixins.client.SandstormCloudMixin` |
+| `client` | `com.ordana.immersive_weathering.mixins.client.SnowstormFogMixin` |
+| `client` | `com.ordana.immersive_weathering.mixins.client.SnowstormCloudMixin` |
 
 
 ## Configuration definitions
@@ -136,6 +138,21 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.jav
 
 | Key | Default and optional bounds | Source field |
 | --- | --- | --- |
+| `freezing_wind.enabled` | `true` | `WIND_ENABLED` |
+| `freezing_wind.base_chance` | `0.001, 0, 1` | `WIND_BASE_CHANCE` |
+| `freezing_wind.cold_bonus` | `0.019, 0, 1` | `WIND_COLD_BONUS` |
+| `freezing_wind.height` | `100, -64, 4096` | `WIND_HEIGHT` |
+| `freezing_wind.height_bonus` | `0.02, 0, 1` | `WIND_HEIGHT_BONUS` |
+| `freezing_wind.snowstorm_bonus` | `0.08, 0, 1` | `WIND_STORM_BONUS` |
+| `freezing_wind.spawn_budget` | `2, 0, 64` | `WIND_SPAWN_BUDGET` |
+| `freezing_wind.live_cap` | `32, 0, 256` | `WIND_LIVE_CAP` |
+| `freezing_wind.slow_ticks` | `60, 0, 1200` | `WIND_SLOW_TICKS` |
+| `freezing_wind.slow_amplifier` | `0, 0, 4` | `WIND_SLOW_AMPLIFIER` |
+| `freezing_wind.extinguish` | `true` | `WIND_EXTINGUISH` |
+| `freezing_wind.freeze_water` | `true` | `WIND_FREEZE_WATER` |
+| `freezing_wind.icicle_chance` | `0.05, 0, 1` | `WIND_ICICLE_CHANCE` |
+| `snowstorms.enabled` | `true` | `SNOWSTORM_ENABLED` |
+| `snowstorms.deposition_bonus` | `1, 0, 3` | `SNOWSTORM_DEPOSITION_BONUS` |
 | `sandstorms.deposition` | `true` | `SANDSTORM_DEPOSITION` |
 | `sandstorms.layer_cap` | `8, 1, 8` | `SANDSTORM_LAYER_CAP` |
 | `sandstorms.slowing` | `true` | `SANDSTORM_SLOWING` |
@@ -233,6 +250,14 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/ClientConfigs.jav
 | `sandstorms.fog_end` | `64d, 1d, 512d` | `SANDSTORM_FOG_END` |
 | `sandstorms.hide_clouds` | `true` | `SANDSTORM_CLOUDS` |
 | `sandstorms.sounds` | `true` | `SANDSTORM_SOUNDS` |
+| `snowstorms.particles` | `true` | `SNOWSTORM_PARTICLES` |
+| `snowstorms.particle_range` | `20, 0, 32` | `SNOWSTORM_PARTICLE_RANGE` |
+| `snowstorms.particle_rarity` | `60, 1, 1200` | `SNOWSTORM_PARTICLE_RARITY` |
+| `snowstorms.fog` | `true` | `SNOWSTORM_FOG` |
+| `snowstorms.fog_start` | `8d, 0d, 256d` | `SNOWSTORM_FOG_START` |
+| `snowstorms.fog_end` | `48d, 1d, 512d` | `SNOWSTORM_FOG_END` |
+| `snowstorms.hide_clouds` | `true` | `SNOWSTORM_CLOUDS` |
+| `snowstorms.sounds` | `true` | `SNOWSTORM_SOUNDS` |
 | `general.leaves_decay_particles` | `true` | `LEAF_DECAY_PARTICLES` |
 | `general.falling_leaf_particles` | `true` | `FALLING_LEAF_PARTICLES` |
 | `general.decay_sound` | `true` | `LEAF_DECAY_SOUND` |

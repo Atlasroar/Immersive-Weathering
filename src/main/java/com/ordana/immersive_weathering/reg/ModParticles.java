@@ -21,6 +21,9 @@ public class ModParticles {
     public static final Supplier<SimpleParticleType> EMBERSPARK = registerParticle("emberspark");
     public static final Supplier<SimpleParticleType> MOSS = registerParticle("moss");
     public static final Supplier<SimpleParticleType> DUST_GRAIN = registerParticle("dust_grain");
+    public static final Supplier<SimpleParticleType> FREEZING_WIND = registerParticle("freezing_wind");
+    public static final Supplier<SimpleParticleType> FREEZING_WIND_FLIPPED = registerParticle("freezing_wind_flipped");
+    public static final Supplier<SimpleParticleType> SNOWSTORM_GRAIN = registerParticle("snowstorm_grain");
 
     //custom flower crowns
 

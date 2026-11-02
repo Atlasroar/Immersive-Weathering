@@ -48,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.4.0.jar --sources build\libs\immersive_weathering-2.4.0-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.5.0.jar --sources build\libs\immersive_weathering-2.5.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -56,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.4.0.jar -
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.4.0.jar`; install that remapped
+`build\libs\immersive_weathering-2.5.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -88,6 +88,61 @@ interactions, existing-world upgrades, and modded tree/resource-pack combination
 still require user testing.
 
 ## Verification by change type
+
+### Freezing wind and snowstorm harness
+
+Version 2.5.0 adds `.\gradlew.bat windMechanicsTest --console=plain` to
+`check`/`build`. It executes production probability/block/lifecycle helpers with
+native Mojang state containers, original thin-ice/icicle/torch implementations
+and explicit bounded world/config/registration fixtures, plus cold thunder
+classification/deposition and client-policy checks. Registration substitutes
+avoid requiring a running Fabric loader; they are not mock rewrites of gameplay
+rules. The source set lives in `src/windTest`, separately from original
+snow/fire/sand regression suites.
+Rejected-write fixtures cover all four relighting tools, ordinary/soul standing
+torches and every wall orientation, with failure results and zero inventory
+cost/effects. Extinguishing checks cover failed/successful fire removal, torch
+replacement and lit-state writes, native candle flags/wick particles and
+campfire dowse ordering without duplicate writes/events.
+
+```powershell
+.\gradlew.bat windMechanicsTest --console=plain
+python tools\wind_resources.py --check
+python tools\wind_resources.py --jar build\libs\immersive_weathering-2.5.0.jar --sources build\libs\immersive_weathering-2.5.0-sources.jar
+```
+
+The resource guard verifies ten pinned upstream PNGs, particle inventories,
+ordinary/soul native torch loot/facing inventory, both license/notices and
+corresponding Java source membership in the sources jar. Source and artifact
+checks run in the existing cross-platform workflow. These checks do **not**
+establish real Mixin weaving, networking/rendering/audio, dedicated-server
+startup, optional-mod coexistence or visual/gameplay acceptance. No external
+Minecraft profile/world is mutated or launched, no EULA accepted by this work.
+Record manual [FW01-FW08](../players/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+separately; all start Not run. Original SP/ST/snow/fire ledger entries remain
+historical, not passes for these features.
+
+On 2026-11-02 the separate dedicated initialization-only check passed:
+
+```powershell
+.\gradlew.bat runServer --args="--initSettings nogui" --console=plain
+```
+
+Fabric 0.16.14/Minecraft 1.20.1 loaded IW 2.4.0, Moonlight 1.20-2.12.11,
+the common config and server Mixin initialization/audit without injection or
+registration exceptions. The command exited after generating local server
+settings; `eula=false` and no `run/server/world` were verified. First-run
+missing-properties/EULA diagnostics preceded successful settings generation.
+Nonfatal missing-data-fixer messages for IW entities remain, including the
+pre-existing falling entities and the unsaved gust. This is **init-only** evidence,
+not a world tick, client rendering, gameplay, network or full server/world pass.
+FW01-FW08 and all earlier manual ledgers are unchanged.
+
+The same init-only command also passed for the 2.5.0 release-target build:
+the loader reported IW 2.5.0, loaded the common config and completed server
+Mixin initialization/audit. The EULA remained false and the world directory
+remained absent. The same nonfatal data-fixer diagnostics and evidence limits
+apply; no new manual acceptance result is claimed.
 
 | Change | Minimum relevant checks |
 | --- | --- |
@@ -143,11 +198,11 @@ No external profile/world or published 2.1.0 artifact is changed by these tasks.
 .\gradlew.bat sandstormMechanicsTest --console=plain
 python tools\sandstorm_resources.py --check
 python tools\sand_resources.py --check
-python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.4.0.jar --sources build\libs\immersive_weathering-2.4.0-sources.jar
+python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.5.0.jar --sources build\libs\immersive_weathering-2.5.0-sources.jar
 ```
 
-The current release target is **2.4.0**; do not overwrite the immutable published
-2.3.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
+The current release target is **2.5.0**; do not overwrite the immutable published
+2.4.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
 Java 17 harness alongside fire, snow and both growth harnesses. It executes
 production classification/exposure, deposition and modifier reconciliation on
 native biome holders, blocks/layer states and attributes. Test-only config and

@@ -13,7 +13,11 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 ## Scope and accuracy
 
 The maintenance target is **Minecraft 1.20.1, Fabric only**. The current source
-and stable release target is **2.4.0**, including
+and stable release target is **2.5.0**, adding
+[freezing wind and cold thunder snowstorms](players/Features.md#freezing-wind-and-thunder-snowstorms)
+with pinned artwork, relightable unlit torches and no thermal-system dependency.
+All [FW01-FW08](players/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+manual scenarios remain **Not run**. Prior contents include
 [standalone sandstorms](players/Features.md#standalone-sandstorms) with original
 dust/wind assets, fog, slowdown and IW sand-layer deposition without new
 dependencies or cauldron changes. The [ST01-ST08 checklist](players/Feature-testing.md#standalone-sandstorms)

@@ -18,6 +18,14 @@ public class ClientConfigs {
     public static Supplier<Integer> SANDSTORM_PARTICLE_RARITY;
     public static Supplier<Double> SANDSTORM_FOG_START;
     public static Supplier<Double> SANDSTORM_FOG_END;
+    public static Supplier<Boolean> SNOWSTORM_PARTICLES;
+    public static Supplier<Boolean> SNOWSTORM_FOG;
+    public static Supplier<Boolean> SNOWSTORM_CLOUDS;
+    public static Supplier<Boolean> SNOWSTORM_SOUNDS;
+    public static Supplier<Integer> SNOWSTORM_PARTICLE_RANGE;
+    public static Supplier<Integer> SNOWSTORM_PARTICLE_RARITY;
+    public static Supplier<Double> SNOWSTORM_FOG_START;
+    public static Supplier<Double> SNOWSTORM_FOG_END;
 
 
     //client configs
@@ -49,6 +57,25 @@ public class ClientConfigs {
         SANDSTORM_CLOUDS = builder.comment("Hide clouds in eligible biomes above 0.75 rain strength. Independent of the fog toggle, including indoors.")
                 .define("hide_clouds", true);
         SANDSTORM_SOUNDS = builder.comment("Intermittent wind near storm surfaces. Uses the Weather volume slider and Wind blows subtitle, not a looping sound.")
+                .define("sounds", true);
+        builder.pop();
+
+        builder.push("snowstorms");
+        SNOWSTORM_PARTICLES = builder.comment("Show windblown snow during cold-biome vanilla thunderstorms. Presentation yields to installed Immersive Storms; gameplay does not.")
+                .define("particles", true);
+        SNOWSTORM_PARTICLE_RANGE = builder.comment("Particle scan radius; checks (2 * range)^2 columns per client tick, without loading chunks.")
+                .define("particle_range", 20, 0, 32);
+        SNOWSTORM_PARTICLE_RARITY = builder.comment("One particle trial in this many columns. Minimal disables snowstorm particles; Decreased halves the trial rate.")
+                .define("particle_rarity", 60, 1, 1200);
+        SNOWSTORM_FOG = builder.comment("Blend pale terrain fog during cold thunder, including indoors. Preserves fluid, blindness, darkness, thick fog and stronger vanilla fog.")
+                .define("fog", true);
+        SNOWSTORM_FOG_START = builder.comment("Full-snowstorm terrain fog start in blocks; clamped to end and vanilla fog.")
+                .define("fog_start", 8d, 0d, 256d);
+        SNOWSTORM_FOG_END = builder.comment("Full-snowstorm terrain fog end in blocks; never extends vanilla view distance.")
+                .define("fog_end", 48d, 1d, 512d);
+        SNOWSTORM_CLOUDS = builder.comment("Hide clouds in snowy biomes above 0.75 thunder strength, independently of the fog toggle.")
+                .define("hide_clouds", true);
+        SNOWSTORM_SOUNDS = builder.comment("Intermittent existing IW wind audio near exposed snowstorm surfaces; respects the Weather volume slider.")
                 .define("sounds", true);
         builder.pop();
 

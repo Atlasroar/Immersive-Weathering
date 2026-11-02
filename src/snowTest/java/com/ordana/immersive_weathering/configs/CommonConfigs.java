@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 public final class CommonConfigs {
     public static boolean mixing = true, falling = true, replacement = true, accumulation = true, ordinary;
     public static int cap = 8;
+    public static final Supplier<Boolean> SNOWSTORM_ENABLED = () -> false;
+    public static final Supplier<Integer> SNOWSTORM_DEPOSITION_BONUS = () -> 0;
     public static final Supplier<Boolean> SNOW_HOSTS = () -> mixing;
     public static final Supplier<Boolean> FALLING_SNOW = () -> falling;
     public static final Supplier<Boolean> REPLACE_PARTIAL_SNOW = () -> replacement;

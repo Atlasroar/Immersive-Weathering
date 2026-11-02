@@ -52,7 +52,8 @@ class SandstormResourcesTests(unittest.TestCase):
     def test_common_and_client_mixins_are_separated(self):
         manifest = json.loads(self.read("immersive_weathering-gameplay.mixins.json"))
         self.assertIn("SandstormLivingMixin", manifest["mixins"])
-        self.assertEqual(manifest["client"], ["client.SandstormFogMixin", "client.SandstormCloudMixin"])
+        self.assertEqual(manifest["client"], ["client.SandstormFogMixin", "client.SandstormCloudMixin",
+                                             "client.SnowstormFogMixin", "client.SnowstormCloudMixin"])
         self.assertIn("ServerLevelMixin", manifest["mixins"])
 
     def test_config_translations_cover_every_control(self):

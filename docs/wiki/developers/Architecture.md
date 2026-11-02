@@ -61,10 +61,78 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 | Sand-layer parity | [`sand`](../../../src/main/java/com/ordana/immersive_weathering/sand) | Two color variants for 13 dry host schemas, native-state delegation, placement/falling/deposition, random-tick erosion and static multipart models |
 | Standalone fire | [`fire`](../../../src/main/java/com/ordana/immersive_weathering/fire) | Per-entity ignition provenance, bounded server trials, successful direct torch combat, dynamic grass odds/ground preservation |
 | Standalone sandstorms | [`sandstorm`](../../../src/main/java/com/ordana/immersive_weathering/sandstorm), [`client/SandstormEffects`](../../../src/main/java/com/ordana/immersive_weathering/client/SandstormEffects.java) | Vanilla weather, dry subtype tags, exposed temporary slowdown, independent sampled deposition, guarded fog/dust/wind; no new dependencies |
+| Freezing wind / snowstorms | [`wind`](../../../src/main/java/com/ordana/immersive_weathering/wind), [`snowstorm`](../../../src/main/java/com/ordana/immersive_weathering/snowstorm) | Server-authoritative ephemeral gust, bounded source-water/fire/underside integration, native unlit torches, single existing sampled snow authority and guarded client presentation |
 | Entities and visuals | [`entities`](../../../src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
 | Compatibility | [`integrations`](../../../src/main/java/com/ordana/immersive_weathering/integrations) | Fabric EMI and Mod Menu entrypoints; external integrations must be verified individually |
 
 ## Important execution paths
+
+### Freezing wind and thunder snowstorms (2.5.0)
+
+The existing `ServerLevelMixin.tickChunk` TAIL also calls `FreezingWind`:
+one staggered trial per chunk per 20 game ticks, independent of randomTickSpeed.
+It samples the loaded surface/up to eight blocks above, clamps build height,
+requires native/skylit dimension, sky exposure, loaded collision margin and
+world border. Ambient is night-only; `Snowstorms.isSnowstorm` allows cold
+thunder day/night. `WindSettings` implements the exact independent additive
+temperature/altitude formula in [configuration](../players/Configuration.md#freezing-wind-and-thunder-snowstorms).
+Weak world-key budgets hold only weak entity references, reset spawn counts
+per game-time second and remove expired/unloaded gusts. They do not retain
+dimensions through a value-to-key entity reference cycle. Caps govern natural
+spawns, not operator `/summon`; the gust's `shouldBeSaved=false` prevents stale
+counts/persisted wind on reopen.
+
+`FreezingWindEntity` synchronizes remaining lifetime through vanilla entity
+data, moves **server-only** one block west every ten ticks (half-block climbing
+on horizontal collision), and discards server-side after 80-140 ticks.
+Clients never independently roll lifetime/movement; vanilla tracking/removal
+owns lifecycle. A NoopRenderer and age-animated imported swirls/snowflakes
+provide visuals. Every five ticks the native 2x2 AABB/line-of-sight query hits
+living nonspectator entities except `wind_heavy`. Push/vanilla Slowness replace
+upstream thermal logic completely; no freeze ticks/thermal APIs/dependency.
+Existing IW wind sound uses WEATHER category, not imported Frostiful recordings.
+
+`WindBlocks` scans only **36 cells** (3x4x3, including surface below), tests
+loaded/build/border/line-of-sight before interaction, and requires mobGriefing
+for every block effect. Explicit fire/candle/candle-cake/campfire tags exclude
+arbitrary LIT machines/lanterns. Extinguishing returns false on rejected writes
+without effects. Candles retain native flags (11), per-wick smoke offsets,
+sound and game event, but only after a successful explicit write: the vanilla
+helper itself discards the write result. A narrowly access-widened
+`AbstractCandleBlock.getParticleOffsets` reuses native/modded candle geometry
+without hardcoding offsets or making a second write. Campfire native `dowse`
+bookkeeping/event likewise follows a successful update, without a duplicate
+custom event. Other changes emit sound/game event. Only exact vanilla normal/soul torch
+states map to four registered `UnlitTorchBlock`/`UnlitWallTorchBlock` counterparts.
+The wall FACING property is copied; native survival and vanilla identity loot
+remain. Native `use` restores the matching lit vanilla state with ordinary
+ignition-item durability/charge handling; there is no replacement block item,
+stick-only loot or permanent torch deletion.
+Rejected relighting writes return `InteractionResult.FAIL` before sound/events
+or inventory/durability consumption.
+
+Exact source WATER blocks alone reach existing `ThinIceBlock.canSurvive`;
+flowing/waterlogged cells are excluded and native light/surface/melting rules
+remain. Empty reachable underside cells use actual `IcicleBlock.canSurvive`
+with DOWN direction, without new material whitelists/owner restrictions;
+global DISABLE_ICICLES and no-overwrite rules apply.
+
+`Snowstorms` classifies native thunder plus snow precipitation at the position;
+server gameplay does not depend on presentation ownership. `SnowWeather.sample`
+remains the **single extra snow deposition authority**, adds a configurable
+bonus only to the same eligible accumulation write, and preserves ordinary
+initial snowfall, existing global snow/weather/host/light/support/gamerule/cap
+checks. No second chunk-deposition pass, snowfall replacement or modern
+EnvironmentAttribute framework is added.
+
+Client snowstorm effects reuse the sandstorm lifecycle pattern, white shared
+upstream grains, separate config toggles, finite loaded-column scanning,
+vanilla particle settings, weather/biome blending, stronger fog/view-distance
+limits and fluid/blindness/darkness guards. Presentation yields to installed
+Immersive Storms, not gameplay. Intermittent audio reuses the pre-existing IW
+event, with world/disconnect/clear/disable timer cleanup. Source/artwork pins,
+modification notices and [provenance limitations](Licensing.md#freezing-wind-and-snowstorm-adaptation)
+ship in both jars and are guarded by `tools/wind_resources.py`.
 
 ### Standalone sandstorms
 
