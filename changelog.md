@@ -1,4 +1,53 @@
-## 2.1.0-beta.3 (unreleased)
+## 2.1.0
+
+Stable release consolidating the Fabric-only fork and all prerelease changes.
+The final fern follow-up was prepared as 2.1.0-beta.3 but ships in 2.1.0 instead;
+no beta.3 release of the 2.1.0 line was published.
+
+### Fabric-only foundation and maintenance
+
+- One root Fabric Loom project for Minecraft 1.20.1 and Java 17; removed IW-owned
+  multiloader modules/bridges, Forge/Quark leftovers and the unfinished season bridge.
+- Updated Fabric API/Loader and development integrations; retained the required
+  Moonlight registration, configuration, networking, events and generated packs.
+- Preserved content IDs and real registered config defaults, direct fluid-field
+  access and Fabric biome registration.
+- Added LGPLv3/GPLv3 companion texts and retained attribution notices in binary
+  and sources jars, SemVer validation, Fabric-only artifact guards and Linux/Windows CI.
+- Built and maintained player/developer wiki guides, source-generated references,
+  publication tooling, upstream Fabric issue catalog and dated gameplay ledgers.
+
+### Growth reliability and performance
+
+- Avoided biome-supplier allocation for empty dispatch and added bounded immutable
+  geometry caching with invocation-local permutations, without changing chances,
+  RNG traversal, growth timing or datapack rules. Isolated benchmarks are not
+  measured in-game TPS/MSPT claims.
+- Fixed paired lower-half normalization, upper-half position normalization and
+  vertical `above_block` placement with build-height preflight. Preserved fluid,
+  obstruction, biome, weighted-output and single-output behavior.
+
+### Snow and plants
+
+- Added both-order snow sharing with 72 hosts: 12 fences, 22 walls and 38 plants.
+  Added explicit native state schemas, English names, raw-host restoration,
+  independent paired cover counts and host/snow loot handling.
+- Added scheduled snow-only falling, bounded merging/remainder items, and source
+  WATER-only ice conversion without moving hosts or freezing waterlogged solids.
+- Added thunder-default accumulation, ordinary-snowfall opt-in, independent common
+  controls/tooltips and a bounded 1-8-layer column cap through vanilla's sample.
+  Gamerule 0 disables weather snow; 1 uses IW's cap; other positives intersect it.
+- Allowed ordinary block-item replacement of partial snow/eligible covered plants
+  through the native placement pipeline; full layer 8 and nonreplaceable hosts
+  remain protected. Supported dry replacements preserve cover while mixing.
+- Preserved weed ages, sapling stages, propagule state, petal amounts/orientation,
+  native effects/bonemeal and growth identity checks; failed 2x2 sapling growth
+  restores independent snow counts. Fixed snow stacking resets and retained
+  native petal stacking with mixing disabled.
+- Covered short grass and ferns use matching frosty appearances temporarily;
+  melting or removing snow restores their normal raw plants.
+
+### Final fern follow-up
 
 - Snow-covered short ferns now use the existing frosty-fern model and its matching
   tint provider, mirroring snow-covered short grass.
@@ -8,8 +57,11 @@
 - Added matching model and client color-state regression controls for all eight
   layer counts, including unchanged-host controls.
 
-Published beta.2 and the installed test-profile jar remain unchanged. The new
-fern appearance needs an in-game retest on this candidate.
+The tester reported N01-N11 Pass on 2.1.0-beta.2. N12-N14 and the final fern
+appearance remain unreported; these outcomes are not backfilled as stable-version
+passes. Existing snowy masonry, leaf/sand mechanics and historical ledgers are
+preserved. Earlier releases/tags/assets remain immutable; known unrelated issues
+and unsupported plant/host types are not claimed fixed by stable promotion.
 
 ## 2.1.0-beta.2
 

@@ -36,7 +36,9 @@ Update `mod_version`, changelog, current installation/build examples and generat
 reference together. Fabric source/artifact checks enforce SemVer syntax, numeric
 prerelease identifiers without leading zeroes, and separation from the Minecraft
 prefix. Publish beta tags as GitHub prereleases, with matching binary/source jars
-and checksums pinned to the verified source commit. Replace only the previous IW
+and checksums pinned to the verified source commit. Stable tags omit the prerelease
+flag and can be marked Latest; stable promotion does not manufacture missing
+manual results. Replace only the previous IW
 jar when deploying; keep a verified backup outside the profile's `mods` directory.
 
 ## Windows commands
@@ -46,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0-beta.3.jar --sources build\libs\immersive_weathering-2.1.0-beta.3-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0.jar --sources build\libs\immersive_weathering-2.1.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -54,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0-beta.
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.1.0-beta.3.jar`; install that remapped
+`build\libs\immersive_weathering-2.1.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.

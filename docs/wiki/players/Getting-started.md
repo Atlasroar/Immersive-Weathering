@@ -15,14 +15,14 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-The current beta is [**2.1.0-beta.2**](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0-beta.2).
+The current stable release is [**2.1.0**](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0).
 Its mod version follows Semantic Versioning; Minecraft **1.20.1** is declared
-separately as compatibility. Install `immersive_weathering-2.1.0-beta.2.jar`
+separately as compatibility. Install `immersive_weathering-2.1.0.jar`
 from the release assets. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
 (CurseForge file **5619072**). Moonlight and Fabric API must be installed
 separately; neither is bundled. Replace the previous IW jar, and never install
-the `-sources.jar` or development jar. This beta includes the Fabric-only build
+the `-sources.jar` or development jar. This release includes the Fabric-only build
 and allocation optimizations, a paired-plant placement correction, and standalone
 snow features. Existing content IDs remain valid; new snow-covered host IDs are
 additions, not a destructive world conversion. No Kiwi, SnowRealMagic, Indium,
@@ -31,10 +31,11 @@ This is not a promise to fix every catalogued gameplay report.
 Growth chances and seeded traversal are unchanged; in-game performance and the
 [beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
 
-The current source builds **2.1.0-beta.3 (unreleased)**:
-`build\libs\immersive_weathering-2.1.0-beta.3.jar`. It extends the temporary
-frosty appearance from covered short grass to covered short ferns. This does
-not modify the published beta.2 download. Do not mix the two jars in an instance.
+The current source builds **2.1.0**: `build\libs\immersive_weathering-2.1.0.jar`.
+It includes temporary frosty appearances for both covered short grass and ferns.
+Earlier prerelease downloads are unchanged; install only one active IW jar.
+The recorded N01-N11 passes were on beta.2, not a new complete stable-version
+acceptance run; N12-N14 and the final fern appearance remain unreported.
 
 Moonlight is required for core registration, configuration, generated bark/leaf
 content, and gameplay hooks. It is not an optional visual enhancement.

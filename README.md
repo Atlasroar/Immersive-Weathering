@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.1.0-beta.3** is an unreleased frosty-fern follow-up, with a single root
+**2.1.0** is the stable release, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,10 +31,10 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.1.0-beta.3.jar`; the matching
+`build\libs\immersive_weathering-2.1.0.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
-## Beta installation
+## Installation
 
 Use a backed-up or disposable Minecraft **1.20.1** instance with Java 17,
 Fabric Loader **0.16.14+**, Fabric API **0.92.12+1.20.1**, and the Fabric
@@ -42,18 +42,19 @@ Moonlight Lib **1.20-2.12.11** build (CurseForge file **5619072**).
 Install only the remapped IW jar, replacing any older IW jar rather than keeping
 both. Dependencies are not bundled. Optional client integrations are EMI,
 Mod Menu, and Cloth Config; see [installation](docs/wiki/players/Getting-started.md).
-The published beta.1 adds standalone snow mixing, falling, storm accumulation, and
+This release includes standalone snow mixing, falling, storm accumulation, and
 partial-layer replacement without SnowRealMagic or Kiwi. See the
 [snow controls](docs/wiki/players/Configuration.md#standalone-snow).
-The beta.2 follow-up expands sharing to small flowers, saplings, mushrooms,
-dead bushes and IW weeds/dune grass/frosty plants. Covered short grass looks
-frosty while retaining its normal underlying state. All six common snow
+Snow sharing supports small flowers, saplings, mushrooms,
+dead bushes and IW weeds/dune grass/frosty plants. Covered short grass and ferns
+look frosty while retaining their normal underlying states. All six common snow
 settings have names and explanatory tooltips.
-Unreleased beta.3 gives covered short ferns the matching frosty-fern appearance,
-restoring normal ferns when their snow is removed, just like short grass.
-It also retains beta.3's paired plant placement correction (grass, fern, seagrass and double flowers)
-without changing growth chances. A fresh in-game G07 retest is still required;
-this is not a blanket fix for the existing gameplay issue catalog.
+Removing the cover restores the original normal grass or fern.
+This release also includes the paired plant placement correction from
+2.0.6-beta.3 (grass, fern, seagrass and double flowers), without changing growth
+chances. N01-N11 were reported Pass on 2.1.0-beta.2; N12-N14 and the final fern
+appearance remain unreported. Stable release status does not imply that every
+catalogued gameplay report is fixed; see the [test ledger](docs/wiki/players/Feature-testing.md).
 
 ## Versioning
 

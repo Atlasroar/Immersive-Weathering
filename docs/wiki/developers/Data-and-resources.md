@@ -128,7 +128,7 @@ append-only tags reference these IW tags for fences, walls, mining, flowers and
 saplings; keep existing tag values. Native weed age models and frosty-grass/fern
 appearances are reused rather than copied. Covered normal grass and short ferns
 retain their raw identities and loot despite their temporary frosty models/tints.
-The fern model/tint mapping is new in unreleased beta.3.
+The fern model/tint mapping ships in stable 2.1.0.
 The supported vanilla hosts do not require a raised
 mining tier: do not infer `needs_stone_tool` from a blackstone/deepslate name.
 Original host loot tables remain authoritative and can still be overridden by

@@ -142,7 +142,7 @@ their snow plane stays aligned with the cell; biome tint is delegated to the raw
 plant, while snow quads are untinted. Covered normal short grass and short fern
 delegate their models and both tint channels to the matching IW frosty plant;
 their stored raw identities and restoration remain normal grass/fern.
-The fern appearance is new in unreleased beta.3; tall grass and large ferns keep
+The fern appearance ships in stable 2.1.0; tall grass and large ferns keep
 their original two-part models. The actual client color-state selector is
 exercised directly without initializing a renderer.
 
