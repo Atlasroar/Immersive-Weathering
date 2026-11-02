@@ -25,6 +25,51 @@ a dedicated stone-brick comparison matrix.
 Not every block has every variant. Tool actions can consume items or durability.
 Do not infer that the mod weathers arbitrary blocks from other mods.
 
+## Standalone sandstorms
+
+**Unreleased source feature**, adapted with original dust sprites and nine wind
+sounds from [Scorchful](../developers/Licensing.md#scorchful-sandstorm-adaptation).
+Requires only IW's existing Fabric API/Moonlight dependencies, not Scorchful,
+Thermoo, CCA or another library. The [ST01-ST08 checklist](Feature-testing.md#standalone-sandstorms)
+has **Not run** manual verdicts; existing snow/fire acceptance does not verify it.
+
+Ordinary vanilla rain (`/weather rain`) becomes a sandstorm in tagged
+**precipitation-disabled** desert/badlands biomes. Thunder, daytime and a separate
+storm timer are not required. `/weather clear` ends it; `doWeatherCycle` controls
+vanilla weather as usual. Regular sand wins when both subtype tags match.
+Rainy biomes (including warm ocean) do not gain this new storm behavior.
+
+Exposed living entities with a movement-speed attribute lose **30% total speed**
+by default. Camels and entities in `immersive_weathering:sandstorm_slow_immune`
+(including optional `#c:bosses`) are exempt. Roofs must block sky visibility or
+the MOTION_BLOCKING heightmap to shelter entities. Clearing weather, entering
+shelter/another biome or dimension, changing immunity or disabling slowing
+removes IW's temporary modifier on the next server entity tick.
+
+Each ticking chunk samples **one column**, then has a **1/16** deposition trial.
+Existing IW `sand_layer_block`/`red_sand_layer_block` are placed on dry, sturdy
+support, not in plants, fluids, occupied cells or cauldrons. Defaults stop at
+**one layer per pile**, configurable to eight; existing taller piles never shrink
+and full piles do not receive another storm pile above them. No source sand is
+consumed. Existing pile loot, recipes, placement and falling rules remain.
+This hook is independent of `randomTickSpeed` and `general.block_growths`.
+Legacy sandy-stone growth still uses its own rain tick, chance, config and old
+`has_sandstorm` biome tag, including warm ocean; the new cap does not control it.
+
+Client dust, fog, cloud hiding and intermittent wind have separate controls.
+Fog blends with vanilla weather and biome boundaries, lighting and view distance;
+underwater/lava/powder-snow, blindness and darkness retain vanilla fog. Visual
+biome fog/cloud hiding can remain **indoors**; shelter protects gameplay, not
+every visual. Wind samples nearby storm surfaces within ten vertical blocks,
+uses the Weather slider and **Wind blows** subtitles, and is not a continuous
+loop. Vanilla Minimal particles disables storm dust; Decreased reduces trials.
+
+If Scorchful is actually installed, **all new IW storm mechanics/effects yield
+to it** and IW removes its own slowdown modifier. Scorchful owns its settings,
+piles and behavior in that combination; IW's legacy growth still runs.
+No new damage, wind force, erosion, thirst, armor, temperature, world generation
+or cauldron mechanics are included. See [settings](Configuration.md#standalone-sandstorms).
+
 ## Standalone fire
 
 Added in the **2.2.0** release line. The [manual run checklist](Feature-testing.md#standalone-fire)

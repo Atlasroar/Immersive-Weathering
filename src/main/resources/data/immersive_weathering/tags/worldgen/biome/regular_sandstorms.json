@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["minecraft:desert", {"id": "#c:desert", "required": false}]
+}

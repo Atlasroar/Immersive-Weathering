@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["minecraft:camel", {"id": "#c:bosses", "required": false}]
+}

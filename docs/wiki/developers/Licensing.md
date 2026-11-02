@@ -24,6 +24,34 @@ from the LGPL text explaining how such grants work.
 and identifies their CC BY 3.0 license. Retain that notice and its source/license
 links. Do not assume every external asset inherits the code's LGPL license.
 
+## Scorchful sandstorm adaptation
+
+The unreleased storm integration pins
+[TheDeathlyCow/Scorchful d74712e9b5fc4348aa8ad9c417ce938daf8bc0a1](https://github.com/TheDeathlyCow/scorchful/tree/d74712e9b5fc4348aa8ad9c417ce938daf8bc0a1),
+not a moving branch. Its root LICENSE is LGPLv3; its pinned manifest's ARR value
+is stale according to the integrating maintainer's explicit clarification that
+the author and distribution pages confirm intended LGPLv3. The user selected
+use of those project assets under that intended license. No CC0 license is
+invented and third-party rights are not reassigned.
+
+[sandstorm-NOTICE.txt](../../../src/main/resources/sandstorm-NOTICE.txt) records
+the original author/source, feature commit, source paths, 2026-11-02 modification
+date, adaptations and limitations. Three PNG dust sprites and nine Ogg wind
+files are byte-identical to the pin; the particle JSON changes namespace.
+[The resource guard](../../../tools/sandstorm_resources.py) stores/checks all
+twelve original SHA-256 values, registration/subtitle inventory and notice,
+including the remapped and sources artifacts. Modified Java/resources and notices
+are included in the corresponding sources jar; existing LICENSE, COPYING and
+the original InspectorJ attribution are retained unchanged, with the new
+provenance **appended** to ATTRIBUTIONS.
+
+Pinned source has no per-file third-party wind mapping. Later upstream CREDITS
+mentions Pixabay generally and a Wagna sandfall (CC0), but does not map these
+nine wind files to either. Preserve that provenance limit: do not label these
+winds Wagna/CC0 or assert that all external audio automatically inherits the
+code license. Retain any additional verified applicable notice if discovered.
+No unrelated Scorchful armor, banner, cauldron or worldgen assets are imported.
+
 ## Distribution checklist
 
 Keep source available under applicable terms, preserve notices, identify

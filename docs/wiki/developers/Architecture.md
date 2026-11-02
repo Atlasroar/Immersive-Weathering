@@ -59,10 +59,57 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 | Cold and fire | [`blocks/frosted`](../../../src/main/java/com/ordana/immersive_weathering/blocks/frosted), [`blocks/charred`](../../../src/main/java/com/ordana/immersive_weathering/blocks/charred), [`TemperatureManager`](../../../src/main/java/com/ordana/immersive_weathering/util/TemperatureManager.java) | Biome/weather predicates, thin ice, icicles, freezing, smoldering, fire/lightning events |
 | Standalone snow | [`snow`](../../../src/main/java/com/ordana/immersive_weathering/snow) | Explicit vanilla host schemas, placement hooks, scheduled falling, one sampled weather hook, static multipart models |
 | Standalone fire | [`fire`](../../../src/main/java/com/ordana/immersive_weathering/fire) | Per-entity ignition provenance, bounded server trials, successful direct torch combat, dynamic grass odds/ground preservation |
+| Standalone sandstorms | [`sandstorm`](../../../src/main/java/com/ordana/immersive_weathering/sandstorm), [`client/SandstormEffects`](../../../src/main/java/com/ordana/immersive_weathering/client/SandstormEffects.java) | Vanilla weather, dry subtype tags, exposed temporary slowdown, independent sampled deposition, guarded fog/dust/wind; no new dependencies |
 | Entities and visuals | [`entities`](../../../src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
 | Compatibility | [`integrations`](../../../src/main/java/com/ordana/immersive_weathering/integrations) | Fabric EMI and Mod Menu entrypoints; external integrations must be verified individually |
 
 ## Important execution paths
+
+### Standalone sandstorms
+
+`Sandstorms.biomeType` is the union of dry regular/red subtype tags; regular wins
+overlap. There is intentionally no separate master tag that can drift from the
+subtypes. `exposedStorm` adds vanilla rain, sky visibility and MOTION_BLOCKING
+height <= query Y; client visuals use biome/weather without the roof gate.
+The existing `TemperatureManager.hasSandstorm` and its `has_sandstorm` tag are
+**unchanged** and remain owned by legacy `SandGrowth`, including warm ocean.
+
+`ServerLevelMixin.tickChunk` TAIL calls `SandAccumulation` once, independent of
+growth dispatch and the randomTickSpeed parameter. One sampled XZ column and
+1/16 trial, no scan/retry, no generic precipitation/cauldron callback. The
+heightmap cell is adjusted down only for a matching IW pile. Dry loaded in-height
+air/matching piles require dry sturdy support and survival; different piles,
+full/at-cap piles and occupied hosts get no write. Entity push-up precedes the
+ordinary block update. Vanilla block/tag/attribute synchronization and save
+formats suffice; no CCA, custom packets or per-world storm state.
+
+`SandstormLivingMixin.tick` TAIL reconciles the actual MOVEMENT_SPEED modifier
+each server tick, not an edge-triggered boolean. IW owns UUID
+`ddcbef92-e913-4994-9524-72e97d4eb92c`, uses transient MULTIPLY_TOTAL, replaces
+changed amount/operation, and removes only that UUID after shelter, clear weather,
+immunity/tag reload, config disable or dimension/biome changes. Camels plus the
+optional `#c:bosses` immunity tag are defaults. If Scorchful is loaded, all new
+IW storm behavior yields and the IW modifier is removed next tick. Legacy
+growth is not suppressed. Scorchful need not be present to link/load any class.
+
+Client initialization registers END_WORLD_TICK dust/wind and disconnect timer
+cleanup through existing Fabric API. A simple serialized particle type is enough:
+color is fixed `0xD9AA84`, upstream requested scale 10 actually clamps to 4 in
+vanilla `DustParticleOptions`, velocity (-1,0,0), gravity 0.1. The default 40x40
+scan is capped at 64x64 and never loads chunks; Y is camera +/- half-range,
+clamped above the surface. Both sand subtypes use the same sprites/color.
+Minimal skips all dust work; Decreased doubles rarity. The ordinary particle
+engine still owns its limits. WindTimer resets on clear/disable/world replacement
+or disconnect and emits one-shot WEATHER 0.1/0.5 events, not persistent loops.
+
+Client-only fog/cloud mixins do not load on the server. Fog blends the dust
+target's dimension/time lighting with native color using cubic sampled biome
+weight and rain gradient. Distance applies only to terrain, skips thick fog and
+fluid/blindness/darkness cameras, clamps to stronger native fog/view distance,
+and changes shape only when actually reducing distance above 0.75 gradient.
+Cloud hiding has its **own** toggle, unlike implicitly tying it to fog.
+See [licensing](Licensing.md#scorchful-sandstorm-adaptation) and
+[fixture limits](Development.md#sandstorm-mechanics-harness).
 
 `ServerLevelMixin` injects growth dispatch into chunk random ticking and adds
 sky-access growth ticks. `ModEvents.onLightningHit` dispatches lightning growths.

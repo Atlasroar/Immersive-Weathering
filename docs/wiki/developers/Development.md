@@ -134,6 +134,51 @@ replaces the [manual F01-F06 run checklist](../players/Feature-testing.md#standa
 the tester's broad 2.2.0 pass does not itemize its variants.
 No external profile/world or published 2.1.0 artifact is changed by these tasks.
 
+## Sandstorm mechanics harness
+
+```powershell
+.\gradlew.bat sandstormMechanicsTest --console=plain
+python tools\sandstorm_resources.py --check
+python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.2.0.jar --sources build\libs\immersive_weathering-2.2.0-sources.jar
+```
+
+Unreleased source remains version 2.2.0 **for local builds only**; do not overwrite
+or redistribute the immutable published 2.2.0 artifacts. `build`/`check` runs this
+Java 17 harness alongside fire, snow and both growth harnesses. It executes
+production classification/exposure, deposition and modifier reconciliation on
+native biome holders, blocks/layer states and attributes. Test-only config and
+registration substitutes avoid platform initialization; explicit Unsafe-allocated
+storage/client fixtures replace chunk storage, not storm policy.
+
+Client fixtures exercise weather/biome sampling, camera fluid/blindness/darkness
+guards, stronger-fog clamping, independent cloud toggle, bounded particle emitter
+and world-aware intermittent wind timer. They do **not** run OpenGL, a sound device,
+the Mixin transformer or a real ticking multiplayer world. Hash/PNG/Vorbis header
+checks do not prove the actual particle atlas, decoder or audio mixer loaded.
+Run [ST01-ST08](../players/Feature-testing.md#standalone-sandstorms) for acceptance
+and record real observations separately. No EULA, world, external profile or
+released artifact changes are part of these checks.
+
+On November 2, 2026 the candidate root build passed **3082** storm assertions,
+**4249** fire checks, **176665** snow checks, **322** paired-growth controls
+(18 shipped entries), and growth **33182** geometry / **10230** area / **10**
+dispatch checks. The documentation/resource Python suite passed **42** tests;
+wiki, snow-resource, Fabric source/artifact and pinned storm asset/notice guards
+passed. A dedicated `--initSettings nogui` audit initialized without accepting
+the EULA or creating a world.
+
+An isolated title-screen client completed Mixin audit, model/particle atlas bake
+and sound-engine initialization, with no missing storm sprites/sound events.
+It used a session-only early `modLocalRuntime` exclusion of optional EMI for the
+existing Moonlight/JEMI issue; no repository dependency was changed. Do not run
+`processResources`/build concurrently with this smoke: it can transiently remove
+files while Minecraft is loading them. The successful final smoke used stable
+outputs and ended without opening a world. Existing falling-entity data-fixer
+messages, vanilla goat-horn/shader warnings and offline Realms authorization
+messages remain unrelated. Actual nine-file sound playback/decoding, in-world
+fog/particles, reload, rates and multiplayer still need ST01-ST08 results;
+all manual storm verdicts remain **Not run**.
+
 ## Snow mechanics harness
 
 ```powershell

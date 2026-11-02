@@ -1,0 +1,47 @@
+Scorchful sandstorm adaptation - modified 2026-11-02 for Immersive Weathering
+
+Original project and author: Scorchful, TheDeathlyCow
+https://github.com/TheDeathlyCow/scorchful
+Pinned 1.20.1 corresponding source:
+https://github.com/TheDeathlyCow/scorchful/tree/d74712e9b5fc4348aa8ad9c417ce938daf8bc0a1
+Original sandstorm feature commit:
+https://github.com/TheDeathlyCow/scorchful/commit/6861a576110f4f39ca3e44ffad74c3b1980b2a1d
+
+The pinned root LICENSE grants GNU LGPL version 3. Its fabric.mod.json says
+ARR; the maintainer integrating this code explicitly confirmed that metadata
+is stale and that the author and project distribution pages confirm intended
+LGPLv3 licensing. This integration relies on that intended project license,
+not the stale manifest. No "or later" grant or CC0 grant is inferred.
+The unmodified LGPLv3 and incorporated GPLv3 texts accompany this distribution
+as LICENSE and COPYING. Preserve these notices and applicable author credits.
+
+Adapted upstream sources (relative to com/github/thedeathlycow/scorchful):
+  src/main/java/.../server/Sandstorms.java
+  src/main/java/.../server/SandAccumulation.java
+  src/main/java/.../server/SandstormSlowing.java
+  src/client/java/.../client/SandstormEffects.java
+  src/client/java/.../client/SandstormSounds.java
+  src/client/java/.../particle/DustGrainParticle.java
+Rendering hooks are reimplemented for Mojang mappings in IW's client mixins.
+IW modifications: Fabric 1.20.1 Mojang API/config/registry integration; fixed
+serialized simple dust type (constant color/scale); reuse IW sand layers;
+loaded/dry/supported deposition and no-write cap fixes; temporary IW-specific
+modifier reconciliation; Scorchful coexistence; vanilla fog safeguards,
+particle setting/budget limits and world-aware sound scheduling.
+No thirst, temperature, cooling, armor, banner, worldgen or cauldron imports.
+Modified Java, resources and this notice are included in the sources jar.
+
+Imported byte-identical assets from src/main/resources/assets/scorchful:
+  textures/particle/dust_grain/var0.png through var2.png
+  sounds/weather/sandstorm/sandstorm1.ogg through sandstorm9.ogg
+particles/dust_grain.json is adapted only to the immersive_weathering namespace.
+Audio event/subtitle registration is adapted into IW's existing resources.
+Exact original hashes are recorded and checked by tools/sandstorm_resources.py.
+
+Audio provenance limit: the pinned tree has no per-file third-party wind
+mapping. Later upstream CREDITS mentions Pixabay generally and a Wagna sandfall
+sound (CC0), but does not map these nine wind files to either source. We retain
+the verified Scorchful/TheDeathlyCow project provenance under its intended LGPLv3
+license; we do NOT attribute these winds to Wagna, assert they are CC0, or
+relicense any separately owned third-party audio. Any additional verified
+third-party notice must be retained if discovered.

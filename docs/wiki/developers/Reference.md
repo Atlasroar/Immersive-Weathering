@@ -99,6 +99,7 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RootedDirtBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.ServerLevelMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SandstormLivingMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowballMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SmallFireballMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowLayerBlockMixin` |
@@ -117,6 +118,8 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.FireBlockInvoker` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.IceInvoker` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.accessors.RandomBlockMatchTestAccessor` |
+| `client` | `com.ordana.immersive_weathering.mixins.client.SandstormFogMixin` |
+| `client` | `com.ordana.immersive_weathering.mixins.client.SandstormCloudMixin` |
 
 
 ## Configuration definitions
@@ -131,6 +134,10 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.jav
 
 | Key | Default and optional bounds | Source field |
 | --- | --- | --- |
+| `sandstorms.deposition` | `true` | `SANDSTORM_DEPOSITION` |
+| `sandstorms.layer_cap` | `1, 1, 8` | `SANDSTORM_LAYER_CAP` |
+| `sandstorms.slowing` | `true` | `SANDSTORM_SLOWING` |
+| `sandstorms.slow_amount` | `0.3, 0, 1` | `SANDSTORM_SLOW_AMOUNT` |
 | `general.block_growths` | `true` | `BLOCK_GROWTHS` |
 | `general.block_growth_blacklist` | `new ArrayList<>()` | `DISABLED_GROWTHS` |
 | `general.creative_tab` | `false` | `CREATIVE_TAB` |
@@ -209,6 +216,14 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/ClientConfigs.jav
 
 | Key | Default and optional bounds | Source field |
 | --- | --- | --- |
+| `sandstorms.particles` | `true` | `SANDSTORM_PARTICLES` |
+| `sandstorms.particle_range` | `20, 0, 32` | `SANDSTORM_PARTICLE_RANGE` |
+| `sandstorms.particle_rarity` | `60, 1, 1200` | `SANDSTORM_PARTICLE_RARITY` |
+| `sandstorms.fog` | `true` | `SANDSTORM_FOG` |
+| `sandstorms.fog_start` | `16d, 0d, 256d` | `SANDSTORM_FOG_START` |
+| `sandstorms.fog_end` | `64d, 1d, 512d` | `SANDSTORM_FOG_END` |
+| `sandstorms.hide_clouds` | `true` | `SANDSTORM_CLOUDS` |
+| `sandstorms.sounds` | `true` | `SANDSTORM_SOUNDS` |
 | `general.leaves_decay_particles` | `true` | `LEAF_DECAY_PARTICLES` |
 | `general.falling_leaf_particles` | `true` | `FALLING_LEAF_PARTICLES` |
 | `general.decay_sound` | `true` | `LEAF_DECAY_SOUND` |

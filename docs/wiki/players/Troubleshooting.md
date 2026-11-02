@@ -2,6 +2,15 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
+For the **unreleased standalone sandstorms**, check vanilla rain first, then the
+new dry-biome subtype tags and common/client `sandstorms` settings. Thunder is
+unnecessary; wet-biome `has_sandstorm` legacy growth does not imply new dust/fog
+or layer deposition. A roof shelters slowdown/deposition, not biome fog/clouds.
+Check the Weather slider, subtitles and particle setting for missing wind/dust.
+IW deliberately yields its new storm features when Scorchful is installed.
+Do not treat [ST01-ST08](Feature-testing.md#standalone-sandstorms)'s Not run
+manual cases as verified graphics, audio or multiplayer results.
+
 ## Reported Fabric 1.20.1 problems
 
 The following is the initial catalog established on November 1, 2026, not a

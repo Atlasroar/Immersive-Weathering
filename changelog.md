@@ -1,3 +1,20 @@
+## Unreleased
+
+- Standalone Fabric 1.20.1 sandstorms adapted from Scorchful's pinned LGPLv3
+  1.20.1 source: imported dust sprites and nine wind sounds, weather/biome-blended
+  fog, exposed-entity slowdown and existing IW sand/red-sand layer deposition.
+- Vanilla rain drives dry desert/badlands storms; common/server and independent
+  client controls, no new dependencies, no thirst/temperature or cauldron changes.
+  Legacy sandy-block growth, including its warm-ocean tag, is unchanged.
+- Fixed upstream at-cap pile reduction; bounded loaded/dry/supported deposition,
+  live temporary-modifier cleanup and guarded vanilla fog. All new IW storm
+  behavior yields to installed Scorchful to avoid duplicate mechanics/effects.
+- Exact pinned asset hashes, source/modification notices and candid audio
+  provenance are preserved in source and both distribution jars.
+- Automated storm/native fixtures and resource guards are not a visual/gameplay
+  pass. New [ST01-ST08 manual cases](docs/wiki/players/Feature-testing.md#standalone-sandstorms)
+  are **Not run**. No new release, tag, deployment or version bump is implied.
+
 ## 2.2.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
