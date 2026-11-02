@@ -21,7 +21,7 @@ def immersive_hosts():
     return [name.lower() for name in re.findall(r"ModBlocks\.([A-Z_]+)\.get\(\)", source)]
 
 
-def multipart(name):
+def host_parts(name):
     parts = []
     if name.endswith("_fence"):
         parts.append({"apply": {"model": f"minecraft:block/{name}_post"}})
@@ -65,10 +65,30 @@ def multipart(name):
     else:
         for half, suffix in (("lower", "bottom"), ("upper", "top")):
             parts.append({"when": {"half": half}, "apply": {"model": f"minecraft:block/{name}_{suffix}"}})
+    return parts
+
+
+def multipart(name):
+    parts = host_parts(name)
     for layers in range(1, 9):
         parts.append({"when": {"layers": str(layers)}, "apply": {
             "model": f"immersive_weathering:block/host_snow_{layers}"}})
     return {"multipart": parts}
+
+
+def cover_model(texture, layers, key="cover"):
+    # A 1/1024-block depth bias hides coplanar host post/arm surfaces under the cover.
+    epsilon = 1 / 64
+    faces = {}
+    for side in ("down", "up", "north", "south", "west", "east"):
+        faces[side] = {"texture": f"#{key}", "uv": [0, 0 if side in ("up", "down") else 16 - layers * 2, 16, 16]}
+        if side != "up" or layers == 8:
+            faces[side]["cullface"] = side
+    return {
+        "textures": {key: texture, "particle": texture},
+        "elements": [{"from": [-epsilon, 0, -epsilon],
+                      "to": [16 + epsilon, layers * 2 + epsilon, 16 + epsilon], "faces": faces}],
+    }
 
 
 def outputs():
@@ -101,19 +121,8 @@ def outputs():
             "replace": False, "values": [f"immersive_weathering:snow_covered_{n}" for n in values]
         }
     for layers in range(1, 9):
-        # A 1/1024-block depth bias hides coplanar host post/arm surfaces under the snow.
-        # This is static vanilla-format geometry, not a renderer/FRAPI dependency.
-        epsilon = 1 / 64
-        faces = {}
-        for side in ("down", "up", "north", "south", "west", "east"):
-            faces[side] = {"texture": "#snow", "uv": [0, 0 if side in ("up", "down") else 16 - layers * 2, 16, 16]}
-            if side != "up" or layers == 8:
-                faces[side]["cullface"] = side
-        result[RESOURCES / f"assets/immersive_weathering/models/block/host_snow_{layers}.json"] = {
-            "textures": {"snow": "minecraft:block/snow", "particle": "minecraft:block/snow"},
-            "elements": [{"from": [-epsilon, 0, -epsilon],
-                          "to": [16 + epsilon, layers * 2 + epsilon, 16 + epsilon], "faces": faces}],
-        }
+        result[RESOURCES / f"assets/immersive_weathering/models/block/host_snow_{layers}.json"] = cover_model(
+            "minecraft:block/snow", layers, "snow")
     return result
 
 

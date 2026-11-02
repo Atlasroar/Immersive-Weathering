@@ -44,6 +44,11 @@ public class ImmersiveWeatheringFabric implements ModInitializer {
             var entry = fire.get(host);
             if (entry != null) fire.add(covered.get(), entry.getBurnChance(), entry.getSpreadChance());
         });
+        com.ordana.immersive_weathering.sand.SandHosts.entries().forEach((host, covers) -> {
+            var entry = fire.get(host);
+            if (entry != null) covers.forEach(covered ->
+                    fire.add(covered.get(), entry.getBurnChance(), entry.getSpreadChance()));
+        });
     }
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {

@@ -4,9 +4,14 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.3.0** is the stable release target, with a single root
+**2.4.0** is the stable release target, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
+
+Version 2.4.0 adds fence/dead-bush sand sharing, gradual rain erosion,
+and thunderstorm fire suppression. See the [feature guide](docs/wiki/players/Features.md#sand-piles)
+and [manual checklist](docs/wiki/players/Feature-testing.md#sand-and-thunder).
+These changes are not part of the immutable published 2.3.0 artifacts.
 
 The default development branch is `1.20.1-fabric`. Historical
 branches were retired after preserving their tips as `archive/2026-11-01/*` tags;
@@ -32,7 +37,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.3.0.jar`; the matching
+`build\libs\immersive_weathering-2.4.0.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Installation
@@ -63,8 +68,9 @@ catalogued gameplay report is fixed; see the [test ledger](docs/wiki/players/Fea
 **New in 2.3.0:** standalone sandstorms with imported Scorchful dust sprites and
 nine wind sounds, guarded weather/biome-blended fog, exposed-entity slowdown
 and existing IW sand/red-sand layer deposition. No new dependencies, thirst,
-temperature or cauldron changes. Default slowdown is 30%; default pile cap is
-one layer, configurable to eight without trimming existing piles. Client effects
+temperature or cauldron changes. Default slowdown is 30%; 2.3.0's default pile cap
+was one layer. In 2.4.0 fresh configs default to eight without trimming existing
+piles or rewriting saved caps. Client effects
 have independent controls, and new IW storms yield to installed Scorchful.
 See [sandstorm settings](docs/wiki/players/Configuration.md#standalone-sandstorms),
 [asset licensing/provenance](docs/wiki/developers/Licensing.md#scorchful-sandstorm-adaptation)

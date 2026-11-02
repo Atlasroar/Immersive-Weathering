@@ -48,13 +48,16 @@ removes IW's temporary modifier on the next server entity tick.
 
 Each ticking chunk samples **one column**, then has a **1/16** deposition trial.
 Existing IW `sand_layer_block`/`red_sand_layer_block` are placed on dry, sturdy
-support, not in plants, fluids, occupied cells or cauldrons. Defaults stop at
-**one layer per pile**, configurable to eight; existing taller piles never shrink
+support, not in fluids, unsupported plants, other occupied cells or cauldrons.
+Version 2.4.0 also covers the supported hosts described below.
+Fresh configs now default to **eight layers per pile**, configurable from one;
+existing 2.3.0 configs keep their previous cap of one. Existing taller piles never shrink
 and full piles do not receive another storm pile above them. No source sand is
-consumed. Existing pile loot, recipes, placement and falling rules remain.
+consumed. Existing pile loot and recipes remain.
 This hook is independent of `randomTickSpeed` and `general.block_growths`.
 Legacy sandy-stone growth still uses its own rain tick, chance, config and old
-`has_sandstorm` biome tag, including warm ocean; the new cap does not control it.
+`has_sandstorm` biome tag, including warm ocean. Its sandy-block conversion
+remains separate; its pile output now uses the same guarded weather cap.
 
 Client dust, fog, cloud hiding and intermittent wind have separate controls.
 Fog blends with vanilla weather and biome boundaries, lighting and view distance;
@@ -67,8 +70,46 @@ loop. Vanilla Minimal particles disables storm dust; Decreased reduces trials.
 If Scorchful is actually installed, **all new IW storm mechanics/effects yield
 to it** and IW removes its own slowdown modifier. Scorchful owns its settings,
 piles and behavior in that combination; IW's legacy growth still runs.
-No new damage, wind force, erosion, thirst, armor, temperature, world generation
+No new damage, wind force, storm-driven erosion, thirst, armor, temperature, world generation
 or cauldron mechanics are included. See [settings](Configuration.md#standalone-sandstorms).
+
+## Sand piles
+
+**Added in 2.4.0; not present in the published 2.3.0 jar.**
+Regular and red sand piles use one to eight layers; a full pile stays a layer
+block, not a destructive world conversion. The configurable **weather-only**
+cap never limits manual stacking or falling-pile merging, and lowering it does
+not remove existing layers.
+
+With `sand.host_mixing=true`, sand shares a dry block cell with any of the
+**12 vanilla fences or a dead bush**, in either placement order. Sandstorms and
+falling sand can also cover those hosts. Fence connections, collision and
+interactions stay native. Waterlogged fences, walls, cactus, other plants and
+modded hosts are not included; a datapack alone cannot add a new host schema.
+Regular and red sand never merge with one another.
+
+Ordinary block items replace **uncovered piles at every depth, including eight
+layers**. Supported host items keep the sand around their block instead.
+A covered fence is still a fence: another block cannot erase it just by
+placement. A covered dead bush remains natively replaceable. Right-click a
+cover with a shovel to remove its sand while leaving the host; Survival uses
+one durability and the existing pile loot rules. Breaking the entire cover
+uses the native host and sand loot. Recipes and eight-layer sand-block drops
+are unchanged.
+
+Unsupported sand falls without moving a fence or plant. Falling sand fills a
+matching pile/eligible host to eight; excess becomes items, not an automatic
+second pile. It does not freeze or replace water.
+
+**Actual rain** gradually removes one layer per successful random tick:
+default chance **1/8**, not one layer per game tick. At zero, a covered host
+returns to its raw native state. There are no erosion drops. Roofs, clear
+weather and snowfall preserve sand. Biomes in either
+`immersive_weathering:regular_sandstorms` or `immersive_weathering:red_sandstorms`
+are exempt, even if a datapack makes one rainy; temperature alone grants no
+exemption. Erosion depends on `randomTickSpeed`; storm deposition does not.
+See [sand controls](Configuration.md#sand-piles) and
+[SP01-SP08](Feature-testing.md#sand-and-thunder), all **Not run**.
 
 ## Standalone fire
 
@@ -110,6 +151,16 @@ are exempt. Fire, soul fire, magma blocks and lava provide a bounded local heat
 bonus; **torches and campfires do not**. Hotter biome base temperatures increase
 the chance above 0.8, clamped at 2; no season integration is included. This
 adjusts entity spread only, not vanilla fire's global probability.
+The separate **2.4.0 thunder rule** does affect exposed ordinary fire:
+while thunder is active, sky-facing sources have **90% fewer neighboring burn
+and spread attempts**, and **25% chance to go out on each normal scheduled fire
+tick** (roughly every 1.5-2 seconds). This includes deserts/badlands without
+actual rainfall and fires on eternal-fire supports. Roofs protect the source.
+Exposed burning-entity environmental spread trials also receive the 0.1
+multiplier, after other chance adjustments; their burning is not extinguished
+by this rule. Fire aging/scheduling and normal rain behavior remain.
+Soul fire, torches and campfires are unchanged. `doFireTick=false` disables
+both new thunder effects. All three thunder controls are configurable.
 See [fire settings](Configuration.md#standalone-fire) and the
 [manual fire checklist](Feature-testing.md#standalone-fire).
 These mechanics are independent of `general.block_growths` and do not replace

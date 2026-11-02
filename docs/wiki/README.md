@@ -13,7 +13,7 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 ## Scope and accuracy
 
 The maintenance target is **Minecraft 1.20.1, Fabric only**. The current source
-and stable release target is **2.3.0**, adding
+and stable release target is **2.4.0**, including
 [standalone sandstorms](players/Features.md#standalone-sandstorms) with original
 dust/wind assets, fog, slowdown and IW sand-layer deposition without new
 dependencies or cauldron changes. The [ST01-ST08 checklist](players/Feature-testing.md#standalone-sandstorms)
@@ -26,6 +26,11 @@ pass; individual [F01-F06 variants](players/Feature-testing.md#standalone-fire)
 remain unreported. Automated rule checks are not manual acceptance.
 Consult [published releases](https://github.com/Atlasroar/Immersive-Weathering/releases)
 for available binaries rather than inferring publication from source version.
+Version 2.4.0 adds [sand-pile sharing and rain erosion](players/Features.md#sand-piles)
+plus configurable [thunder fire suppression](players/Configuration.md#standalone-fire).
+The new
+[SP01-SP08 checklist](players/Feature-testing.md#sand-and-thunder)
+is **Not run**. Published 2.3.0 remains immutable and does not include these additions.
 It includes expanded dry-plant snow sharing and temporary frosty appearances
 for covered short grass and ferns. Published prereleases remain unchanged;
 see the [plant retests](players/Feature-testing.md#standalone-snow-candidate-retest).

@@ -28,6 +28,10 @@ serialized simple dust type (constant color/scale); reuse IW sand layers;
 loaded/dry/supported deposition and no-write cap fixes; temporary IW-specific
 modifier reconciliation; Scorchful coexistence; vanilla fog safeguards,
 particle setting/budget limits and world-aware sound scheduling.
+Further IW modifications on 2026-11-02: unified guarded sand deposition for
+dry native fence/dead-bush covers, with a weather-only configurable pile cap.
+The new sand-cover/rain-erosion and thunder-fire helpers are independently
+authored IW code. Imported binary assets remain byte-identical.
 No thirst, temperature, cooling, armor, banner, worldgen or cauldron imports.
 Modified Java, resources and this notice are included in the sources jar.
 

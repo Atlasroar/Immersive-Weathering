@@ -6,6 +6,11 @@ public final class CommonConfigs {
     public static boolean spread = true, torches = true, grass = true;
     public static int interval = 20;
     public static double chance = 0.02;
+    public static boolean thunderDampening = true;
+    public static double thunderMultiplier = 0.1, thunderExtinguish = 0.25;
+    public static final Supplier<Boolean> FIRE_THUNDER_DAMPENING = () -> thunderDampening;
+    public static final Supplier<Double> FIRE_THUNDER_SPREAD_MULTIPLIER = () -> thunderMultiplier;
+    public static final Supplier<Double> FIRE_THUNDER_EXTINGUISH_CHANCE = () -> thunderExtinguish;
     public static final Supplier<Boolean> FIRE_ENTITY_SPREAD = () -> spread;
     public static final Supplier<Boolean> FIRE_TORCH_ATTACKS = () -> torches;
     public static final Supplier<Boolean> FIRE_FLAMMABLE_GRASS = () -> grass;

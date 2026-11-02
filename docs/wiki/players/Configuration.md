@@ -28,6 +28,7 @@ source expressions rather than guessing what a setting's name means.
 | Control standalone snow | Common `snow` section; independent of `general.block_growths` |
 | Control standalone fire | Common `fire` section; independent of `general.block_growths` and existing `charring` settings |
 | Control standalone sandstorms | Common and client `sandstorms` sections; independent of legacy sandy-block growth |
+| Control sand sharing/replacement/erosion | Common `sand` section, added in 2.4.0; independent of the growth dispatcher |
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
 
@@ -44,7 +45,7 @@ tag changes; it is not a substitute for reloading config files.
 | Spec / key in `sandstorms` | Default (bounds) | Meaning |
 | --- | --- | --- |
 | Common `deposition` | `true` | Add existing IW sand layers on exposed, dry, sturdy surfaces; no cauldrons. |
-| Common `layer_cap` | `1` (1-8) | Maximum deposited layers per pile; never trims taller piles or creates a new storm pile above a full one. |
+| Common `layer_cap` | `8` (1-8), since 2.4.0 | Weather-deposited layers per pile, including legacy growth's pile output. Manual/falling piles still reach eight; never trims taller piles or creates a new storm pile above a full one. |
 | Common `slowing` | `true` | Temporary total-speed reduction for exposed nonimmune living entities. Disabling removes IW's modifier next tick. |
 | Common `slow_amount` | `0.3` (0-1) | Fraction removed: 0.3 is 30%. Zero removes IW's modifier; one stops attribute-based movement. |
 | Client `particles` | `true` | Windblown dust; vanilla Minimal suppresses it, Decreased halves column trial probability. |
@@ -56,12 +57,36 @@ tag changes; it is not a substitute for reloading config files.
 | Client `hide_clouds` | `true` | Hide clouds above 0.75 rain strength in storm biomes; deliberately independent of fog. |
 | Client `sounds` | `true` | Intermittent wind near storm surfaces; Weather volume and subtitles still apply. |
 
+Existing configs retain their prior value (2.3.0 generated `layer_cap=1`);
+changing the default does not silently rewrite saved settings.
 These settings do **not** disable/retune the older `weather_sandstorm` sandy-block
-growth or its `has_sandstorm` tag. Use growth settings/datapacks for that.
+conversion or its `has_sandstorm` tag. The 2.4.0 pile-output guard is the
+exception: it now uses `layer_cap` and never overwrites an occupied block.
+Use growth settings/datapacks for the conversion itself.
 New storm subtype tags are `regular_sandstorms` and `red_sandstorms`; both also
 require precipitation-disabled biomes. Entity exemptions use
 `sandstorm_slow_immune`. When Scorchful is installed, new IW storm settings have
 no simulation/presentation effect because Scorchful owns that behavior.
+
+## Sand piles
+
+**Added in 2.4.0**, under **Common -> Sand piles**. Restart after manual config
+edits; Moonlight synchronizes common values. Disabling mixing stops new
+covering/stacking but leaves existing registered cover blocks readable.
+This does not add datapack-defined host schemas.
+
+| Key in `sand` | Default (bounds) | Meaning |
+| --- | --- | --- |
+| `host_mixing` | `true` | Regular/red sand shares dry vanilla fences and dead bushes, in either placement order and through weather/falling deposition. |
+| `replace_piles` | `true` | Ordinary block items replace bare sand at any depth, including eight. Covered fences remain protected; covered bushes retain native replaceability. |
+| `rain_erosion` | `true` | Actual rain removes one exposed layer per successful random tick without drops, restoring hosts at zero. Either sandstorm biome tag exempts the biome. |
+| `rain_erosion_chance` | `0.125` (0-1) | Erosion probability per eligible random tick; zero disables erosion. Roofs, snow and clear weather are negative controls. |
+
+Weather depth uses the existing common **`sandstorms.layer_cap`**, not a second
+conflicting limit. Manual/falling sand still reaches eight. The rain exemption
+reads the two biome tags live on `/reload`, **not** a temperature threshold or
+the legacy `has_sandstorm` tag. `randomTickSpeed=0` stops erosion, not independent
+storm deposition. No additional libraries or custom world storage are needed.
 
 ## Standalone fire
 
@@ -88,6 +113,9 @@ datapack behavior or alter the existing `charring` controls.
 | `heat_bonus` | `0.125` (0-1) | Adds this amount per counted source to a heat multiplier starting at one. |
 | `temperature_bonus` | `0.5` (0-4) | Adds this amount per degree of biome base temperature above 0.8, up to temperature 2. |
 | `spread_chance_cap` | `0.25` (0-1) | Maximum trial probability **before** projectile reduction. |
+| `thunder_dampening` | `true`, since 2.4.0 | Thunder affects sky-exposed ordinary fire even in dry biomes and on eternal-fire supports. Requires `doFireTick`; sheltered sources are unchanged. |
+| `thunder_spread_multiplier` | `0.1` (0-1), since 2.4.0 | Allows 10% of exposed fire's normal neighboring burn/spread attempts and scales exposed burning-entity environmental trials. Zero prevents attempts; one preserves attempts. |
+| `thunder_extinguish_chance` | `0.25` (0-1), since 2.4.0 | Chance per normal scheduled fire tick to extinguish exposed ordinary fire; zero disables extinguishing. Not applied to entities, soul fire, torches or campfires. |
 
 Chance is the smaller of the cap and
 `base chance * (1 + counted sources * heat bonus) * (1 + max(0, min(2, temperature) - 0.8) * temperature bonus)`,
@@ -96,6 +124,9 @@ eight heat cells and temperature 2 give about **6.4% per trial**, or **0.4%**
 for a projectile, not guaranteed spreading near heat. Default cold/temperate
 trials with no heat remain 2%, or 0.125% for projectiles. One successful trial
 chooses uniformly among eligible cells and attempts at most one placement.
+During exposed thunder, multiply that final probability by
+`thunder_spread_multiplier` when `thunder_dampening` is enabled. This does not
+remove the projectile reduction or change the heat/cap ordering.
 
 `doFireTick` is a hard environmental gate, including grass burning; direct torch
 combat is deliberately independent. Non-player carriers obey `mobGriefing`;

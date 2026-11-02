@@ -1,0 +1,81 @@
+{
+  "textures": {
+    "cover": "minecraft:block/red_sand",
+    "particle": "minecraft:block/red_sand"
+  },
+  "elements": [
+    {
+      "from": [
+        -0.015625,
+        0,
+        -0.015625
+      ],
+      "to": [
+        16.015625,
+        2.015625,
+        16.015625
+      ],
+      "faces": {
+        "down": {
+          "texture": "#cover",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#cover",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#cover",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ],
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#cover",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ],
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#cover",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ],
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#cover",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ],
+          "cullface": "east"
+        }
+      }
+    }
+  ]
+}

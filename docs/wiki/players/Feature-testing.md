@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.3.0**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.4.0**, Minecraft **1.20.1**, Fabric.
 The latest recorded snow round below is **2.1.0-beta.2**, not a new stable-version pass.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
@@ -10,17 +10,80 @@ their `Not run` cells are template defaults, not the current test-round verdicts
 Use the dated ledger for recorded outcomes.
 Datapacks, configuration, other mods, and later releases can change expectations.
 
+## Sand and thunder
+
+**2.4.0 release round, 2026-11-02: SP01-SP08 are all Not run.**
+Use `immersive_weathering-2.4.0.jar`, not the immutable published 2.3.0 jar.
+Record the release tag/merged source revision and jar SHA, not only its filename.
+The deployment uses the published binary; installation itself is not a pass.
+No historical fire/snow/storm pass verifies these additions. The test profile
+retains existing configs, so explicitly record/change an old layer_cap=1 when
+testing the new eight-layer default; deployment does not rewrite it.
+
+| Release-round record | Value |
+| --- | --- |
+| Date / release | 2026-11-02 / **2.4.0**, Minecraft 1.20.1, Fabric only |
+| Immutable source pin | Release tag `2.4.0`; resolve its merged commit and compare with the release notes |
+| Installable binary | `immersive_weathering-2.4.0.jar`; compare SHA-256 with the published `SHA256SUMS.txt` |
+| Deployment target | Modrinth profile `Fabric Test Enviorment 1.20.1`; install only one active IW jar, never sources/dev jars |
+| Existing test dependencies | Fabric API 0.92.12+1.20.1, Moonlight 1.20-2.16.38B, Cloth Config 11.1.136, EMI 1.1.24+1.20.1, Mod Menu 7.2.2; record actual Fabric Loader at launch |
+| Upgrade controls | Keep worlds/configs/other mods; explicitly record the retained weather cap and test 1 versus 8 without assuming default migration |
+| New manual verdicts | **SP01-SP08: Not run** |
+| Storm retest verdicts | **ST01-ST08: Not run**; do not copy old fire/snow results into this release |
+| Regression ledger | Earlier N01-N11 beta.2 passes and broad 2.2.0 fire report remain historical, not 2.4.0 passes |
+
+Use a disposable/backed-up cheats-enabled world and restore all settings
+afterward. The commands below intentionally overwrite only this small test
+area; they are manual instructions, not commands run by the build.
+
+```text
+/gamemode creative
+/gamerule doWeatherCycle false
+/gamerule randomTickSpeed 0
+/weather clear
+/fill -4 64 -4 4 70 4 minecraft:air
+/fill -4 63 -4 4 63 4 minecraft:sand
+/tp @s 0 64 0
+/give @s immersive_weathering:sand_layer_block 64
+/give @s immersive_weathering:red_sand_layer_block 64
+```
+
+Record the original gamerules, `sand`/`sandstorms`/`fire` configs and weather
+first. Initial clear weather/randomTickSpeed zero isolates manual placement.
+Use F3's targeted block ID/properties to distinguish native hosts from cover
+states; graphics alone are insufficient.
+
+| Case | Runnable variants and negative controls | Required observation | Manual verdict |
+| --- | --- | --- | --- |
+| SP01 | For regular and red piles, place each of the 12 vanilla fences and a dead bush before sand and then into sand. Test depths 1, 4 and 8. Connect/disconnect neighboring fences and gates; attach a lead; rotate a saved structure. Compare waterlogged fence, cactus, wall and a modded plant. | Both orders retain the native dry host, color and exact layer count, including eight. Connections/collision/leads remain native. Unsupported/wet hosts do not become covers. Regular/red layers do not merge. No datapack-only modded-host claim. | Not run |
+| SP02 | At depths 1-8 replace bare regular/red piles with stone, wood, glass, chest and torch. Place fence/dead-bush items instead. Try replacing covered fence and covered dead bush with stone. Repeat with host_mixing and replace_piles separately disabled after restart. | Every bare depth, including eight, is replaceable by ordinary blocks. Supported hosts retain sand when mixing is on. Covered fences cannot be erased by placement; covered bushes retain native replacement rules. Matching sand stacks only to eight; toggles preserve existing saves/cover IDs. | Not run |
+| SP03 | Shovel-right-click regular/red covers in Survival and Creative; break whole covers with appropriate tools/shears at depths 1, 4 and 8. Remove support below a covered fence and dead bush; drop matching sand into raw/covered hosts and near full piles; repeat over water and at a blocked landing cell. Save/reopen while sand is falling. | Shovel strips only sand; Survival durability/drop behavior matches existing pile economy. Whole-cover loot includes native host and sand (eight-layer loot remains one full sand/red-sand block). Only sand falls; no host movement, mixed-color merge, duplicated/lost remainder, automatic overflow column or frozen/replaced water. Falling state survives reload. | Not run |
+| SP04 | Set layer_cap=1, storm in desert/badlands at randomTickSpeed=0 over bare ground, dry fences and dead bushes. Manually stack to eight. Repeat cap=8; lower cap below a prepared six-layer cover. Compare original saved config=1 with fresh-config default=8, and disable mixing/deposition independently. | Weather caps at the configured value around eligible hosts/bare ground; manual/falling sand still reaches eight. No trimming, color conversion, occupied-block overwrite or new storm pile above full piles. Saved values do not silently change. | Not run |
+| SP05 | In untagged plains, use `/weather rain`, restore positive randomTickSpeed and observe bare/covered regular/red piles. For a faster isolated trial, explicitly set erosion chance=1 and temporarily increase randomTickSpeed, recording/restoring both. Compare clear, roofed, snowfall and each storm-tag biome. Tag a rainy biome, `/reload`, then remove tag and reload; compare a hot but untagged rainy biome. | Each successful eligible random tick removes exactly one layer, no items; last covered layer restores the host. Roof/clear/snow preserve piles; membership in either storm tag exempts, including rainy tagged biomes. Temperature alone does not. randomTickSpeed=0 and erosion=false/chance=0 stop erosion, not independent storms. | Not run |
+| SP06 | In a dry desert plot, light multiple separated netherrack fires with adjacent fuel. Compare clear/rain/thunder, exposed versus a broad solid roof covering source and neighbors. Record lightning separately. With extinguish chance=0 compare sustained spread/burn attempts; then restore 0.25. | Thunder reduces exposed source attempts, including in dry biomes, and may extinguish ordinary eternal-support fires on scheduled ticks. Sheltered sources retain native behavior. Do not demand exactly 90%/25% in a small random sample; fire aging/scheduling and non-thunder rain behavior remain. | Not run |
+| SP07 | Repeat SP06 with doFireTick=false, thunder_dampening=false, spread multiplier=0/1 and extinguish chance=0/1. Compare ordinary fire, soul fire, torch and campfire. Separately compare authorized burning-entity environmental trials exposed/roofed in a dry biome. | Gamerule/toggle disable new weather effects. Zero multiplier prevents attempts; one preserves attempts. Extinguish zero/one provides deterministic controls for eligible ordinary fire only. Entities are not extinguished by this rule; their environmental probability is reduced without removing projectile reduction. Soul fire/torches/campfires remain unchanged. | Not run |
+| SP08 | F3+T reload, save/reopen covers/falling sand, change dimensions, and repeat with a second client on a matching dedicated server. Retest snow covers/placement and existing fire/Scorchful coexistence controls. | No missing models/textures, lost native properties, stale covers, duplicated items or client/server disagreement. Storm ownership still yields to actually installed Scorchful; native IW sand sharing/rain erosion are independent pile behavior. Earlier snow/fire ledger stays historical. | Not run |
+
+Restore the recorded configs, weather, biome changes and gamerules, and remove
+only fixtures created for this round. Record each variant separately, using
+the [result record](#return-results-by-test-id), rather than inferring a gameplay
+pass from native fixtures, compilation or a title-screen initialization.
+
 ## Standalone sandstorms
 
 **2.3.0 sandstorm integration; ST01-ST08 are all Not run.** The broad
 reported 2.2.0 fire pass and earlier snow ledger below are preserved and do not
-cover these storms. Use the remapped 2.3.0 jar from a recorded source commit,
-not the immutable published 2.2.0 jar. Source version alone does not establish
+cover these storms. For this release's retest use the remapped 2.4.0 jar and
+record its merged source commit, not an earlier release's artifact. Source version alone does not establish
 publication. Do not overwrite historical release assets or an external profile.
 Record source/jar SHA, dependencies, effective config, packs, biome, weather,
 simulation distance, real time/game ticks and client/server setup. Automated
 [native fixtures](../developers/Development.md#sandstorm-mechanics-harness) are
 not visual, audio, multiplayer or gameplay acceptance.
+
+The original published 2.3.0 default was layer_cap=1. Version 2.4.0
+uses eight for fresh configs and adds the host/rain/thunder behavior in SP01-SP08;
+record which artifact is being tested rather than combining those outcomes.
 
 ### Runnable storm fixture
 
@@ -46,7 +109,7 @@ original gamerules/weather/config after the round.
 /weather rain 600
 ```
 
-Default common `sandstorms`: deposition=true, layer_cap=1, slowing=true,
+Current source default common `sandstorms`: deposition=true, layer_cap=8, slowing=true,
 slow_amount=0.3. Default client: particles/fog/hide_clouds/sounds=true,
 particle_range=20, particle_rarity=60, fog_start=16, fog_end=64.
 Use vanilla All particles, nonzero Weather volume and subtitles, without a
@@ -60,8 +123,8 @@ with F3 targeted-block readout; screenshots of dust alone prove no server rule.
 | --- | --- | --- | --- |
 | ST01 | Run the fixture with ordinary rain (no thunder); `/weather clear`, then rain again. Use `/fillbiome 0 48 0 31 79 31 minecraft:badlands`, then warm_ocean and plains; return to desert. With weather cycling disabled, wait and explicitly change weather; repeat at night. | Dry desert deposits regular IW layers, dry badlands red; warm ocean/plains have no new storm effects/deposition. Ordinary rain/night suffice; clear stops gameplay, gradients fade visuals. No independent storm timer. Warm-ocean legacy sandy-block growth is a separate control at a restored positive randomTickSpeed. | Not run |
 | ST02 | During rain compare `/attribute @s minecraft:generic.movement_speed get` with the clear value without sprint/effects. `/fill 4 67 4 12 67 12 minecraft:stone`, stand below it, then remove roof. Summon a pig and camel on the platform and inspect their movement-speed attributes too. | Exposed eligible entities have a temporary 30% reduction; roof removes it on the next server tick, camel remains immune. No damage, armor/thirst/temperature state or wind force. Biome fog/cloud effects may remain indoors. | Not run |
-| ST03 | Clear the floor's air cells, leave randomTickSpeed=0 and observe the default cap. Place `/setblock 8 64 8 immersive_weathering:sand_layer_block[layers=6]`, move aside and inspect it before/after. Restart with layer_cap=8, fresh piles; fill a pile to eight, inspect the cell above. Restore cap=1. | Sampled supported cells accumulate to configured cap without resetting/reducing six/eight-layer piles or stacking a ninth layer in another cell. Each chunk performs one sampled 1/16 trial, not a randomTickSpeed multiplier. No source sand disappears; no claim of an exact short-run rate. | Not run |
-| ST04 | On separate recorded columns use water/lava, grass, a chest, bottom slab, leaves, empty/water/powder-snow cauldrons, red pile in desert and regular pile in badlands. Test pile support removal and a normal manual eight-layer pile/loot/recipe control. | No fluid/host/different-pile replacement, unsupported deposition or cauldron conversion; sturdy dry free surfaces still work. Existing IW falling/placement/drop/recipe rules remain, not Scorchful's pile economy. Falling piles moving after support removal are not a deposition-cap violation. | Not run |
+| ST03 | Clear the floor's air cells, leave randomTickSpeed=0 and explicitly set cap=1. Place `/setblock 8 64 8 immersive_weathering:sand_layer_block[layers=6]`, move aside and inspect it before/after. Restart with layer_cap=8, fresh piles; fill a pile to eight, inspect the cell above. Restore the original cap. | Sampled supported cells accumulate to configured cap without resetting/reducing six/eight-layer piles or stacking a ninth layer in another cell. Each chunk performs one sampled 1/16 trial, not a randomTickSpeed multiplier. No source sand disappears; no claim of an exact short-run rate. | Not run |
+| ST04 | On separate recorded columns use water/lava, grass, a chest, bottom slab, leaves, empty/water/powder-snow cauldrons, red pile in desert and regular pile in badlands. Test pile support removal and a normal manual eight-layer pile/loot/recipe control; add SP01-SP04 host controls. | No fluid/unsupported-host/different-pile replacement, unsupported deposition or cauldron conversion; sturdy dry free surfaces still work. Existing IW loot/recipes remain, not Scorchful's economy. Supported hosts gain sand without disappearing. Falling piles moving after support removal are not a deposition-cap violation. | Not run |
 | ST05 | Independently disable deposition and slowing, restart and verify server-effective values; set slow_amount=0 then 0.5. Add/remove pig immunity via a datapack's sandstorm_slow_immune tag and `/reload`; remove/re-add dry-biome subtype tags, including overlap and a wet biome. | Existing modifier cleans up after disable/immunity/tag changes; strength changes without stacking. Regular wins overlap; wet biomes stay excluded. Old deposits remain. Disabling general.block_growths stops old growth, not new storm hooks. Config files require restart; `/reload` alone is for tags. | Not run |
 | ST06 | Watch dawn/noon/night and a desert/plains boundary. Change fog_start/end, deliberately invert them, lower render distance; compare fog off/cloud hiding on and vice versa. Submerge camera in water/lava/powder snow and apply blindness/darkness separately, then clear effects. | Smooth weather/biome color/distance, sand tint lit by dimension/day; no extending stronger vanilla fog/view distance, no fluid/effect/sky-fog override. Clouds hide only above 0.75 gradient with own toggle. No missing sprites; dust goes west with gravity, both subtypes share color. | Not run |
 | ST07 | Compare All/Decreased/Minimal particles, range zero/default/32 and rarity 1/60. Toggle wind separately, set Weather slider to zero, enable subtitles, move >10 blocks vertically from surface, clear/restart weather, disconnect/change worlds/dimensions, and use F3+T resource reload. | Bounded local dust (Minimal/range0 off), ordinary resource reload without missing atlas/sounds; nine event variants can load, wind intermittent at Weather 0.1/pitch0.5 near surfaces, no stale scheduling across world changes. No continuous loop or promise all random variants are heard in a short sample. | Not run |
@@ -90,7 +153,7 @@ These are runnable acceptance instructions, not a claim that the immutable
 acceptance. Automated fixtures and hook checks
 are described in the [fire harness](../developers/Development.md#fire-mechanics-harness).
 Use a new disposable Creative flat world with cheats, the remapped target-version
-jar (2.3.0 for current checks) and
+jar (2.4.0 for current checks) and
 matching server/client dependencies. Back up the instance configuration first.
 Record the release/source SHA, jar SHA-256, server config, gamerules, difficulty,
 weather, biome, trial count and singleplayer/dedicated-client setup.

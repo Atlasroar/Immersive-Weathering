@@ -7,13 +7,21 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import com.ordana.immersive_weathering.sand.SandHosts;
+import com.ordana.immersive_weathering.sand.SandPhysics;
+import com.ordana.immersive_weathering.sand.SandWeather;
+import com.ordana.immersive_weathering.configs.CommonConfigs;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.context.BlockPlaceContext;
 
 public class SandLayerBlock extends LayerBlock {
 
     private final int particleColor;
 
     public SandLayerBlock( int particleColor, Properties properties) {
-        super(properties);
+        super(properties.randomTicks());
         this.particleColor = particleColor;
     }
 
@@ -44,5 +52,27 @@ public class SandLayerBlock extends LayerBlock {
                 Mth.randomBetween(level.random, -1.0F, 1.0F) * 0.083333336F);
     }
 
-    //TODO: check and merge properly
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState old = context.getLevel().getBlockState(context.getClickedPos());
+        if (SandHosts.canAdd(context, old)) return SandHosts.cover(old, this, SandHosts.layers(old) + 1);
+        return super.getStateForPlacement(context);
+    }
+
+    @Override
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+        if (context.getItemInHand().is(asItem())) return getLayers(state) < 8;
+        return CommonConfigs.REPLACE_SAND_PILES.get() && context.getItemInHand().getItem() instanceof BlockItem
+                || super.canBeReplaced(state, context);
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        SandPhysics.checkSupport(level, pos, state);
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        SandWeather.erode(level, pos, state, random);
+    }
 }

@@ -146,6 +146,30 @@ uses only vanilla's sampled server chunk hook, not a second block-growth entry.
 The [configuration contract](../players/Configuration.md#standalone-snow) explains
 the bounded column cap and gamerule-1 sentinel. Existing growths remain independent.
 
+## Sand-cover resources (2.4.0)
+
+`tools/sand_resources.py` generates the two sand colors for the explicit
+13-host inventory: 26 multipart blockstates, 16 cover models using vanilla
+sand/red-sand textures, and five append-only host semantic tags. It shares
+native host/model helpers with `tools/snow_resources.py`; existing snow output
+is unchanged. After intentional changes run:
+
+```powershell
+python tools\sand_resources.py
+python tools\sand_resources.py --check
+python tools\snow_resources.py --check
+```
+
+Vanilla fence/tool tags reference IW's sand-host tags without replacing other
+entries. Native host and existing IW sand loot tables are evaluated with the
+real player/tool context; no duplicated host loot JSON or new binary asset is
+needed. Sand cover schemas are registered in Java, not enabled by merely adding
+a modded plant to a tag. Both `regular_sandstorms` and `red_sandstorms` biome
+tags also exempt piles from rain erosion, including rainy tagged biomes.
+This intentionally differs from dry-biome storm classification. The legacy
+`has_sandstorm` tag is not that exemption. Datapacks can change the tags through
+normal `/reload`; they cannot change the weather-only config cap.
+
 ## Generated resources
 
 Moonlight discovers wood/leaf families before IW dynamically registers related

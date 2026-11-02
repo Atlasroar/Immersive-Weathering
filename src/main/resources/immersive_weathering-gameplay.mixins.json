@@ -32,6 +32,8 @@
     "RootedDirtBlockMixin",
     "ServerLevelMixin",
     "SandstormLivingMixin",
+    "SandHostPlacementMixin",
+    "SandHostReplaceMixin",
     "SnowballMixin",
     "SmallFireballMixin",
     "SnowLayerBlockMixin",

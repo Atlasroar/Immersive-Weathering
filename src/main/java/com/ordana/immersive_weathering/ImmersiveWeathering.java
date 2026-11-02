@@ -56,6 +56,7 @@ public class ImmersiveWeathering {
 
         ModBlocks.init();
         com.ordana.immersive_weathering.snow.SnowHosts.init();
+        com.ordana.immersive_weathering.sand.SandHosts.init();
         ModItems.init();
         ModEntities.init();
         ModParticles.init();
