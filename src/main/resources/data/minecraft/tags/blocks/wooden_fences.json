@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#immersive_weathering:snow_hosts/wooden_fences",
+    "#immersive_weathering:sand_hosts/wooden_fences",
     "immersive_weathering:charred_fence"
   ]
 }

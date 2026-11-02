@@ -46,6 +46,8 @@ public class ImmersiveWeatheringClient {
     public static void setup() {
         com.ordana.immersive_weathering.snow.SnowHosts.entries().values().forEach(block ->
                 ClientHelper.registerRenderType(block.get(), RenderType.cutoutMipped()));
+        com.ordana.immersive_weathering.sand.SandHosts.entries().values().forEach(blocks ->
+                blocks.forEach(block -> ClientHelper.registerRenderType(block.get(), RenderType.cutoutMipped())));
 
         ClientHelper.registerRenderType(ModBlocks.GRASSY_PERMAFROST.get(), RenderType.cutoutMipped());
         ClientHelper.registerRenderType(ModBlocks.GRASSY_SILT.get(), RenderType.cutoutMipped());

@@ -48,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.3.0.jar --sources build\libs\immersive_weathering-2.3.0-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.4.0.jar --sources build\libs\immersive_weathering-2.4.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -56,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.3.0.jar -
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.3.0.jar`; install that remapped
+`build\libs\immersive_weathering-2.4.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -122,6 +122,9 @@ fuel/survival gates, gamerules, known/unknown ignition NBT/reset, successful/
 failed torch actions and item counts, grass odds/config updates and dirt
 preservation. Structural ASM checks verify the exact vanilla descriptors and
 successful-burn/direct-melee ordinals, including the retained soot hook.
+Version 2.4.0 coverage includes exact thunder probability boundaries, dry-biome/
+roof/clear/config/gamerule controls, the extinguishing injection body and the
+six burn/two age-or-spread call sites. Mixin weaving remains a separate audit.
 It is wired into `check` and the root build alongside snow/growth checks.
 
 The harness does **not** weave Mixins or emulate a running chunk engine,
@@ -139,16 +142,44 @@ No external profile/world or published 2.1.0 artifact is changed by these tasks.
 ```powershell
 .\gradlew.bat sandstormMechanicsTest --console=plain
 python tools\sandstorm_resources.py --check
-python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.3.0.jar --sources build\libs\immersive_weathering-2.3.0-sources.jar
+python tools\sand_resources.py --check
+python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.4.0.jar --sources build\libs\immersive_weathering-2.4.0-sources.jar
 ```
 
-The current release target is **2.3.0**; do not overwrite the immutable published
-2.2.0 artifacts. Source version alone does not prove publication. `build`/`check` runs this
+The current release target is **2.4.0**; do not overwrite the immutable published
+2.3.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
 Java 17 harness alongside fire, snow and both growth harnesses. It executes
 production classification/exposure, deposition and modifier reconciliation on
 native biome holders, blocks/layer states and attributes. Test-only config and
 registration substitutes avoid platform initialization; explicit Unsafe-allocated
 storage/client fixtures replace chunk storage, not storm policy.
+
+Version 2.4.0 coverage adds production sand schemas for both colors/all host
+states/layers, exact union collision, native rotation/mirroring and survival,
+both placement orders, weather cap/no-write behavior, all-depth replacement
+and native host protection, falling merge/remainders/support/NBT/timeout/drop
+rules, real vanilla/IW loot tables, and one-layer rain erosion/tag exemptions.
+The test fixture binds native fence/sand/dead-bush-support tags explicitly;
+it does not substitute a different dead-bush survival rule. The shared snow
+model generator still emits byte-identical snow resources. New
+[SP01-SP08](../players/Feature-testing.md#sand-and-thunder) manual
+acceptance remains **Not run**. Published 2.3.0 artifacts remain immutable.
+Building alone does not deploy; the 2.4.0 release deployment replaces only the
+IW binary in the authorized test profile, retaining configs and other mods.
+
+During sand/thunder implementation, `.\gradlew.bat build --console=plain`
+passed with 75,931 sand/storm native assertions, 4,571 fire assertions/hook
+checks and the existing snow/growth suites. The 47 Python tests, resource
+guards, wiki checks and binary/sources packaging checks also passed.
+`.\gradlew.bat runServer --args="--initSettings nogui" --console=plain` passed
+real registration/Mixin/config initialization at the dedicated-server EULA
+gate (`eula=false`), without opening a dedicated world. A development client
+completed model/atlas/resource bake without missing sand-cover assets, using a
+temporary init script that excluded optional EMI only from `modLocalRuntime`
+for the existing Moonlight/JEMI issue; repository dependencies were unchanged.
+Local integrated-world startup subsequently appeared in that client's log and
+the helper was stopped. This is **not** an in-world placement, rendering,
+weather-rate or multiplayer acceptance result; SP01-SP08 remain Not run.
 
 Client fixtures exercise weather/biome sampling, camera fluid/blindness/darkness
 guards, stronger-fog clamping, independent cloud toggle, bounded particle emitter

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#immersive_weathering:snow_hosts/sword_efficient"
+    "#immersive_weathering:snow_hosts/sword_efficient",
+    "#immersive_weathering:sand_hosts/sword_efficient"
   ]
 }

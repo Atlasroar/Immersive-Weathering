@@ -28,6 +28,7 @@ jobs:
         run: |
           python tools/fabric.py --check
           python tools/snow_resources.py --check
+          python tools/sand_resources.py --check
           python tools/sandstorm_resources.py --check
           python tools/wiki.py --check
           python -B -m unittest discover -s tools -p "test_*.py"

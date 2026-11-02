@@ -2,12 +2,19 @@ package com.ordana.immersive_weathering.sandstorm;
 
 import com.mojang.serialization.Lifecycle;
 import com.ordana.immersive_weathering.blocks.LayerBlock;
+import com.ordana.immersive_weathering.blocks.SandLayerBlock;
+import com.ordana.immersive_weathering.sand.SandHosts;
+import com.ordana.immersive_weathering.sand.SandCoveredBlock;
+import com.ordana.immersive_weathering.sand.SandPhysics;
+import com.ordana.immersive_weathering.sand.SandWeather;
+import com.ordana.immersive_weathering.entities.FallingLayerEntity;
 import com.ordana.immersive_weathering.client.SandstormEffects;
 import com.ordana.immersive_weathering.client.WindTimer;
 import com.ordana.immersive_weathering.configs.ClientConfigs;
 import com.ordana.immersive_weathering.configs.CommonConfigs;
 import com.ordana.immersive_weathering.reg.ModBlocks;
 import net.minecraft.SharedConstants;
+import net.minecraft.util.RandomSource;
 import net.minecraft.client.Camera;
 import net.minecraft.client.ParticleStatus;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -22,6 +29,12 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.block.*;
@@ -31,6 +44,10 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.*;
@@ -42,7 +59,8 @@ public final class SandstormMechanicsTest {
     private static final Unsafe UNSAFE = unsafe();
     private static final BlockPos POS = new BlockPos(0, 64, 0);
     private static MappedRegistry<Biome> BIOMES;
-    private static Holder<Biome> dry, wet, red;
+    private static Holder<Biome> dry, wet, red, rainy;
+    private static net.minecraft.world.level.storage.loot.LootDataManager loot;
     private static int cases;
 
     public static void main(String[] args) throws Exception {
@@ -51,24 +69,43 @@ public final class SandstormMechanicsTest {
         boot.setAccessible(true);
         boot.setBoolean(null, true);
         BuiltInRegistries.REGISTRY.keySet();
-        Registry.register(BuiltInRegistries.BLOCK, "iw_storm:sand", ModBlocks.SAND);
-        Registry.register(BuiltInRegistries.BLOCK, "iw_storm:red", ModBlocks.RED);
+        Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:sand_layer_block", ModBlocks.SAND);
+        Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:red_sand_layer_block", ModBlocks.RED);
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, "iw_storm:dust_grain",
                 com.ordana.immersive_weathering.reg.ModParticles.TYPE);
+        for (var pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+            var item = new BlockItem(pile, new Item.Properties());
+            Registry.register(BuiltInRegistries.ITEM, BuiltInRegistries.BLOCK.getKey(pile), item);
+            item.registerBlocks(Item.BY_BLOCK, item);
+        }
+        SandHosts.init();
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, "iw_storm:falling",
+                com.ordana.immersive_weathering.reg.ModEntities.FALLING_LAYER.get());
         boot.setBoolean(null, false);
         Bootstrap.bootStrap();
         BIOMES = new MappedRegistry<>(Registries.BIOME, Lifecycle.stable());
         for (var pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
             pile.getStateDefinition().getPossibleStates().forEach(BlockState::initCache);
         }
+        SandHosts.entries().values().forEach(covers -> covers.forEach(covered ->
+                covered.get().getStateDefinition().getPossibleStates().forEach(BlockState::initCache)));
         dry = biome("dry", false);
         red = biome("red", false);
         wet = biome("wet", true);
+        rainy = biome("rainy_untagged", true);
         BIOMES.freeze();
+        bindBlockTags();
+        loadSandLoot();
         tags(false);
         weather();
         chunkTick();
         deposition();
+        sandCovers();
+        sandPlacement();
+        sandShovels();
+        sandFalling();
+        sandRain();
+        sandLoot();
         slowing();
         client();
         System.out.println("Sandstorm mechanics: " + cases + " production/native assertions passed");
@@ -85,6 +122,62 @@ public final class SandstormMechanicsTest {
     private static void tags(boolean overlap) {
         BIOMES.bindTags(Map.of(Sandstorms.REGULAR, overlap ? List.of(dry, wet, red) : List.of(dry, wet),
                 Sandstorms.RED, List.of(red)));
+    }
+
+    private static void bindBlockTags() {
+        List<Holder<Block>> fences = new ArrayList<>(), wood = new ArrayList<>();
+        SandHosts.entries().forEach((host, covers) -> {
+            if (!(host instanceof FenceBlock)) return;
+            fences.add(host.builtInRegistryHolder());
+            covers.forEach(covered -> fences.add(covered.get().builtInRegistryHolder()));
+            if (host != Blocks.NETHER_BRICK_FENCE) {
+                wood.add(host.builtInRegistryHolder());
+                covers.forEach(covered -> wood.add(covered.get().builtInRegistryHolder()));
+            }
+        });
+        BuiltInRegistries.BLOCK.bindTags(Map.of(
+                net.minecraft.tags.BlockTags.SAND, List.of(Blocks.SAND.builtInRegistryHolder(), Blocks.RED_SAND.builtInRegistryHolder()),
+                net.minecraft.tags.BlockTags.DEAD_BUSH_MAY_PLACE_ON, List.of(Blocks.SAND.builtInRegistryHolder(), Blocks.RED_SAND.builtInRegistryHolder()),
+                net.minecraft.tags.BlockTags.FENCES, fences, net.minecraft.tags.BlockTags.WOODEN_FENCES, wood));
+    }
+
+    private static void loadSandLoot() throws Exception {
+        loot = new net.minecraft.world.level.storage.loot.LootDataManager();
+        Map<net.minecraft.world.level.storage.loot.LootDataId<?>, Object> tables = new HashMap<>();
+        List<Block> blocks = new ArrayList<>(SandHosts.hosts());
+        blocks.addAll(List.of(ModBlocks.SAND, ModBlocks.RED));
+        for (Block block : blocks) {
+            var id = block.getLootTable();
+            try (var stream = SandstormMechanicsTest.class.getResourceAsStream(
+                    "/data/" + id.getNamespace() + "/loot_tables/" + id.getPath() + ".json")) {
+                check(stream != null, "Missing real native/IW loot table " + id);
+                var json = com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(stream, java.nio.charset.StandardCharsets.UTF_8));
+                tables.put(new net.minecraft.world.level.storage.loot.LootDataId<>(net.minecraft.world.level.storage.loot.LootDataType.TABLE, id),
+                        net.minecraft.world.level.storage.loot.LootDataType.TABLE.deserialize(id, json).orElseThrow());
+            }
+        }
+        Field elements = net.minecraft.world.level.storage.loot.LootDataManager.class.getDeclaredField("elements");
+        elements.setAccessible(true);
+        elements.set(loot, Map.copyOf(tables));
+    }
+
+    private static void sandLoot() throws Exception {
+        for (SandLayerBlock pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+            for (Block host : SandHosts.hosts()) {
+                for (int layers = 1; layers <= 8; layers++) {
+                    Fixture level = world();
+                    BlockState state = SandHosts.cover(host.defaultBlockState(), pile, layers);
+                    var builder = new net.minecraft.world.level.storage.loot.LootParams.Builder(level)
+                            .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, Vec3.atCenterOf(POS))
+                            .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.TOOL, Items.SHEARS.getDefaultInstance());
+                    List<ItemStack> drops = state.getDrops(builder);
+                    Map<Item, Integer> counts = new HashMap<>();
+                    drops.forEach(stack -> counts.merge(stack.getItem(), stack.getCount(), Integer::sum));
+                    Item sand = layers == 8 ? (pile == ModBlocks.SAND ? Items.SAND : Items.RED_SAND) : pile.asItem();
+                    check(counts.equals(Map.of(host.asItem(), 1, sand, layers == 8 ? 1 : layers)), "Exact native host plus existing pile loot economy");
+                }
+            }
+        }
     }
 
     private static void weather() throws Exception {
@@ -188,6 +281,252 @@ public final class SandstormMechanicsTest {
         level.rain = false;
         SandAccumulation.tickChunk(level, chunk);
         check(level.samples == samples, "Clear weather no work");
+    }
+
+    private static void sandCovers() throws Exception {
+        check(SandHosts.hosts().size() == 13 && SandHosts.entries().size() == 13, "Only 12 fences and dead bush");
+        Fixture level = world();
+        level.states.put(POS.below(), Blocks.SAND.defaultBlockState());
+        for (Block host : SandHosts.hosts()) {
+            for (BlockState raw : host.getStateDefinition().getPossibleStates()) {
+                if (!raw.getFluidState().isEmpty()) {
+                    check(!SandHosts.supported(raw) && SandHosts.cover(raw, ModBlocks.SAND, 1) == null, "Waterlogged hosts are rejected");
+                    continue;
+                }
+                for (SandLayerBlock pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+                    for (int layers = 1; layers <= 8; layers++) {
+                        BlockState covered = SandHosts.cover(raw, pile, layers);
+                        check(covered != null && SandHosts.raw(covered) == raw, "Native state round trip");
+                        check(SandHosts.pile(covered) == pile && SandHosts.layers(covered) == layers, "Color/layer round trip");
+                        BlockState sand = pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, layers);
+                        check(!Shapes.joinIsNotEmpty(covered.getCollisionShape(level, POS),
+                                Shapes.or(raw.getCollisionShape(level, POS), sand.getCollisionShape(level, POS)), BooleanOp.NOT_SAME),
+                                "Native collision plus exact sand layer shape");
+                        for (Rotation rotation : Rotation.values()) {
+                            check(SandHosts.raw(covered.rotate(rotation)) == raw.rotate(rotation), "Rotation preserves all host connections");
+                            check(SandHosts.layers(covered.rotate(rotation)) == layers, "Rotation retains sand");
+                        }
+                        for (Mirror mirror : Mirror.values()) {
+                            check(SandHosts.raw(covered.mirror(mirror)) == raw.mirror(mirror), "Mirror preserves host connections");
+                        }
+                        SandLayerBlock other = pile == ModBlocks.SAND ? ModBlocks.RED : ModBlocks.SAND;
+                        check(SandHosts.cover(covered, other, layers) == null, "Never convert or mix colors");
+                        check(covered.canSurvive(level, POS) == raw.canSurvive(level, POS), "Native survival contract");
+                    }
+                }
+            }
+        }
+        for (Block block : List.of(Blocks.CACTUS, Blocks.GRASS, Blocks.OAK_SAPLING, Blocks.SANDSTONE_WALL, Blocks.CHEST)) {
+            check(!SandHosts.supported(block.defaultBlockState()), "Unregistered host stays excluded: " + block);
+        }
+    }
+
+    private static BlockPlaceContext context(Fixture level, ItemStack stack) {
+        return new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, stack,
+                new BlockHitResult(Vec3.atCenterOf(POS), Direction.UP, POS, false)) {
+            @Override public BlockPos getClickedPos() { return POS; }
+        };
+    }
+
+    private static void sandPlacement() throws Exception {
+        for (SandLayerBlock pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+            for (Block host : SandHosts.hosts()) {
+                Fixture level = world();
+                level.states.put(POS.below(), Blocks.SAND.defaultBlockState());
+                for (int layers = 1; layers <= 8; layers++) {
+                    BlockState state = pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, layers);
+                    level.states.put(POS, state);
+                    BlockPlaceContext hostContext = context(level, host.asItem().getDefaultInstance());
+                    check(state.canBeReplaced(hostContext), "Every layer allows host placement");
+                    BlockState shared = SandHosts.placement(hostContext, host.defaultBlockState());
+                    check(SandHosts.raw(shared).is(host) && SandHosts.layers(shared) == layers, "Host placed into pile retains all layers");
+                    level.states.put(POS, layers == 1 ? host.defaultBlockState() : SandHosts.cover(host.defaultBlockState(), pile, layers - 1));
+                    BlockPlaceContext sandContext = context(level, pile.asItem().getDefaultInstance());
+                    check(SandHosts.canAdd(sandContext, level.getBlockState(POS)), "Pile placed into native/covered host");
+                    check(SandHosts.layers(pile.getStateForPlacement(sandContext)) == layers, "Manual stack has no weather cap");
+                    level.states.put(POS, SandHosts.cover(host.defaultBlockState(), pile, 8));
+                    check(!SandHosts.canAdd(context(level, pile.asItem().getDefaultInstance()), level.getBlockState(POS)), "Full covered pile cannot receive ninth layer");
+                }
+                for (int cap = 1; cap <= 8; cap++) {
+                    level.states.put(POS, host.defaultBlockState());
+                    for (int layer = 1; layer <= cap; layer++) {
+                        check(SandAccumulation.deposit(level, POS.above(), pile, cap),
+                                "Weather deposits around " + host + " cap=" + cap + " depth=" + layer
+                                        + " survives=" + host.defaultBlockState().canSurvive(level, POS));
+                        check(SandHosts.layers(level.states.get(POS)) == layer, "Exact covered weather depth");
+                    }
+                    int writes = level.writes;
+                    check(!SandAccumulation.deposit(level, POS.above(), pile, cap) && level.writes == writes, "Covered cap is no-write");
+                    check(!SandAccumulation.deposit(level, POS.above(), pile, 1) && SandHosts.layers(level.states.get(POS)) == cap,
+                            "Lower cap never trims a cover");
+                }
+            }
+            for (int layers = 1; layers <= 8; layers++) {
+                Fixture level = world();
+                BlockState state = pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, layers);
+                level.states.put(POS, state);
+                for (Block block : List.of(Blocks.STONE, Blocks.OAK_PLANKS, Blocks.GLASS, Blocks.CHEST, Blocks.TORCH)) {
+                    check(state.canBeReplaced(context(level, block.asItem().getDefaultInstance())), "All depths accept ordinary blocks");
+                }
+                check(state.canBeReplaced(context(level, pile.asItem().getDefaultInstance())) == (layers < 8), "Raw manual cap stays eight");
+                BlockState fence = SandHosts.cover(Blocks.OAK_FENCE.defaultBlockState(), pile, layers);
+                BlockState bush = SandHosts.cover(Blocks.DEAD_BUSH.defaultBlockState(), pile, layers);
+                check(!fence.canBeReplaced(context(level, Items.STONE.getDefaultInstance())), "Do not replace covered fence with another block");
+                check(bush.canBeReplaced(context(level, Items.STONE.getDefaultInstance())), "Covered bush keeps native replacement");
+            }
+        }
+        Fixture level = world();
+        level.states.put(POS, Blocks.OAK_FENCE.defaultBlockState());
+        CommonConfigs.mixing = false;
+        check(!SandHosts.canAdd(context(level, ModBlocks.SAND.asItem().getDefaultInstance()), level.states.get(POS)), "Mixing toggle stops manual covering");
+        check(!SandAccumulation.deposit(level, POS.above(), ModBlocks.SAND, 8), "Mixing toggle stops weather covering");
+        CommonConfigs.mixing = true;
+        level.states.put(POS, ModBlocks.SAND.defaultBlockState().setValue(LayerBlock.LAYERS_8, 8));
+        CommonConfigs.replacement = false;
+        check(!level.states.get(POS).canBeReplaced(context(level, Items.STONE.getDefaultInstance())), "Replacement toggle restores deep-pile protection");
+        CommonConfigs.replacement = true;
+    }
+
+    private static void sandShovels() throws Exception {
+        for (SandLayerBlock pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+            for (Block host : SandHosts.hosts()) {
+                for (boolean creative : List.of(false, true)) {
+                    Fixture level = world();
+                    ProbePlayer player = new ProbePlayer(level, creative);
+                    BlockState state = SandHosts.cover(host.defaultBlockState(), pile, 4);
+                    level.states.put(POS, state);
+                    BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(POS), Direction.UP, POS, false);
+                    level.failWrites = true;
+                    check(state.use(level, player, InteractionHand.MAIN_HAND, hit) == net.minecraft.world.InteractionResult.FAIL,
+                            "Rejected shovel write reports failure");
+                    check(level.states.get(POS) == state && level.entities.isEmpty() && player.shovel.getDamageValue() == 0,
+                            "Rejected shovel write retains cover without drops or durability cost");
+                    level.failWrites = false;
+                    check(state.use(level, player, InteractionHand.MAIN_HAND, hit).consumesAction(), "Shovel strips cover");
+                    check(level.states.get(POS) == host.defaultBlockState(), "Shovel restores exact native host");
+                    check(player.shovel.getDamageValue() == (creative ? 0 : 1), "Only Survival consumes shovel durability");
+                    int count = level.entities.stream().filter(entity -> entity instanceof net.minecraft.world.entity.item.ItemEntity)
+                            .mapToInt(entity -> ((net.minecraft.world.entity.item.ItemEntity) entity).getItem().getCount()).sum();
+                    check(count == (creative ? 0 : 4), "Shovel drops only the removed sand in Survival");
+                }
+            }
+        }
+    }
+
+    private static void sandFalling() throws Exception {
+        for (SandLayerBlock pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+            for (int existing = 0; existing <= 8; existing++) {
+                for (int incoming = 1; incoming <= 8; incoming++) {
+                    for (Block host : SandHosts.hosts()) {
+                        Fixture level = world();
+                        level.states.put(POS.below(), Blocks.SAND.defaultBlockState());
+                        level.states.put(POS, existing == 0 ? host.defaultBlockState() : SandHosts.cover(host.defaultBlockState(), pile, existing));
+                        int remainder = SandPhysics.deposit(level, POS, pile, incoming);
+                        int expected = Math.min(8, existing + incoming);
+                        check(SandHosts.layers(level.states.get(POS)) == expected, "Falling sand fills host to eight");
+                        check(remainder == existing + incoming - expected, "Exact overflow retained");
+                        check(SandHosts.raw(level.states.get(POS)).is(host), "Falling sand never moves host");
+                    }
+                }
+            }
+            Fixture level = world();
+            BlockState fence = SandHosts.cover(Blocks.OAK_FENCE.defaultBlockState(), pile, 6);
+            level.states.put(POS, fence);
+            level.states.remove(POS.below());
+            SandPhysics.checkSupport(level, POS, fence);
+            check(level.entities.size() == 1 && level.states.get(POS).is(Blocks.OAK_FENCE), "Unsupported sand falls without moving fence");
+            FallingLayerEntity falling = (FallingLayerEntity) level.entities.get(0);
+            check(SandHosts.layers(falling.getBlockState()) == 6 && falling.getBlockState().is(pile), "Detached exact color/layers");
+            var saved = new net.minecraft.nbt.CompoundTag();
+            falling.saveWithoutId(saved);
+            FallingLayerEntity restored = new FallingLayerEntity(level);
+            restored.load(saved);
+            check(restored.getBlockState() == falling.getBlockState(), "Falling color/layer save round trip");
+            level = world();
+            level.states.put(POS, Blocks.WATER.defaultBlockState());
+            check(SandPhysics.deposit(level, POS, pile, 8) == 8 && level.states.get(POS).is(Blocks.WATER), "Sand does not freeze or replace water");
+            level = world();
+            level.failWrites = true;
+            check(SandPhysics.deposit(level, POS, pile, 4) == 4 && !level.states.containsKey(POS), "Rejected write retains all falling layers");
+            level = world();
+            level.states.put(POS, (pile == ModBlocks.SAND ? ModBlocks.RED : ModBlocks.SAND).defaultBlockState());
+            check(SandPhysics.deposit(level, POS, pile, 3) == 3, "Falling sand cannot mix colors");
+            level = world();
+            level.states.put(POS, Blocks.OAK_FENCE.defaultBlockState());
+            ProbeFalling landing = new ProbeFalling(level, pile, 5);
+            landing.ground = true;
+            landing.tick();
+            check(landing.time == 1 && landing.isRemoved() && SandHosts.layers(level.states.get(POS)) == 5,
+                    "Actual falling-entity dispatch lands sand into host");
+            level = world();
+            ProbeFalling timeout = new ProbeFalling(level, pile, 3);
+            timeout.time = 600;
+            timeout.tick();
+            check(timeout.time == 601 && timeout.isRemoved()
+                    && level.entities.stream().anyMatch(entity -> entity instanceof net.minecraft.world.entity.item.ItemEntity item
+                    && item.getItem().is(pile.asItem()) && item.getItem().getCount() == 3), "Falling timeout preserves all layers as items");
+            level = world();
+            level.rules.getRule(GameRules.RULE_DOENTITYDROPS).set(false, null);
+            timeout = new ProbeFalling(level, pile, 3);
+            timeout.time = 600;
+            timeout.tick();
+            check(timeout.isRemoved() && level.entities.isEmpty(), "Falling drops respect doEntityDrops");
+        }
+    }
+
+    private static void sandRain() throws Exception {
+        var rolls = new net.minecraft.world.level.levelgen.LegacyRandomSource(1) {
+            @Override public double nextDouble() { return 0; }
+        };
+        for (SandLayerBlock pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
+            for (Block host : SandHosts.hosts()) {
+                Fixture level = world();
+                level.biome = rainy;
+                for (int layers = 8; layers >= 1; layers--) {
+                    BlockState state = SandHosts.cover(host.defaultBlockState(), pile, layers);
+                    level.states.put(POS, state);
+                    level.states.get(POS).randomTick(level, POS, rolls);
+                    check(SandHosts.layers(level.states.get(POS)) == layers - 1, "Production random tick removes exactly one layer");
+                    check(SandHosts.raw(level.states.get(POS)).is(host), "Last erosion layer restores native host");
+                }
+            }
+            Fixture level = world();
+            BlockState state = pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, 8);
+            level.biome = rainy;
+            level.states.put(POS, state);
+            pile.randomTick(state, level, POS, rolls);
+            check(SandHosts.layers(level.states.get(POS)) == 7, "Uncovered sand random ticks erode");
+            state = pile.defaultBlockState();
+            level.states.put(POS, state);
+            check(SandWeather.erode(level, POS, state, rolls) && level.states.get(POS).isAir(), "Last bare layer becomes air without drops");
+            for (Holder<Biome> immune : List.of(dry, red, wet)) {
+                level.biome = immune;
+                level.rainAt = true;
+                check(!SandWeather.erode(level, POS, state, rolls), "Either storm tag protects even when precipitation is forced");
+            }
+            level.biome = rainy;
+            BIOMES.bindTags(Map.of(Sandstorms.REGULAR, List.of(), Sandstorms.RED, List.of()));
+            level.sky = false;
+            check(!SandWeather.erode(level, POS, state, rolls), "Roof blocks erosion");
+            level.sky = true;
+            level.rain = false;
+            check(!SandWeather.erode(level, POS, state, rolls), "Clear weather preserves piles");
+            level.rain = true;
+            level.rainAt = false;
+            check(!SandWeather.erode(level, POS, state, rolls), "Snowfall/dry precipitation cannot erode");
+            level.rainAt = true;
+            CommonConfigs.erosion = false;
+            check(!SandWeather.erode(level, POS, state, rolls), "Live erosion toggle");
+            CommonConfigs.erosion = true;
+            CommonConfigs.erosionChance = 0;
+            check(!SandWeather.erode(level, POS, state, rolls), "Zero erosion chance");
+            CommonConfigs.erosionChance = 0.125;
+            var boundary = new net.minecraft.world.level.levelgen.LegacyRandomSource(1) {
+                @Override public double nextDouble() { return 0.125; }
+            };
+            check(!SandWeather.erode(level, POS, state, boundary), "Exact chance boundary is rejected");
+            tags(false);
+        }
     }
 
     private static void slowing() throws Exception {
@@ -390,6 +729,10 @@ public final class SandstormMechanicsTest {
         level.border = new WorldBorder();
         level.biome = dry;
         level.rain = level.sky = level.loaded = true;
+        level.rainAt = true;
+        level.entities = new ArrayList<>();
+        level.rules = new GameRules();
+        level.server = (FixtureServer) UNSAFE.allocateInstance(FixtureServer.class);
         level.top = 64;
         random(level);
         return level;
@@ -415,7 +758,10 @@ public final class SandstormMechanicsTest {
         private Map<BlockPos, BlockState> states;
         private WorldBorder border;
         private Holder<Biome> biome;
-        private boolean rain, sky, loaded;
+        private boolean rain, sky, loaded, rainAt, failWrites;
+        private List<Entity> entities;
+        private GameRules rules;
+        private FixtureServer server;
         private int top, writes;
         private int samples, roll;
         private Fixture() { super(null, null, null, null, null, null, null, false, 0, List.of(), false, null); throw new AssertionError(); }
@@ -424,6 +770,7 @@ public final class SandstormMechanicsTest {
             return states.getOrDefault(pos, Blocks.AIR.defaultBlockState());
         }
         @Override public boolean setBlock(BlockPos pos, BlockState state, int flags, int recursion) {
+            if (failWrites) return false;
             writes++;
             states.put(pos.immutable(), state);
             return true;
@@ -434,6 +781,16 @@ public final class SandstormMechanicsTest {
         @Override public boolean hasChunkAt(BlockPos pos) { return loaded; }
         @Override public boolean isRaining() { return rain; }
         @Override public boolean canSeeSky(BlockPos pos) { return sky; }
+        @Override public boolean isRainingAt(BlockPos pos) { return rain && sky && rainAt; }
+        @Override public boolean addFreshEntity(Entity entity) { entities.add(entity); return true; }
+        @Override public GameRules getGameRules() { return rules; }
+        @Override public net.minecraft.server.MinecraftServer getServer() { return server; }
+        @Override public RandomSource getRandomSequence(ResourceLocation id) { return random; }
+        @Override public net.minecraft.world.flag.FeatureFlagSet enabledFeatures() { return net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS; }
+        @Override public void scheduleTick(BlockPos pos, Block block, int delay) {}
+        @Override public void levelEvent(net.minecraft.world.entity.player.Player player, int event, BlockPos pos, int data) {}
+        @Override public void gameEvent(net.minecraft.world.level.gameevent.GameEvent event, Vec3 pos,
+                                        net.minecraft.world.level.gameevent.GameEvent.Context context) {}
         @Override public int getHeight(Heightmap.Types type, int x, int z) { return top; }
         @Override public BlockPos getBlockRandomPos(int x, int y, int z, int mask) {
             check(mask == 15 && x == 0 && z == 0, "Sample bounded to ticking chunk");
@@ -443,6 +800,34 @@ public final class SandstormMechanicsTest {
         @Override public WorldBorder getWorldBorder() { return border; }
         @Override public Holder<Biome> getBiome(BlockPos pos) { return biome; }
         @Override public RegistryAccess registryAccess() { return RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY); }
+    }
+
+    private static final class FixtureServer extends net.minecraft.server.dedicated.DedicatedServer {
+        private FixtureServer() { super(null, null, null, null, null, null, null, null); throw new AssertionError(); }
+        @Override public net.minecraft.world.level.storage.loot.LootDataManager getLootData() { return loot; }
+    }
+
+    private static final class ProbePlayer extends net.minecraft.world.entity.player.Player {
+        private final ItemStack shovel = new ItemStack(Items.IRON_SHOVEL);
+        private final boolean creative;
+        private ProbePlayer(Level level, boolean creative) {
+            super(level, POS, 0, new com.mojang.authlib.GameProfile(new java.util.UUID(0, 1), "sand-test"));
+            this.creative = creative;
+        }
+        @Override public boolean isCreative() { return creative; }
+        @Override public boolean isSpectator() { return false; }
+        @Override public ItemStack getItemInHand(InteractionHand hand) { return shovel; }
+    }
+
+    private static final class ProbeFalling extends FallingLayerEntity {
+        private boolean ground;
+        private ProbeFalling(Fixture level, SandLayerBlock pile, int layers) {
+            super(level, POS, pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, layers));
+        }
+        @Override public void move(MoverType type, Vec3 delta) {
+            if (!ground) setPos(getX() + delta.x, getY() + delta.y, getZ() + delta.z);
+        }
+        @Override public boolean onGround() { return ground; }
     }
 
     private static final class ProbeLiving extends LivingEntity {

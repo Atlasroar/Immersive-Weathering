@@ -17,6 +17,10 @@ public class CommonConfigs {
     public static final Supplier<Integer> SANDSTORM_LAYER_CAP;
     public static final Supplier<Boolean> SANDSTORM_SLOWING;
     public static final Supplier<Double> SANDSTORM_SLOW_AMOUNT;
+    public static final Supplier<Boolean> SAND_HOSTS;
+    public static final Supplier<Boolean> REPLACE_SAND_PILES;
+    public static final Supplier<Boolean> SAND_RAIN_EROSION;
+    public static final Supplier<Double> SAND_RAIN_EROSION_CHANCE;
 
     public static final Supplier<Boolean> BLOCK_GROWTHS;
     public static final Supplier<List<String>> DISABLED_GROWTHS;
@@ -60,6 +64,9 @@ public class CommonConfigs {
     public static final Supplier<Double> FIRE_HEAT_BONUS;
     public static final Supplier<Double> FIRE_TEMPERATURE_BONUS;
     public static final Supplier<Double> FIRE_SPREAD_CHANCE_CAP;
+    public static final Supplier<Boolean> FIRE_THUNDER_DAMPENING;
+    public static final Supplier<Double> FIRE_THUNDER_SPREAD_MULTIPLIER;
+    public static final Supplier<Double> FIRE_THUNDER_EXTINGUISH_CHANCE;
 
 
     public static final Supplier<Boolean> PICKAXE_CRACKING;
@@ -120,12 +127,23 @@ public class CommonConfigs {
         builder.push("sandstorms");
         SANDSTORM_DEPOSITION = builder.comment("Deposit existing IW sand layers in exposed dry desert/badlands during vanilla rain. Independent of block growths/randomTickSpeed; no cauldron changes. Yields to installed Scorchful.")
                 .define("deposition", true);
-        SANDSTORM_LAYER_CAP = builder.comment("Maximum storm-deposited layers per pile (1-8). Never reduces existing piles; not a column-height limit or legacy sandy-block growth setting.")
-                .define("layer_cap", 1, 1, 8);
+        SANDSTORM_LAYER_CAP = builder.comment("Maximum weather-deposited layers per pile (1-8), including the pile output of legacy sandy growth. Manual/falling piles still reach eight; never reduces existing piles. Does not limit sandy-block variant conversion.")
+                .define("layer_cap", 8, 1, 8);
         SANDSTORM_SLOWING = builder.comment("Slow exposed living entities during sandstorms. Camel and sandstorm_slow_immune entity tag are exempt. Existing modifiers are cleaned up when disabled.")
                 .define("slowing", true);
         SANDSTORM_SLOW_AMOUNT = builder.comment("Fraction of total movement speed removed (0.3 = 30%). No damage, thirst or temperature effects.")
                 .define("slow_amount", 0.3, 0, 1);
+        builder.pop();
+
+        builder.push("sand");
+        SAND_HOSTS = builder.comment("Allow regular/red sand layers to share dry vanilla fences and dead bushes, in either placement order.")
+                .define("host_mixing", true);
+        REPLACE_SAND_PILES = builder.comment("Allow ordinary block items to replace sand piles at any depth, including eight layers. Supported hosts retain the sand when mixing is enabled; covered fences retain native replacement rules.")
+                .define("replace_piles", true);
+        SAND_RAIN_EROSION = builder.comment("Rain removes one layer per successful random tick, without drops. Covered hosts are restored at zero. Biomes in either sandstorm tag are exempt, regardless of temperature.")
+                .define("rain_erosion", true);
+        SAND_RAIN_EROSION_CHANCE = builder.comment("Probability per random tick of an exposed sand pile during actual rain. No erosion under roofs, during snow, or in either sandstorm biome tag.")
+                .define("rain_erosion_chance", 0.125, 0, 1);
         builder.pop();
 
         builder.push("general");
@@ -202,6 +220,12 @@ public class CommonConfigs {
                 .define("temperature_bonus", 0.5, 0, 4);
         FIRE_SPREAD_CHANCE_CAP = builder.comment("Maximum trial probability before the projectile reduction.")
                 .define("spread_chance_cap", 0.25, 0, 1);
+        FIRE_THUNDER_DAMPENING = builder.comment("Thunder hampers sky-exposed ordinary fire, including on eternal-fire supports and in dry biomes. Requires doFireTick; does not extinguish entities, soul fire, torches or campfires.")
+                .define("thunder_dampening", true);
+        FIRE_THUNDER_SPREAD_MULTIPLIER = builder.comment("Multiplier for exposed fire's neighboring burn and spread attempts, and exposed burning-entity environmental trials, during thunder. 0.1 means 90% fewer attempts; zero prevents them.")
+                .define("thunder_spread_multiplier", 0.1, 0, 1);
+        FIRE_THUNDER_EXTINGUISH_CHANCE = builder.comment("Chance to extinguish exposed ordinary fire on each normal scheduled tick during thunder (roughly every 1.5-2 seconds). Zero disables extinguishing.")
+                .define("thunder_extinguish_chance", 0.25, 0, 1);
         builder.pop();
 
 

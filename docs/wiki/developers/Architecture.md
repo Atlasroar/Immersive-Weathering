@@ -58,6 +58,7 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 | Soils and plants | [`blocks/soil_types`](../../../src/main/java/com/ordana/immersive_weathering/blocks/soil_types), [`CropBlockMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/CropBlockMixin.java) | Fertile tags, placement/survival, plant-specific mixins, growth speed |
 | Cold and fire | [`blocks/frosted`](../../../src/main/java/com/ordana/immersive_weathering/blocks/frosted), [`blocks/charred`](../../../src/main/java/com/ordana/immersive_weathering/blocks/charred), [`TemperatureManager`](../../../src/main/java/com/ordana/immersive_weathering/util/TemperatureManager.java) | Biome/weather predicates, thin ice, icicles, freezing, smoldering, fire/lightning events |
 | Standalone snow | [`snow`](../../../src/main/java/com/ordana/immersive_weathering/snow) | Explicit vanilla host schemas, placement hooks, scheduled falling, one sampled weather hook, static multipart models |
+| Sand-layer parity | [`sand`](../../../src/main/java/com/ordana/immersive_weathering/sand) | Two color variants for 13 dry host schemas, native-state delegation, placement/falling/deposition, random-tick erosion and static multipart models |
 | Standalone fire | [`fire`](../../../src/main/java/com/ordana/immersive_weathering/fire) | Per-entity ignition provenance, bounded server trials, successful direct torch combat, dynamic grass odds/ground preservation |
 | Standalone sandstorms | [`sandstorm`](../../../src/main/java/com/ordana/immersive_weathering/sandstorm), [`client/SandstormEffects`](../../../src/main/java/com/ordana/immersive_weathering/client/SandstormEffects.java) | Vanilla weather, dry subtype tags, exposed temporary slowdown, independent sampled deposition, guarded fog/dust/wind; no new dependencies |
 | Entities and visuals | [`entities`](../../../src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
@@ -77,11 +78,55 @@ The existing `TemperatureManager.hasSandstorm` and its `has_sandstorm` tag are
 `ServerLevelMixin.tickChunk` TAIL calls `SandAccumulation` once, independent of
 growth dispatch and the randomTickSpeed parameter. One sampled XZ column and
 1/16 trial, no scan/retry, no generic precipitation/cauldron callback. The
-heightmap cell is adjusted down only for a matching IW pile. Dry loaded in-height
-air/matching piles require dry sturdy support and survival; different piles,
-full/at-cap piles and occupied hosts get no write. Entity push-up precedes the
+2.4.0 heightmap adjustment includes existing piles and supported dry hosts.
+Dry loaded in-height air/matching piles/eligible hosts require dry sturdy support
+and native host survival; different piles, full/at-cap piles and unsupported
+occupied cells get no write. Entity push-up precedes the
 ordinary block update. Vanilla block/tag/attribute synchronization and save
 formats suffice; no CCA, custom packets or per-world storm state.
+
+### Sand covers and rain erosion (2.4.0)
+
+`SandHosts` registers `sand_covered_*` and `red_sand_covered_*` blocks for
+12 vanilla fences and dead bush: **26 wrappers**, no block entities/items.
+State schemas retain native connection property objects plus LAYERS, exclude
+WATERLOGGED, and reject wet/unsupported hosts. `SnowHosts.copy` is reused for
+generic property copying; snow registration/gameplay remains separate.
+Raw host states go to native shape/neighbor/survival/interaction/loot methods.
+Full covers retain native fence replacement rules; a replaceable covered bush
+can become another supported host while retaining its cover. Shovels strip
+only the cover. Fabric setup copies host flammability and generated append-only
+tags preserve fence/tool identity; the client registers cutout rendering.
+
+`SandLayerBlock` handles manual stacking/replacement and random ticks.
+`SandHostReplaceMixin` admits sand into raw hosts; `SandHostPlacementMixin`
+preserves sand when placing a supported host into a pile. Both placement
+orders work at layers 1-8. Existing covers remain registered when mixing is
+disabled, but new mixing/covered accumulation stops.
+`SandPhysics` owns support loss and falling-entity landing/timeout: only the
+sand detaches, matching deposits cap at eight and overflow becomes items.
+Water is neither replaced nor frozen. The existing falling entity dispatches
+sand separately from snow and leaf piles.
+
+`SandAccumulation` and legacy `SandGrowth`'s **pile output** use one guarded
+weather deposition path. The default weather cap changes to eight for fresh
+configs; saved values remain unchanged. Manual/falling deposition ignores that
+cap. Legacy sandy-block conversion, dispatch chance and old biome tag remain
+separate. Occupied cells are no longer overwritten by the legacy pile output.
+`SandWeather` erodes exactly one layer on a successful random tick during
+`isRainingAt(pos.above())`, unless the biome holder belongs to either subtype
+tag. This exemption intentionally checks membership, not dry-storm
+classification or temperature; rainy tagged biomes are immune too. Zero layers
+restore the raw host or air, without drops. No weather-column scan is added.
+
+`tools/sand_resources.py` shares native host multipart/depth-biased model
+generation helpers with `tools/snow_resources.py`. It emits 26 blockstates,
+16 texture-referencing models and five semantic tags, without new binary assets.
+New modded hosts still need registered schemas/resources; no datapack host
+extension is implemented. See [sand controls](../players/Configuration.md#sand-piles)
+and [native fixture limits](Development.md#sandstorm-mechanics-harness).
+
+### Sandstorm entity and client behavior
 
 `SandstormLivingMixin.tick` TAIL reconciles the actual MOVEMENT_SPEED modifier
 each server tick, not an edge-triggered boolean. IW owns UUID
@@ -164,6 +209,17 @@ Minecraft API is imported. The immutable published 2.1.0 artifacts are unchanged
 The [player contract](../players/Features.md#standalone-fire)
 and [common controls](../players/Configuration.md#standalone-fire)
 are authoritative; season integration is deferred.
+
+The 2.4.0 `ThunderFire` rule requires enabled `doFireTick`, thunder and
+sky visibility at the **source**. It deliberately does not require rainfall or
+a particular biome temperature. `FireMixin.tick` HEAD may extinguish ordinary
+fire (including on eternal-fire supports). MixinExtras wraps all six
+`checkBurnOut` calls and distant fire-placement writes with the spread
+multiplier. Same-position age writes, normal tick scheduling and existing
+soot/grass hook ordinals are preserved; an extinguished tick is cancelled.
+`EntityFire.spread` multiplies its final trial probability by the same
+source-exposure factor. No entity is extinguished and no new soul-fire,
+campfire/torch, timer or weather-world state is introduced.
 
 `EntityFireMixin` owns one `IgnitionHistory` per entity. Server-side authorization
 requires positive vanilla fire ticks and a non-immune entity. Living
@@ -314,7 +370,8 @@ independent covers if a failed native 2x2 tree attempt restores raw saplings.
 This is a bounded operation-local snapshot, not a world cache or extra tick.
 
 `SnowPhysics` detaches only the snow state into the existing falling-layer entity
-type; the leaf/sand branch is unchanged. The snow branch advances its own time,
+type; the leaf branch is unchanged and sand since 2.4.0 has its own
+`SandPhysics` dispatch. The snow branch advances its own time,
 ray-checks source water on every move, and lands without overwriting blocked/wet
 cells. Deposits return an explicit remainder; at most eight layers enter one cell,
 and overflow becomes snow-layer items under the drop gamerules. Source WATER is

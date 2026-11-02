@@ -69,6 +69,7 @@ public final class FireMechanicsTest {
         ignitionSources();
         torches();
         grass();
+        thunder();
         hooks();
         System.out.println("Fire mechanics: " + cases + " production assertions and vanilla-hook checks passed");
     }
@@ -427,6 +428,66 @@ public final class FireMechanicsTest {
                 "net/minecraft/world/level/portal/PortalShape", "findEmptyPortalShape") == 1, "Portal suppression hook");
         MethodNode tick = method(FireBlock.class, "tick", "(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V");
         check(calls(tick, "net/minecraft/server/level/ServerLevel", "removeBlock") >= 4, "Existing soot ordinal remains available");
+        check(calls(tick, "net/minecraft/world/level/block/FireBlock", "checkBurnOut") == 6, "All six neighboring burn attempts are wrapped");
+        check(calls(tick, "net/minecraft/server/level/ServerLevel", "setBlock") == 2, "Both age write and distant spread hook exist");
+    }
+
+    private static void thunder() throws Exception {
+        Fixture world = world();
+        world.sky = true;
+        check(!ThunderFire.affected(world, POS), "Clear weather preserves fire");
+        world.thunder = true;
+        check(world.rain.isEmpty() && ThunderFire.affected(world, POS), "Thunder applies in dry biomes without rainfall");
+        near(ThunderFire.multiplier(world, POS), 0.1, "Default 90 percent suppression");
+        world.roll = 0.099999;
+        check(ThunderFire.allowSpread(world, POS, world.random), "Below suppression threshold spreads");
+        world.roll = 0.1;
+        check(!ThunderFire.allowSpread(world, POS, world.random), "Exact suppression threshold is rejected");
+        int permitted = 0;
+        for (int i = 0; i < 1000; i++) {
+            world.roll = i / 1000.0;
+            if (ThunderFire.allowSpread(world, POS, world.random)) permitted++;
+        }
+        check(permitted == 100, "Exact default permits ten percent of deterministic quantiles");
+        CommonConfigs.thunderMultiplier = 0;
+        world.roll = 0;
+        check(!ThunderFire.allowSpread(world, POS, world.random), "Zero multiplier prevents every attempt");
+        CommonConfigs.thunderMultiplier = 1;
+        world.roll = 0.999;
+        check(ThunderFire.allowSpread(world, POS, world.random), "Multiplier one restores attempts");
+        CommonConfigs.thunderMultiplier = 0.1;
+        world.states.put(POS, Blocks.FIRE.defaultBlockState());
+        world.roll = 0.25;
+        check(!ThunderFire.extinguish(world, POS, world.random) && world.getBlockState(POS).is(Blocks.FIRE),
+                "Exact extinguish threshold is rejected");
+        world.roll = 0.249999;
+        CallbackInfo callback = new CallbackInfo("tick", true);
+        invokeMixin("thunderExtinguish", new Class<?>[]{BlockState.class, ServerLevel.class, BlockPos.class,
+                RandomSource.class, CallbackInfo.class}, Blocks.FIRE.defaultBlockState(), world, POS, world.random, callback);
+        check(callback.isCancelled() && world.getBlockState(POS).isAir(), "Actual mixin entry cancels an extinguished fire tick");
+        world.states.put(POS, Blocks.FIRE.defaultBlockState());
+        world.roll = 0;
+        CommonConfigs.thunderExtinguish = 0;
+        check(!ThunderFire.extinguish(world, POS, world.random), "Zero extinguish chance preserves fire");
+        CommonConfigs.thunderExtinguish = 0.25;
+        world.sky = false;
+        check(!ThunderFire.affected(world, POS) && !ThunderFire.extinguish(world, POS, world.random),
+                "Roof preserves fire and normal spreading");
+        near(ThunderFire.multiplier(world, POS), 1, "Sheltered entity trials retain their probability");
+        world.sky = true;
+        world.rules.getRule(GameRules.RULE_DOFIRETICK).set(false, null);
+        check(!ThunderFire.affected(world, POS) && !ThunderFire.extinguish(world, POS, world.random), "doFireTick false preserves fire");
+        world.rules.getRule(GameRules.RULE_DOFIRETICK).set(true, null);
+        CommonConfigs.thunderDampening = false;
+        check(!ThunderFire.affected(world, POS), "Live config disables thunder effects");
+        CommonConfigs.thunderDampening = true;
+        world.states.put(POS.below(), Blocks.OAK_PLANKS.defaultBlockState());
+        world.states.remove(POS);
+        FireSettings certain = new FireSettings(20, 1, 0, 1, 1, 1, 0, 0, 1);
+        world.roll = 0.1;
+        check(!EntityFire.spread(world, POS, false, certain), "Exposed burning-entity trial is reduced before target scanning");
+        world.roll = 0.099999;
+        check(EntityFire.spread(world, POS, false, certain), "Reduced entity trial still can ignite");
     }
 
     private static MethodNode method(Class<?> type, String name, String descriptor) throws Exception {
@@ -549,7 +610,7 @@ public final class FireMechanicsTest {
         private Set<BlockPos> rain, unloaded;
         private GameRules rules;
         private WorldBorder border;
-        private boolean loaded, failWrites, sawPlacementScope;
+        private boolean loaded, failWrites, sawPlacementScope, thunder, sky;
         private int reads, writes;
         private double roll;
         private float temperature;
@@ -571,6 +632,8 @@ public final class FireMechanicsTest {
         @Override public int getHeight() { return 384; }
         @Override public boolean isLoaded(BlockPos pos) { return loaded && !unloaded.contains(pos); }
         @Override public boolean isRainingAt(BlockPos pos) { return rain.contains(pos); }
+        @Override public boolean isThundering() { return thunder; }
+        @Override public boolean canSeeSky(BlockPos pos) { return sky; }
         @Override public WorldBorder getWorldBorder() { return border; }
         @Override public GameRules getGameRules() { return rules; }
         @Override public RegistryAccess registryAccess() { return RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY); }

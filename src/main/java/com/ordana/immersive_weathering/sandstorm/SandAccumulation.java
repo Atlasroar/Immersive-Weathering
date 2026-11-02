@@ -5,13 +5,14 @@
 package com.ordana.immersive_weathering.sandstorm;
 
 import com.ordana.immersive_weathering.blocks.LayerBlock;
+import com.ordana.immersive_weathering.blocks.SandLayerBlock;
 import com.ordana.immersive_weathering.configs.CommonConfigs;
 import com.ordana.immersive_weathering.reg.ModBlocks;
+import com.ordana.immersive_weathering.sand.SandHosts;
+import com.ordana.immersive_weathering.sand.SandPhysics;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -24,30 +25,21 @@ public final class SandAccumulation {
                 level.getBlockRandomPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ(), 15));
         Sandstorms.Type type = Sandstorms.exposedStorm(level, top);
         if (type == Sandstorms.Type.NONE || level.random.nextInt(16) != 0) return;
-        LayerBlock pile = (LayerBlock) (type == Sandstorms.Type.REGULAR
+        SandLayerBlock pile = (SandLayerBlock) (type == Sandstorms.Type.REGULAR
                 ? ModBlocks.SAND_LAYER_BLOCK.get() : ModBlocks.RED_SAND_LAYER_BLOCK.get());
         deposit(level, top, pile, CommonConfigs.SANDSTORM_LAYER_CAP.get());
     }
 
-    public static boolean deposit(Level level, BlockPos top, LayerBlock pile, int cap) {
+    public static boolean deposit(Level level, BlockPos top, SandLayerBlock pile, int cap) {
         if (cap < 1 || level.isOutsideBuildHeight(top) || level.isOutsideBuildHeight(top.below()) || !level.hasChunkAt(top)
                 || !level.getWorldBorder().isWithinBounds(top)) return false;
         // MOTION_BLOCKING returns the cell above a partial pile, not the pile itself.
         BlockState ground = level.getBlockState(top.below());
         if (ground.getBlock() instanceof LayerBlock && !ground.is(pile)) return false;
-        BlockPos pos = ground.is(pile) ? top.below() : top;
-        if (level.isOutsideBuildHeight(pos) || !level.hasChunkAt(pos.below())
-                || level.isOutsideBuildHeight(pos.below())) return false;
+        BlockPos pos = SandHosts.pile(ground) != null || SandHosts.supported(ground) ? top.below() : top;
         BlockState current = level.getBlockState(pos);
-        BlockState support = level.getBlockState(pos.below());
-        if ((!current.isAir() && !current.is(pile)) || !current.getFluidState().isEmpty()
-                || !support.getFluidState().isEmpty() || !support.isFaceSturdy(level, pos.below(), Direction.UP)
-                || !pile.defaultBlockState().canSurvive(level, pos)) return false;
-        int layers = current.is(pile) ? pile.getLayers(current) : 0;
-        if (layers >= Math.min(cap, pile.getMaxLayers())) return false;
-        BlockState next = pile.defaultBlockState().setValue(pile.layerProperty(), layers + 1);
-        Block.pushEntitiesUp(current, next, level, pos);
-        return level.setBlock(pos, next, Block.UPDATE_ALL);
+        if (SandHosts.layers(current) >= Math.min(cap, pile.getMaxLayers())) return false;
+        return SandPhysics.deposit(level, pos, pile, 1) == 0;
     }
 
     private SandAccumulation() {}

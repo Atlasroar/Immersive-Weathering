@@ -116,7 +116,7 @@ public final class EntityFire {
                 || settings.baseChance() == 0 || settings.chanceCap() == 0
                 || projectile && settings.projectileMultiplier() == 0 || !accessible(level, origin)) return false;
         double chance = settings.chance(heatSources(level, origin, settings),
-                level.getBiome(origin).value().getBaseTemperature(), projectile);
+                level.getBiome(origin).value().getBaseTemperature(), projectile) * ThunderFire.multiplier(level, origin);
         if (level.random.nextDouble() >= chance) return false;
         BlockPos chosen = null;
         int candidates = 0;

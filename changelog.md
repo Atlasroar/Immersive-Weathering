@@ -1,3 +1,46 @@
+## 2.4.0
+
+Stable release for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Install only `immersive_weathering-2.4.0.jar`, replacing the previous IW jar
+after backing up worlds/configuration. Fabric Loader **0.16.14+**, Fabric API
+**0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11** remain required.
+Sources are distributed separately; no new runtime dependency is added.
+
+- Regular/red sand piles share dry cells with the 12 vanilla fences or dead
+  bushes, in either placement order. Native host states/connections, collision,
+  interactions and drops are retained. Right-click a cover with a shovel to
+  remove its sand without removing the host. Other plants/modded hosts are not
+  enabled by a datapack; explicit registered state schemas are still required.
+- Ordinary block items can replace uncovered sand at every depth, including
+  eight layers. Supported host items retain the sand instead of replacing it.
+  Covered fences retain native protection against replacement; covered dead
+  bushes retain native replaceability.
+- Weather deposition defaults to eight layers for newly generated configs,
+  configurable from one to eight through the existing `sandstorms.layer_cap`.
+  Existing configs keep their value. Manual stacking and falling piles still
+  reach eight; lowering the weather cap never trims a pile. Legacy sandy
+  growth's pile output uses the same guarded deposition, without overwriting
+  occupied blocks; its variant conversion and old biome tag are unchanged.
+- Sand falls independently of its host, merges without mixing colors, and
+  drops excess layers rather than creating an automatic overflow column.
+  Water is neither frozen nor overwritten.
+- Actual rain erodes exposed sand by one layer per successful random tick
+  (default chance 0.125), without drops, restoring a host when the last layer
+  disappears. Either sandstorm biome tag exempts a biome, regardless of its
+  temperature. Roofs, clear weather and snowfall preserve sand.
+- Thunder suppresses sky-exposed ordinary fire in all biomes, including dry
+  biomes and eternal-fire supports: default 90% fewer neighboring burn/spread
+  attempts and 25% chance of extinguishing on each normal scheduled fire tick.
+  Exposed burning-entity environmental trials receive the same multiplier.
+  Fire aging/scheduling and ordinary rain rules remain; sheltered fire,
+  entity burning, soul fire, torches and campfires are not extinguished by this
+  rule. All new environmental fire effects respect `doFireTick`.
+- Common `sand` and `fire` controls, generated native-model cover resources,
+  production/native regression coverage, and a separate SP01-SP08 manual
+  checklist accompany the changes. Manual acceptance remains **Not run**.
+  Published 2.3.0 and earlier assets remain immutable. A release/deployment
+  does not count as a manual gameplay pass.
+
 ## 2.3.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.

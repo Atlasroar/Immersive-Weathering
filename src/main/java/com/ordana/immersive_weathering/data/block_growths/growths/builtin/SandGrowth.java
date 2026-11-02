@@ -56,7 +56,9 @@ public class SandGrowth extends BuiltinBlockGrowth {
                     if (sandyBlock2.isPresent()) {
                         level.setBlockAndUpdate(pos, sandyBlock.get().setValue(ModBlockProperties.SANDINESS, 1));
                         level.setBlockAndUpdate(pos.below(), sandyBlock2.get().setValue(ModBlockProperties.SANDINESS, 0));
-                        level.setBlockAndUpdate(pos.above(), ModBlocks.SAND_LAYER_BLOCK.get().defaultBlockState());
+                        com.ordana.immersive_weathering.sandstorm.SandAccumulation.deposit(level, pos.above(),
+                                (com.ordana.immersive_weathering.blocks.SandLayerBlock) ModBlocks.SAND_LAYER_BLOCK.get(),
+                                com.ordana.immersive_weathering.configs.CommonConfigs.SANDSTORM_LAYER_CAP.get());
                     }
                 }
                 else level.setBlockAndUpdate(pos, sandyBlock.get());

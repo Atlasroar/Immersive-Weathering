@@ -15,12 +15,12 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-This source targets stable **2.3.0**. Its mod version follows Semantic Versioning;
+This source targets stable **2.4.0**. Its mod version follows Semantic Versioning;
 Minecraft **1.20.1** is declared separately as compatibility.
-For 2.3.0, install `immersive_weathering-2.3.0.jar` from the
+For 2.4.0, install `immersive_weathering-2.4.0.jar` from the
 [published release assets](https://github.com/Atlasroar/Immersive-Weathering/releases)
 when available; source changes alone are not proof of publication. Published
-2.2.0 assets and the immutable
+2.3.0/2.2.0 assets and the immutable
 [2.1.0 release](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0)
 and earlier assets are unchanged. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
@@ -35,10 +35,11 @@ This is not a promise to fix every catalogued gameplay report.
 Growth chances and seeded traversal are unchanged; in-game performance and the
 [beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
 
-The current source builds **2.3.0**: `build\libs\immersive_weathering-2.3.0.jar`.
+The current source builds **2.4.0**: `build\libs\immersive_weathering-2.4.0.jar`.
 New standalone sandstorms add original dust/wind assets, guarded fog, 30%
-exposed-entity slowdown and existing IW sand-layer deposition capped at one
-layer by default. Review [sandstorm controls](Configuration.md#standalone-sandstorms)
+exposed-entity slowdown and existing IW sand-layer deposition. Published 2.3.0
+defaults to one weather layer; 2.4.0 defaults fresh configs to eight
+without changing saved settings. Review [sandstorm controls](Configuration.md#standalone-sandstorms)
 before opening a world. No new dependency or cauldron behavior is added.
 [ST01-ST08](Feature-testing.md#standalone-sandstorms) remain **Not run**; stable
 versioning is not visual/audio or multiplayer acceptance.
@@ -51,6 +52,10 @@ they are enabled by default, and environmental spreading requires `doFireTick`.
 The tester reported a broad 2.2.0 fire-feature pass; individual
 [F01-F06 variants](Feature-testing.md#standalone-fire) remain unreported.
 Earlier prerelease downloads are unchanged; install only one active IW jar.
+Version 2.4.0 adds [sand sharing/rain erosion](Features.md#sand-piles) and
+[thunder fire suppression](Configuration.md#standalone-fire), not present in
+the published 2.3.0 jar. Their [SP01-SP08 checklist](Feature-testing.md#sand-and-thunder)
+has no recorded manual results; published release assets must not be overwritten.
 The recorded N01-N11 passes were on beta.2, not a new complete stable-version
 acceptance run; N12-N14 and the final fern appearance remain unreported.
 

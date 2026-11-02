@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class SnowWallPostMixin {
     @ModifyVariable(method = "shouldRaisePost", at = @At("HEAD"), argsOnly = true, ordinal = 1)
     private BlockState snowCoveredPost(BlockState above) {
-        return SnowHosts.raw(above);
+        return com.ordana.immersive_weathering.sand.SandHosts.raw(SnowHosts.raw(above));
     }
 }

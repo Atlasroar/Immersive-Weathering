@@ -90,6 +90,10 @@ public class FallingLayerEntity extends FallingBlockEntity {
             return;
         }
         BlockState blockState = this.getBlockState();
+        if (blockState.getBlock() instanceof com.ordana.immersive_weathering.blocks.SandLayerBlock pile) {
+            com.ordana.immersive_weathering.sand.SandPhysics.tick(this, pile);
+            return;
+        }
         if (blockState.is(Blocks.SNOW)) {
             com.ordana.immersive_weathering.snow.SnowPhysics.tick(this);
             return;

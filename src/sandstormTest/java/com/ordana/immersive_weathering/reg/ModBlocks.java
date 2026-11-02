@@ -8,6 +8,11 @@ import java.util.function.Supplier;
 
 /** Native IW block classes, registered before vanilla registries freeze. */
 public final class ModBlocks {
+    public static <T extends net.minecraft.world.level.block.Block> Supplier<T> regBlock(String name, Supplier<T> supplier) {
+        T block = net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+                "immersive_weathering:" + name, supplier.get());
+        return () -> block;
+    }
     public static final SandLayerBlock SAND = new SandLayerBlock(0xDBD3A0, BlockBehaviour.Properties.copy(Blocks.SAND));
     public static final SandLayerBlock RED = new SandLayerBlock(0xA95821, BlockBehaviour.Properties.copy(Blocks.RED_SAND));
     public static final Supplier<net.minecraft.world.level.block.Block> SAND_LAYER_BLOCK = () -> SAND;

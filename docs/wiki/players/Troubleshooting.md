@@ -11,6 +11,18 @@ IW deliberately yields its new storm features when Scorchful is installed.
 Do not treat [ST01-ST08](Feature-testing.md#standalone-sandstorms)'s Not run
 manual cases as verified graphics, audio or multiplayer results.
 
+For **2.4.0 sand/thunder changes**, first distinguish that version
+from published 2.3.0. Saved `sandstorms.layer_cap=1` stays one until
+explicitly changed; manual stacking still reaches eight. Mixing covers only
+dry vanilla fences and dead bushes, not cactus/walls/modded plants. A covered
+fence cannot be replaced like bare sand. Rain erosion needs actual rainfall,
+positive randomTickSpeed and absence from **both** sandstorm biome tags;
+temperature alone is irrelevant. Thunder fire suppression uses sky exposure,
+not actual rainfall, and requires `doFireTick`. Covered/indoor fire, soul fire,
+torches and campfires are not extinguished by it. See
+[SP01-SP08](Feature-testing.md#sand-and-thunder); no gameplay result
+is implied by automated coverage.
+
 ## Reported Fabric 1.20.1 problems
 
 The following is the initial catalog established on November 1, 2026, not a
