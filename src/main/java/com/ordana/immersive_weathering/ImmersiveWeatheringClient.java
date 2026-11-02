@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ImmersiveWeatheringClient {
 
     public static void init() {
+        com.ordana.immersive_weathering.client.SandstormEffects.init();
         ClientHelper.addClientSetup(ImmersiveWeatheringClient::setup);
         ClientDynamicResourcesHandler.INSTANCE.register();
 
@@ -119,6 +120,7 @@ public class ImmersiveWeatheringClient {
     }
 
     private static void registerParticles(ClientHelper.ParticleEvent event) {
+        event.register(ModParticles.DUST_GRAIN.get(), com.ordana.immersive_weathering.client.particles.DustGrainParticle.Provider::new);
         event.register(ModParticles.EMBERSPARK.get(), EmberParticle.EmberFactory::new);
         event.register(ModParticles.SCRAPE_RUST.get(), ScrapeRustFactory::new);
         event.register(ModParticles.MOSS.get(), NormalGravityParticle.Particle::new);

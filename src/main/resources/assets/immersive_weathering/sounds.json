@@ -1,4 +1,18 @@
 {
+  "weather.sandstorm": {
+    "subtitle": "sound.immersive_weathering.weather.sandstorm",
+    "sounds": [
+      "immersive_weathering:weather/sandstorm/sandstorm1",
+      "immersive_weathering:weather/sandstorm/sandstorm2",
+      "immersive_weathering:weather/sandstorm/sandstorm3",
+      "immersive_weathering:weather/sandstorm/sandstorm4",
+      "immersive_weathering:weather/sandstorm/sandstorm5",
+      "immersive_weathering:weather/sandstorm/sandstorm6",
+      "immersive_weathering:weather/sandstorm/sandstorm7",
+      "immersive_weathering:weather/sandstorm/sandstorm8",
+      "immersive_weathering:weather/sandstorm/sandstorm9"
+    ]
+  },
   "icicle_crack": {
     "subtitle": "sound.immersive_weathering.ice.crack",
     "sounds": [

@@ -3,6 +3,10 @@
   "minVersion": "0.8",
   "package": "com.ordana.immersive_weathering.mixins",
   "compatibilityLevel": "JAVA_17",
+  "client": [
+    "client.SandstormFogMixin",
+    "client.SandstormCloudMixin"
+  ],
   "mixins": [
     "ArrowFireMixin",
     "AttachedStemBlockMixin",
@@ -27,6 +31,7 @@
     "RabbitMixin",
     "RootedDirtBlockMixin",
     "ServerLevelMixin",
+    "SandstormLivingMixin",
     "SnowballMixin",
     "SmallFireballMixin",
     "SnowLayerBlockMixin",

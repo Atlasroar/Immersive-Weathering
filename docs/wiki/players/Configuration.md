@@ -27,8 +27,41 @@ source expressions rather than guessing what a setting's name means.
 | Control leaf piles | Common `leaf_piles` section |
 | Control standalone snow | Common `snow` section; independent of `general.block_growths` |
 | Control standalone fire | Common `fire` section; independent of `general.block_growths` and existing `charring` settings |
+| Control standalone sandstorms | Common and client `sandstorms` sections; independent of legacy sandy-block growth |
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
+
+## Standalone sandstorms
+
+Added in 2.3.0. In Mod Menu open **Immersive Weathering -> Configs ->
+Common/Client -> Standalone sandstorms**. The common/server spec is synchronized
+by the existing Moonlight config system. No new library is required.
+Stop/restart for manual file edits, then verify the effective server config.
+Gameplay suppliers are read on every relevant tick; disabling deposition does
+not remove already-deposited sand. `/reload` applies datapack biome/immunity
+tag changes; it is not a substitute for reloading config files.
+
+| Spec / key in `sandstorms` | Default (bounds) | Meaning |
+| --- | --- | --- |
+| Common `deposition` | `true` | Add existing IW sand layers on exposed, dry, sturdy surfaces; no cauldrons. |
+| Common `layer_cap` | `1` (1-8) | Maximum deposited layers per pile; never trims taller piles or creates a new storm pile above a full one. |
+| Common `slowing` | `true` | Temporary total-speed reduction for exposed nonimmune living entities. Disabling removes IW's modifier next tick. |
+| Common `slow_amount` | `0.3` (0-1) | Fraction removed: 0.3 is 30%. Zero removes IW's modifier; one stops attribute-based movement. |
+| Client `particles` | `true` | Windblown dust; vanilla Minimal suppresses it, Decreased halves column trial probability. |
+| Client `particle_range` | `20` (0-32) | Scans `(2 * range)^2` loaded columns/tick, default 1600, maximum 4096; zero disables. |
+| Client `particle_rarity` | `60` (1-1200) | One particle trial in this many columns. Higher is sparser. |
+| Client `fog` | `true` | Weather/biome-blended sand-colored terrain fog, including indoors. |
+| Client `fog_start` | `16` (0-256) | Full-storm fog start, clamped to end and stronger vanilla fog. |
+| Client `fog_end` | `64` (1-512) | Full-storm fog end, never extending vanilla view distance. |
+| Client `hide_clouds` | `true` | Hide clouds above 0.75 rain strength in storm biomes; deliberately independent of fog. |
+| Client `sounds` | `true` | Intermittent wind near storm surfaces; Weather volume and subtitles still apply. |
+
+These settings do **not** disable/retune the older `weather_sandstorm` sandy-block
+growth or its `has_sandstorm` tag. Use growth settings/datapacks for that.
+New storm subtype tags are `regular_sandstorms` and `red_sandstorms`; both also
+require precipitation-disabled biomes. Entity exemptions use
+`sandstorm_slow_immune`. When Scorchful is installed, new IW storm settings have
+no simulation/presentation effect because Scorchful owns that behavior.
 
 ## Standalone fire
 

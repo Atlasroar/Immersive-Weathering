@@ -138,6 +138,10 @@ sourceSets {
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
         runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
     }
+    sandstormTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
 }
 
 tasks.register("pairedGrowthTest", JavaExec) {
@@ -152,7 +156,7 @@ tasks.register("pairedGrowthTest", JavaExec) {
 }
 
 tasks.named("check") {
-    dependsOn growthPerformanceTest, pairedGrowthTest, "snowMechanicsTest", "fireMechanicsTest"
+    dependsOn growthPerformanceTest, pairedGrowthTest, "snowMechanicsTest", "fireMechanicsTest", "sandstormMechanicsTest"
 }
 
 tasks.register("snowMechanicsTest", JavaExec) {
@@ -173,5 +177,15 @@ tasks.register("fireMechanicsTest", JavaExec) {
     classpath = sourceSets.fireTest.runtimeClasspath
     mainClass = "com.ordana.immersive_weathering.fire.FireMechanicsTest"
     workingDir layout.buildDirectory.dir("fire-harness")
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register("sandstormMechanicsTest", JavaExec) {
+    group = "verification"
+    description = "Exercise production storm rules with native states/attributes and explicit storage/client fixtures."
+    dependsOn sandstormTestClasses
+    classpath = sourceSets.sandstormTest.runtimeClasspath
+    mainClass = "com.ordana.immersive_weathering.sandstorm.SandstormMechanicsTest"
+    workingDir layout.buildDirectory.dir("sandstorm-harness")
     doFirst { workingDir.mkdirs() }
 }

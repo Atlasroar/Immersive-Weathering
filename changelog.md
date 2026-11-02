@@ -1,3 +1,55 @@
+## 2.3.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Requires Fabric Loader **0.16.14+**, Fabric API **0.92.12+1.20.1** and
+Fabric Moonlight **1.20-2.12.11** (CurseForge file **5619072**).
+Install only `immersive_weathering-2.3.0.jar`, replacing the previous IW jar
+after backing up worlds/configuration. Sources are distributed separately.
+Published 2.2.0 and older releases, assets, tags and historical results remain
+unchanged. This heading records release contents, not proof of publication.
+
+### Standalone sandstorms
+
+- Standalone Fabric 1.20.1 sandstorms adapted from Scorchful's pinned LGPLv3
+  1.20.1 source: imported dust sprites and nine wind sounds, weather/biome-blended
+  fog, exposed-entity slowdown and existing IW sand/red-sand layer deposition.
+- Vanilla rain drives dry desert/badlands storms; common/server and independent
+  client controls, no new dependencies, no thirst/temperature or cauldron changes.
+  Legacy sandy-block growth, including its warm-ocean tag, is unchanged.
+- Fixed upstream at-cap pile reduction; bounded loaded/dry/supported deposition,
+  live temporary-modifier cleanup and guarded vanilla fog. All new IW storm
+  behavior yields to installed Scorchful to avoid duplicate mechanics/effects.
+- Exact pinned asset hashes, source/modification notices and candid audio
+  provenance are preserved in source and both distribution jars.
+- Adaptation pins Scorchful **d74712e9b5fc4348aa8ad9c417ce938daf8bc0a1** by
+  TheDeathlyCow under the intended root LGPLv3 license; the stale ARR manifest
+  clarification and per-wind third-party provenance limits are recorded in
+  `sandstorm-NOTICE.txt` and appended `ATTRIBUTIONS`. Three original dust sprites
+  and nine original wind sounds are included without inventing CC0 attribution.
+- Common/server defaults: `sandstorms.deposition=true`, `layer_cap=1` (1-8),
+  `slowing=true`, `slow_amount=0.3` (0-1). Deposition samples one column per
+  ticking chunk with a 1/16 trial, independent of randomTickSpeed and block
+  growth settings. Camels and optional `#c:bosses` are
+  immune; shelter/clear/config/immunity/biome/dimension changes reconcile the
+  temporary IW modifier every server entity tick.
+- Client defaults: particles/fog/hide_clouds/sounds enabled, particle scan radius
+  20 (40x40 loaded columns), rarity 60, fog start/end 16/64. Cloud hiding above
+  0.75 rain strength is independently configurable; wind uses Weather volume,
+  pitch 0.5 and the Wind blows subtitle. Dust uses the original color/gravity;
+  the upstream requested scale 10 actually clamps to 4 in vanilla.
+
+### Run checklist and validation limits
+
+- Automated storm/native fixtures and resource guards are not a visual/gameplay
+  pass. New [ST01-ST08 manual cases](docs/wiki/players/Feature-testing.md#standalone-sandstorms)
+  are **Not run**. Run the linked disposable-world fixture and its positive and
+  negative controls for weather/subtypes, exposure/slowdown, cap/occupied support,
+  live config/tag cleanup, client fog/dust/wind/reload and multiplayer/coexistence.
+- The prior broad user-reported 2.2.0 fire pass and snow historical outcomes are
+  retained, not relabeled as sandstorm or complete 2.3.0 acceptance. Real wind
+  playback/decoding, in-world visuals/rates, resource reload and multiplayer
+  remain unverified. Stable versioning does not manufacture those results.
+
 ## 2.2.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.

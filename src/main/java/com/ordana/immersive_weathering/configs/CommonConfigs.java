@@ -13,6 +13,10 @@ public class CommonConfigs {
 
 
     public static final ConfigSpec SERVER_SPEC;
+    public static final Supplier<Boolean> SANDSTORM_DEPOSITION;
+    public static final Supplier<Integer> SANDSTORM_LAYER_CAP;
+    public static final Supplier<Boolean> SANDSTORM_SLOWING;
+    public static final Supplier<Double> SANDSTORM_SLOW_AMOUNT;
 
     public static final Supplier<Boolean> BLOCK_GROWTHS;
     public static final Supplier<List<String>> DISABLED_GROWTHS;
@@ -112,6 +116,17 @@ public class CommonConfigs {
         ConfigBuilder builder = ConfigBuilder.create(ImmersiveWeathering.res("common"), ConfigType.COMMON);
 
         builder.setSynced();
+
+        builder.push("sandstorms");
+        SANDSTORM_DEPOSITION = builder.comment("Deposit existing IW sand layers in exposed dry desert/badlands during vanilla rain. Independent of block growths/randomTickSpeed; no cauldron changes. Yields to installed Scorchful.")
+                .define("deposition", true);
+        SANDSTORM_LAYER_CAP = builder.comment("Maximum storm-deposited layers per pile (1-8). Never reduces existing piles; not a column-height limit or legacy sandy-block growth setting.")
+                .define("layer_cap", 1, 1, 8);
+        SANDSTORM_SLOWING = builder.comment("Slow exposed living entities during sandstorms. Camel and sandstorm_slow_immune entity tag are exempt. Existing modifiers are cleaned up when disabled.")
+                .define("slowing", true);
+        SANDSTORM_SLOW_AMOUNT = builder.comment("Fraction of total movement speed removed (0.3 = 30%). No damage, thirst or temperature effects.")
+                .define("slow_amount", 0.3, 0, 1);
+        builder.pop();
 
         builder.push("general");
         BLOCK_GROWTHS = builder.define("block_growths", true);

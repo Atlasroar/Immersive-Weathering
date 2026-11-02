@@ -20,6 +20,7 @@ public class ModParticles {
     public static final Supplier<SimpleParticleType> SCRAPE_RUST = registerParticle("scrape_rust");
     public static final Supplier<SimpleParticleType> EMBERSPARK = registerParticle("emberspark");
     public static final Supplier<SimpleParticleType> MOSS = registerParticle("moss");
+    public static final Supplier<SimpleParticleType> DUST_GRAIN = registerParticle("dust_grain");
 
     //custom flower crowns
 

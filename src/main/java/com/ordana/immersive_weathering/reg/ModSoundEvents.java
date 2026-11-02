@@ -14,6 +14,7 @@ public class ModSoundEvents {
     }
 
     public static Supplier<SoundEvent> ICICLE_CRACK = registerSoundEvent("icicle_crack");
+    public static final Supplier<SoundEvent> WEATHER_SANDSTORM = registerSoundEvent("weather.sandstorm");
 
     @NotNull
     private static RegSupplier<SoundEvent> registerSoundEvent(@NotNull String name) {

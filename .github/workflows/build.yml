@@ -28,6 +28,7 @@ jobs:
         run: |
           python tools/fabric.py --check
           python tools/snow_resources.py --check
+          python tools/sandstorm_resources.py --check
           python tools/wiki.py --check
           python -B -m unittest discover -s tools -p "test_*.py"
       - name: make gradle wrapper executable
@@ -40,6 +41,7 @@ jobs:
         run: |
           $version = ((Get-Content gradle.properties | Select-String '^mod_version\s*=') -split '=', 2)[1].Trim()
           python tools/fabric.py --check --jar "build/libs/immersive_weathering-$version.jar" --sources "build/libs/immersive_weathering-$version-sources.jar"
+          python tools/sandstorm_resources.py --jar "build/libs/immersive_weathering-$version.jar" --sources "build/libs/immersive_weathering-$version-sources.jar"
       - name: capture build artifacts
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v7
