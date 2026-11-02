@@ -1,6 +1,7 @@
 package com.ordana.immersive_weathering.snow;
 
 import com.ordana.immersive_weathering.configs.CommonConfigs;
+import com.ordana.immersive_weathering.snowstorm.Snowstorms;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
@@ -34,8 +35,10 @@ public final class SnowWeather {
                 || !SnowPhysics.supported(level, target)) return false;
         int cap = effectiveCap(CommonConfigs.SNOW_COLUMN_CAP.get(), rule);
         if (existing >= cap || existing == 0 && (!SnowSettings.mixing() || !SnowHosts.supported(old))) return false;
-        BlockState next = old.is(Blocks.SNOW) ? old.setValue(SnowLayerBlock.LAYERS, existing + 1)
-                : SnowHosts.cover(old, existing + 1);
+        int layers = Snowstorms.depositionLayers(existing, cap, Snowstorms.isSnowstorm(level, sampledAir),
+                CommonConfigs.SNOWSTORM_DEPOSITION_BONUS.get());
+        BlockState next = old.is(Blocks.SNOW) ? old.setValue(SnowLayerBlock.LAYERS, layers)
+                : SnowHosts.cover(old, layers);
         if (next != null) {
             Block.pushEntitiesUp(old, next, level, target);
             level.setBlockAndUpdate(target, next);

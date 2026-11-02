@@ -1,0 +1,67 @@
+Standalone freezing wind and thunder snowstorms, adapted for IW 2026-11-02.
+Original projects by TheDeathlyCow, repository-declared GNU LGPL version 3.
+Retain weather-adaptations-LGPL-3.0.txt, LICENSE, COPYING and ATTRIBUTIONS.
+No "or later", blanket CC0, or independent certification of every pixel is asserted.
+
+Frostiful source pin: f017b15a2b23a6474d03d8e4b4e9e244247ffa24
+https://github.com/TheDeathlyCow/frostiful/tree/f017b15a2b23a6474d03d8e4b4e9e244247ffa24
+Original source root: src/main/java/com/github/thedeathlycow/frostiful/
+Adapted entity/WindEntity.java, entity/FreezingWindEntity.java and
+survival/wind/WindManager.java into IW wind/FreezingWindEntity.java,
+wind/FreezingWind.java and wind/WindBlocks.java; particle/client/WindParticle.java
+informs the age animation in client/particles/FreezingWindParticle.java.
+Selected particle registration/empty renderer behavior is wired in IW's native
+registries/client setup. Existing IW wind audio is reused, not Frostiful audio.
+
+Original resource root: src/main/resources/assets/frostiful/
+particles/wind.json -> IW particles/freezing_wind.json
+particles/wind_flipped.json -> IW particles/freezing_wind_flipped.json
+textures/particle/wind/var1_01.png, var1_02.png, var1_03.png,
+var2_01.png, var2_02.png, var2_03.png -> IW textures/particle/freezing_wind/
+textures/block/frozen_torch.png -> IW textures/block/unlit_torch.png
+models/block/frozen_torch.json and frozen_wall_torch.json,
+blockstates/frozen_torch.json and frozen_wall_torch.json inform native unlit models.
+PNGs are byte-identical; JSON namespace/names and wall variants adapted.
+The six gust frames were introduced in 87e79d1e902cf9ec3c395f65ee13fe0f20daef3c,
+after LGPL change 96cd6e6a3814a5fd6c0567c44c69e0baca189073.
+Torch artwork originated in 8b8d1a18eee3be36102dc56b9a75843fd924a16f.
+
+IW modifications: Mojmap/Fabric 1.20.1 integration, server-authoritative lifetime
+and discrete movement, bounded loaded/exposed sampling, independent additive
+temperature/altitude spawn probability, per-dimension weak budgets, ephemeral
+gusts, native vanilla Slowness instead of ALL thermal/player-temperature logic,
+explicit bounded fire interaction, source-water thin ice, native-survival
+underside icicles, normal/soul and wall-orientation-preserving relightable
+unlit torches with ordinary vanilla torch loot (not stick/SilkTouch-only loot).
+IW uses camera-facing age-animated swirls, not the original double-sided mesh.
+No Frostiful/Thermoo runtime dependency or custom thermal networking.
+
+Immersive Storms source pin: 66c883b5c1facba2219c9a31e1f93acfe2e333c9
+https://github.com/TheDeathlyCow/immersive-storms/tree/66c883b5c1facba2219c9a31e1f93acfe2e333c9
+Original source root: src/main/java/com/thedeathlycow/immersive/storms/
+client/world/BiomeWindEffects.java, client/particle/DustGrainParticle.java,
+client/world/SandstormSounds.java, client/world/StormFogModifier.java and
+config/section/AdvancedSettings.java inform IW client/SnowstormEffects.java,
+client/particles/SnowstormGrainParticle.java and client-only fog/cloud hooks.
+MC 26.1.2/Java 25 APIs are NOT copied as a dependency; presentation is adapted
+to IW's Minecraft 1.20.1 lifecycle and renderer safeguards. Thunder/cold
+classification and capped deposition bonus are new IW gameplay through the
+existing SINGLE SnowWeather sampled deposition authority, not upstream physics.
+
+Original resource root: src/main/resources/assets/immersive-storms/
+particles/dust_grain.json -> IW particles/snowstorm_grain.json (namespace rewrite)
+textures/particle/dust_grain/var0.png, var1.png, var2.png ->
+IW textures/particle/snowstorm_grain/ (byte-identical shared grains, not snow-only art).
+Shared sprite introduction: 1db4504cc0a65ee0eca2e15ded24a3a71340cfb5.
+Pinned LICENSE/README explicitly grant project LGPLv3; no art exception found.
+
+No howls, woosh, soft/strong wind, sandstorm recordings or unrelated assets from
+either project are imported. Third-party audio origins/redistribution terms
+remain unresolved; later generic Pixabay/CC0 credits are not a license grant
+for unmapped recordings. User selected reuse of the EXISTING IW weather.sandstorm
+event instead. Its pre-existing provenance limits remain in sandstorm-NOTICE.txt.
+
+tools/wind_resources.py records exact imported PNG SHA-256 values and checks
+registrations, notices and corresponding source in binary and sources jars.
+Modified Java, JSON and this notice ship in the sources jar at the same commit
+as the binary; the repository source at that commit is corresponding source.

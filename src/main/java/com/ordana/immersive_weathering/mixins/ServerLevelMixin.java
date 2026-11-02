@@ -30,6 +30,7 @@ public abstract class ServerLevelMixin extends Level {
     @Inject(method = "tickChunk", at = @At("TAIL"))
     private void sandstormDeposition(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
         com.ordana.immersive_weathering.sandstorm.SandAccumulation.tickChunk((ServerLevel) (Object) this, chunk);
+        com.ordana.immersive_weathering.wind.FreezingWind.tickChunk((ServerLevel) (Object) this, chunk);
     }
 
     protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {

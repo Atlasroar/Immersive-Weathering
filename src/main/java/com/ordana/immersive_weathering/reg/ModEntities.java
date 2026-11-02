@@ -19,6 +19,10 @@ public class ModEntities {
     }
 
     //entities
+    public static final Supplier<EntityType<com.ordana.immersive_weathering.wind.FreezingWindEntity>> FREEZING_WIND =
+            RegHelper.registerEntityType(ImmersiveWeathering.res("freezing_wind"),
+                    com.ordana.immersive_weathering.wind.FreezingWindEntity::new, MobCategory.MISC, 2, 2, 10, 1);
+
     public static Supplier<EntityType<FallingIcicleEntity>> FALLING_ICICLE = RegHelper.registerEntityType(
             ImmersiveWeathering.res("falling_icicle"),
             FallingIcicleEntity::new, MobCategory.MISC, 0.98F, 0.98F, 10, 20);

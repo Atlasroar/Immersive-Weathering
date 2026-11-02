@@ -25,6 +25,62 @@ a dedicated stone-brick comparison matrix.
 Not every block has every variant. Tool actions can consume items or durability.
 Do not infer that the mod weathers arbitrary blocks from other mods.
 
+## Freezing wind and thunder snowstorms
+
+**Unreleased implementation; version remains 2.4.0.** All new
+[FW01-FW08 manual scenarios](Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+are **Not run**. Frostiful and Immersive Storms are not required.
+
+Traveling, snowflake-filled 2x2 gusts can spawn **at night in all biomes** in
+natural skylit dimensions, at an exposed sampled surface or up to eight blocks
+above it. Cold biomes add probability; Y **100 or higher** adds an independent
+bonus, so a cold mountain is more likely than a low cold biome. Spawn budgets
+bound successful gusts to two per dimension per second and 32 live natural gusts.
+These are caps, not guaranteed rates. See the exact
+[probability and controls](Configuration.md#freezing-wind-and-thunder-snowstorms).
+
+Gusts live 80-140 ticks, move west one block **every ten ticks**, and climb
+half a block when horizontally obstructed. They push eligible living entities
+and apply **Slowness I for 60 ticks**, refreshed on contact every five ticks.
+Spectators and the `wind_heavy` entity tag (iron golems, ravagers, wardens) are
+immune. Elytra flight receives the stronger upstream push. There is **no player
+temperature, freeze-tick, thermal damage, wetness, armor or heart system**.
+Compatibility temperature changes belong to other mods, not IW's wind.
+
+Nearby reachable fire/soul fire, candles, candle cakes and campfires go out.
+Normal and soul torches stay **unlit in place**, retaining standing/wall identity
+and wall facing. Both use the imported frozen-torch appearance; F3 identifies
+their distinct soul/normal block IDs. Right-click with flint and steel, a fire
+charge or either lit torch to restore the matching vanilla torch. Survival uses
+one durability/one charge, but does not consume a held torch. Breaking/picking
+returns the matching vanilla torch, not sticks or a Silk Touch requirement.
+Lanterns, redstone torches and lit machines are not extinguished.
+
+Wind freezes only exposed **water source blocks** into existing IW thin ice,
+subject to its light/surface survival rules; flowing water and waterlogged blocks
+are untouched. Thin ice retains its existing breaking/melting behavior.
+Wind also increases icicle formation in nearby empty cells below **any native
+valid support**, not only ice/snow materials. It does not overwrite blocks.
+All gust block changes require `mobGriefing=true`; the global `disable_icicles`
+still wins. Walls block interactions; unloaded chunks are never forced.
+
+During **vanilla thunder** in a biome with native snow precipitation at the
+position, a **snowstorm** adds daytime or nighttime gusts, one extra snow layer
+per eligible existing accumulation sample, white fog, windblown grains, hidden
+clouds and intermittent existing IW wind audio. No extra whole-chunk snow loop:
+the existing snow enablement, support/light rules, cap, host settings and
+`snowAccumulationHeight` still apply. Ordinary snowfall is unchanged. Clearing
+weather stops the storm; already-spawned gusts finish their short life.
+Fog/clouds may remain visible indoors; particles/sound sample exposed surfaces.
+Fluid, blindness, darkness, stronger native fog and view-distance safeguards
+remain. Minimal particles suppress grains; Decreased reduces trials.
+
+If Immersive Storms is installed, IW yields **snowstorm presentation only** to
+it, without disabling IW snow deposition or gusts. This avoids duplicate
+fog/audio ownership; compatibility still needs manual verification.
+All audio reuses the already-present IW event: no new upstream recordings.
+See [provenance and limits](../developers/Licensing.md#freezing-wind-and-snowstorm-adaptation).
+
 ## Standalone sandstorms
 
 **Added in 2.3.0**, adapted with original dust sprites and nine wind

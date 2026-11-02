@@ -1,3 +1,24 @@
+## Unreleased
+
+- Standalone traveling freezing wind adapted from pinned Frostiful source and
+  six original particle frames, without Frostiful/Thermoo or player temperature,
+  freeze ticks, damage, wetness, armor or heart systems. Ambient wind is
+  night-only in all biomes; independent cold/altitude bonuses favor cold mountains.
+- Gusts push and apply configurable vanilla Slowness, extinguish open flames
+  (including normal/soul torches left unlit in place and relightable), freeze
+  eligible source water into existing thin ice, and grow native-survival
+  underside icicles without restricting support materials. Block changes require
+  mobGriefing; existing thin-ice light rules and disable_icicles remain.
+- Cold vanilla thunder snowstorms run day or night, add a capped bonus through
+  the existing single sampled snow deposition authority, and generate more wind.
+  Guarded white fog, shared upstream grain artwork, cloud hiding and intermittent
+  existing IW wind audio are independently configurable. No new audio recordings
+  or modern Immersive Storms APIs/dependencies imported.
+- Pinned LGPLv3 provenance, packaged-source/resource guards and a separate
+  FW01-FW08 acceptance checklist accompany the work. All new manual scenarios
+  remain **Not run**; previous 2.4.0 SP01-SP07 Pass/SP08 N/A and ST01-ST08
+  Not run records are unchanged. Version remains 2.4.0; this is not a release.
+
 ## 2.4.0
 
 Stable release for Minecraft **1.20.1**, **Fabric** and **Java 17**.

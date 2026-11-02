@@ -52,6 +52,39 @@ winds Wagna/CC0 or assert that all external audio automatically inherits the
 code license. Retain any additional verified applicable notice if discovered.
 No unrelated Scorchful armor, banner, cauldron or worldgen assets are imported.
 
+## Freezing wind and snowstorm adaptation
+
+Unreleased integration pins
+[Frostiful f017b15a2b23a6474d03d8e4b4e9e244247ffa24](https://github.com/TheDeathlyCow/frostiful/tree/f017b15a2b23a6474d03d8e4b4e9e244247ffa24)
+and [Immersive Storms 66c883b5c1facba2219c9a31e1f93acfe2e333c9](https://github.com/TheDeathlyCow/immersive-storms/tree/66c883b5c1facba2219c9a31e1f93acfe2e333c9),
+both by TheDeathlyCow under repository-declared LGPLv3. This is a standalone
+source/presentation adaptation, not a runtime dependency. Immersive Storms at
+that pin targets modern Minecraft/Java, not a nonexistent 1.20.1 port.
+
+[freezing-wind-NOTICE.txt](../../../src/main/resources/freezing-wind-NOTICE.txt)
+lists exact upstream roots/paths, imported six wind frames/frozen-torch PNG and
+three shared grain PNGs, introduction commits, modifications, corresponding IW
+source and limitations. The namespaces/JSON and native torch identity/loot are
+adapted; the ten PNGs remain byte-identical.
+[weather-adaptations-LGPL-3.0.txt](../../../src/main/resources/weather-adaptations-LGPL-3.0.txt)
+retains the upstream license verbatim; original LICENSE/COPYING/InspectorJ and
+Scorchful notices remain, with attribution appended rather than replaced.
+`tools/wind_resources.py` verifies PNG SHA-256, native torch loot/orientations,
+notices and corresponding source in the binary and sources jars.
+
+The six gust frames postdate Frostiful's LGPL license change; no artwork
+carve-out or specific third-party claim was found. Immersive Storms explicitly
+declares project LGPL in LICENSE/README without an art exception. This is the
+repository-declared provenance basis, **not forensic certification of each pixel**
+or an "or later"/CC0 assertion. Shared dust artwork is honestly identified as
+shared, not an upstream snow-exclusive sprite sheet.
+
+**No new recordings** are imported: no Frostiful howls/woosh or Immersive Storms
+soft/strong/sandstorm winds. Unmapped third-party audio provenance/redistribution
+terms remain unresolved; generic later Pixabay/CC0 credits are not reassigned
+to those recordings. The user's selected alternative reuses IW's existing
+`weather.sandstorm` event; its already-recorded provenance limits remain above.
+
 ## Distribution checklist
 
 Keep source available under applicable terms, preserve notices, identify

@@ -10,6 +10,42 @@ their `Not run` cells are template defaults, not the current test-round verdicts
 Use the dated ledger for recorded outcomes.
 Datapacks, configuration, other mods, and later releases can change expectations.
 
+## Freezing wind and thunder snowstorms
+
+**Unreleased work on 2.4.0; FW01-FW08 are all Not run.** Earlier SP01-SP07
+Pass/SP08 N/A, ST01-ST08 Not run and older snow/fire records below are unchanged.
+Use a locally built remapped binary at the implementation commit, record its
+SHA-256 and server/client configs; the published 2.4.0 binary predates this work.
+Do not install sources/dev jars, launch an external profile automatically, or
+equate native fixtures/build output with gameplay, visual or audio acceptance.
+
+Use an intentionally disposable/backed-up cheats-enabled world. Record and
+restore weather/daylight/mobGriefing/snowAccumulationHeight/randomTickSpeed and
+configs; only alter a named small test area. No commands here have been run by
+the implementation. To isolate block/contact behavior from probabilistic
+spawning, `/summon immersive_weathering:freezing_wind ~3 ~ ~` creates a short-lived
+gust east of the tester. Clear obstacles for its 2x2 volume and westward path;
+use standing and wall fixtures on separate lanes. Natural spawning still needs
+its own measured tests, not only `/summon`.
+When retesting older SP/fire scenarios on this Unreleased build, temporarily
+disable `freezing_wind.enabled` to isolate the old thunder-only fire rule from
+the new independent gust extinguishing; record and restore that control.
+
+| Case | Setup and controls | Required observation | Manual verdict |
+| --- | --- | --- | --- |
+| FW01 | Compare exposed low hot/plains/cold biomes at midnight, and the same base-temperature biome below/at Y100. Record many per-chunk attempts and effective config; use base/bonuses=0 and then a deterministic 1 for isolated negative/positive controls, restoring defaults afterward. Compare clear noon/night and non-natural dimensions. | Ambient gusts only at night, all biomes eligible, colder/altitude independently increase measured probability; no spawn through roofs/outside build limits or forced chunks. Two successes/dimension/20 ticks and 32-live cap are maxima, not guaranteed rates. | Not run |
+| FW02 | Summon into open lane, then behind a full wall and beside a step/eave. Observe five-second-scale lifetime and movement with block coordinates; test pig/player, spectator, iron golem, ravager, warden and elytra flight. | 2x2 gust, west one block per ten ticks (not per tick), 80-140 tick lifespan, collision climbing; push plus 60-tick Slowness I every five ticks, no through-wall hit. Heavy tag/spectators excluded; stronger elytra push. No new temperature/freeze ticks/damage/hearts. | Not run |
+| FW03 | Ordinary/soul standing torches and each wall facing; fire/soul fire, every candle count/candle cake, lit ordinary/soul campfire including waterlogged native states. Include lit furnace, lantern, redstone torch/lamp controls. Relight with flint/charge/held torch in Survival and Creative, then break/pick unlit variants. | Applicable flames go out; torches remain unlit/no light/no flame animation with exact soul/normal identity and wall facing, native survival/support updates. Relighting restores matching vanilla state; Survival one durability/charge, no held-torch consumption; correct vanilla torch loot/pick. Machines/lanterns/redstone unchanged. | Not run |
+| FW04 | Source pool, flowing water, waterlogged fence/slab, stacked water and nearby bright light; compare existing thin-ice cracking/melting. Put empty underside cells below stone, wood, glass, leaves, slab and invalid supports, with a chest/flower occupying other cells. Temporarily use icicle chance=1; restore. | Only native-surviving surface sources freeze to existing thin ice. No flow/waterlogged replacement. Icicles form on any geometrically valid support; not occupied/unsupported cells or through walls. Existing ice/icicle physics remain. | Not run |
+| FW05 | Independently toggle wind enabled, extinguish, freeze_water, icicle chance0, disable_icicles, slow_ticks0 and mobGriefing=false. Set spawn_budget/live_cap0, low caps, then restore. Unload/reload a gust chunk, change dimension, save/reopen, restart server. | Wind disable removes live gusts, zero caps stop natural spawns, zero effect controls respected. mobGriefing stops all gust block changes but not contact push/Slowness. No orphaned saved gusts/stale budget leak or loss of existing unlit/ice/icicle blocks. | Not run |
+| FW06 | Cold native snow-precipitation biome during daytime thunder; compare rain-only, clear, hot thunder, roof, night and biome/height boundaries. Compare bonus0/1/3, snow accumulation off, cap1/4/8 and snowAccumulationHeight0/1/3; supported dry hosts and wet/occupied cells. | Storm only cold thunder; daytime gusts and additive bonus. Snow uses one existing sampled deposition authority, obeys light/support/host/cap/gamerule and never trims piles or adds a competing whole-chunk loop. Ordinary first snowfall/thunder behavior remains with storm disabled/bonus0. | Not run |
+| FW07 | Independently toggle snowstorm particles/fog/clouds/sounds, All/Decreased/Minimal particles, range0/default/max and rarity, Weather volume0/subtitles, underwater/lava/powder-snow, blindness/darkness/thick fog, short render distance, indoor shelter and biome edge. Disconnect, change worlds/dimensions, clear/restart storm and F3+T. | Original six swirl frames/shared upstream white grains render without missing resources; guarded blended fog never extends stronger native fog/view distance. Cloud control independent; bounded loaded scan; native particle setting honored; intermittent existing IW audio, not new recordings/stale timers. | Not run |
+| FW08 | Matching dedicated server and two clients, save/reopen unlit wall torches and storm deposits, datapack wind_heavy reload, optional Immersive Storms coexistence in a separate disposable setup. Retest SP/ST and snow/fire controls without overwriting their historical verdicts. | Server authority/client agreement; no missing entity factory/renderer/resources on dedicated server. Immersive Storms owns snowstorm presentation without disabling IW gameplay or duplicate IW storm fog/audio. Optional setup absent is N/A, not a compatibility pass. | Not run |
+
+Probabilistic observations need counted trials, not a promise of gusts in a
+short wait. Restore all changed settings and delete only fixtures created for
+this round. Record each variant using the [result record](#return-results-by-test-id).
+
 ## Sand and thunder
 
 **2.4.0 release round, 2026-11-02: SP01-SP07 user-reported Pass;

@@ -28,9 +28,61 @@ source expressions rather than guessing what a setting's name means.
 | Control standalone snow | Common `snow` section; independent of `general.block_growths` |
 | Control standalone fire | Common `fire` section; independent of `general.block_growths` and existing `charring` settings |
 | Control standalone sandstorms | Common and client `sandstorms` sections; independent of legacy sandy-block growth |
+| Control freezing wind / thunder snowstorms | Common `freezing_wind`/`snowstorms` and client `snowstorms`; no temperature system |
 | Control sand sharing/replacement/erosion | Common `sand` section, added in 2.4.0; independent of the growth dispatcher |
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
+
+## Freezing wind and thunder snowstorms
+
+Unreleased; no version bump. Common controls are server-synchronized. Restart
+after editing files; config disable does not erase existing ice/icicles/unlit
+torches or snow. Disabling wind discards active gusts on their next server tick.
+
+One attempt per ticking chunk per **20 game ticks**, staggered by chunk position,
+uses this probability (all bonuses are **additive**, final result clamped 0-1):
+
+```text
+base_chance + cold_bonus * clamp((0.8 - base biome temperature) / 1.3, 0, 1)
+            + (sampled Y >= height ? height_bonus : 0)
+            + (cold thunder snowstorm ? snowstorm_bonus : 0)
+```
+
+Base biome temperature deliberately avoids double-counting altitude: cold
+classification for snowstorms separately uses native precipitation at position.
+At defaults, a hot biome below Y100 has 0.1% per attempt; temperature -0.5 has
+2%; that same cold biome at/above Y100 has 4%; with a thunder snowstorm it has
+12%. Ambient attempts are **night-only**; only cold thunder storms allow daytime.
+Caps/loaded-space/exposure/obstruction checks can prevent a successful spawn.
+`general.block_growths` and `randomTickSpeed` do not control wind.
+
+| Common `freezing_wind` key | Default (bounds) | Meaning |
+| --- | --- | --- |
+| `enabled` | true | Ambient all-biome night gusts and cold thunder gusts |
+| `base_chance`, `cold_bonus` | 0.001, 0.019 (each 0-1) | Base and independent cold probability |
+| `height`, `height_bonus` | 100 (-64 to 4096), 0.02 (0-1) | Independent altitude threshold and bonus |
+| `snowstorm_bonus` | 0.08 (0-1) | Adds to cold thunder chance, day or night |
+| `spawn_budget`, `live_cap` | 2 (0-64), 32 (0-256) | Per-dimension successful spawns per 20 ticks / simultaneous natural gusts; either zero stops natural spawning |
+| `slow_ticks`, `slow_amplifier` | 60 (0-1200), 0 (0-4) | Vanilla Slowness; zero duration disables; amplifier is zero-based |
+| `extinguish`, `freeze_water` | true | Open-flame/unlit-torch and existing thin-ice integrations |
+| `icicle_chance` | 0.05 (0-1) | Per eligible cell per bounded 36-cell scan every five ticks; zero stops wind formation |
+
+Common `snowstorms.enabled=true` enables native cold thunder storms;
+`deposition_bonus=1` (0-3) adds layers only in the existing sampled accumulation
+path. Zero preserves ordinary thunder accumulation, not a global snowfall
+disable. `snow.accumulation=false`/`snowAccumulationHeight=0` retain their existing
+meaning. `snowstorms.enabled=false` removes daytime storm gusts and their bonus,
+not ambient night wind or existing vanilla/IW ordinary thunder snow.
+
+Client `snowstorms` controls particles, bounded range/rarity, fog start/end,
+cloud hiding and sounds independently, like the existing sandstorm settings.
+Defaults are `particles/fog/hide_clouds/sounds=true`, `particle_range=20` (0-32),
+`particle_rarity=60` (1-1200), `fog_start=8` (0-256), `fog_end=48` (1-512).
+All exact keys also appear in the [generated reference](../developers/Reference.md).
+Vanilla Minimal particles and Weather volume still apply. Presentation yields
+to installed Immersive Storms; IW gameplay controls remain effective.
+The client snowstorm sound toggle controls atmospheric scheduling, not the
+separate traveling gust's own WEATHER-category sound.
 
 ## Standalone sandstorms
 

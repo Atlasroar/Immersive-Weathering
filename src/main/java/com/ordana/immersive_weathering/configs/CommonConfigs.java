@@ -13,6 +13,21 @@ public class CommonConfigs {
 
 
     public static final ConfigSpec SERVER_SPEC;
+    public static final Supplier<Boolean> WIND_ENABLED;
+    public static final Supplier<Double> WIND_BASE_CHANCE;
+    public static final Supplier<Double> WIND_COLD_BONUS;
+    public static final Supplier<Integer> WIND_HEIGHT;
+    public static final Supplier<Double> WIND_HEIGHT_BONUS;
+    public static final Supplier<Double> WIND_STORM_BONUS;
+    public static final Supplier<Integer> WIND_SPAWN_BUDGET;
+    public static final Supplier<Integer> WIND_LIVE_CAP;
+    public static final Supplier<Integer> WIND_SLOW_TICKS;
+    public static final Supplier<Integer> WIND_SLOW_AMPLIFIER;
+    public static final Supplier<Boolean> WIND_EXTINGUISH;
+    public static final Supplier<Boolean> WIND_FREEZE_WATER;
+    public static final Supplier<Double> WIND_ICICLE_CHANCE;
+    public static final Supplier<Boolean> SNOWSTORM_ENABLED;
+    public static final Supplier<Integer> SNOWSTORM_DEPOSITION_BONUS;
     public static final Supplier<Boolean> SANDSTORM_DEPOSITION;
     public static final Supplier<Integer> SANDSTORM_LAYER_CAP;
     public static final Supplier<Boolean> SANDSTORM_SLOWING;
@@ -123,6 +138,40 @@ public class CommonConfigs {
         ConfigBuilder builder = ConfigBuilder.create(ImmersiveWeathering.res("common"), ConfigType.COMMON);
 
         builder.setSynced();
+
+        builder.push("freezing_wind");
+        WIND_ENABLED = builder.comment("Traveling gusts in natural skylit dimensions. Ambient wind is night-only in all biomes; cold thunder snowstorms can generate wind day or night. No thermal system.")
+                .define("enabled", true);
+        WIND_BASE_CHANCE = builder.comment("Probability per ticking chunk per 20 ticks at one exposed sampled position. Total = clamp(base + cold_bonus * clamp((0.8 - base biome temperature)/1.3,0,1) + height_bonus if Y >= height + storm_bonus during snowstorms,0,1).")
+                .define("base_chance", 0.001, 0, 1);
+        WIND_COLD_BONUS = builder.comment("Additive cold-biome probability bonus; independent of altitude.")
+                .define("cold_bonus", 0.019, 0, 1);
+        WIND_HEIGHT = builder.comment("Altitude at which the independent height bonus applies.")
+                .define("height", 100, -64, 4096);
+        WIND_HEIGHT_BONUS = builder.define("height_bonus", 0.02, 0, 1);
+        WIND_STORM_BONUS = builder.define("snowstorm_bonus", 0.08, 0, 1);
+        WIND_SPAWN_BUDGET = builder.comment("Maximum successful natural gust spawns per dimension per 20 game ticks.")
+                .define("spawn_budget", 2, 0, 64);
+        WIND_LIVE_CAP = builder.comment("Maximum live natural gusts per dimension. Gusts are ephemeral and are not saved.")
+                .define("live_cap", 32, 0, 256);
+        WIND_SLOW_TICKS = builder.comment("Vanilla Slowness duration per gust hit every five ticks; zero disables Slowness. IW default, not upstream temperature.")
+                .define("slow_ticks", 60, 0, 1200);
+        WIND_SLOW_AMPLIFIER = builder.comment("Zero-based Slowness amplifier (0 = Slowness I).")
+                .define("slow_amplifier", 0, 0, 4);
+        WIND_EXTINGUISH = builder.comment("Extinguish fire, candles, candle cakes, campfires and vanilla ordinary/soul torches. Torches stay in place and can be relit. All wind block writes require doMobGriefing.")
+                .define("extinguish", true);
+        WIND_FREEZE_WATER = builder.comment("Freeze exposed source WATER blocks into existing IW thin ice, respecting its native light/surface survival rules. No flowing/waterlogged replacement.")
+                .define("freeze_water", true);
+        WIND_ICICLE_CHANCE = builder.comment("Chance per eligible empty underside cell in the bounded gust scan every five ticks. Any native valid support; respects disable_icicles and doMobGriefing.")
+                .define("icicle_chance", 0.05, 0, 1);
+        builder.pop();
+
+        builder.push("snowstorms");
+        SNOWSTORM_ENABLED = builder.comment("Cold snow-precipitation biomes during vanilla thunder, including daytime. Presentation yields to Immersive Storms; IW gameplay remains independent.")
+                .define("enabled", true);
+        SNOWSTORM_DEPOSITION_BONUS = builder.comment("Extra layers per successful existing sampled snow-deposition event in a snowstorm, bounded by the existing column cap/gamerule. Zero preserves ordinary thunder deposition.")
+                .define("deposition_bonus", 1, 0, 3);
+        builder.pop();
 
         builder.push("sandstorms");
         SANDSTORM_DEPOSITION = builder.comment("Deposit existing IW sand layers in exposed dry desert/badlands during vanilla rain. Independent of block growths/randomTickSpeed; no cauldron changes. Yields to installed Scorchful.")

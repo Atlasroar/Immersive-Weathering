@@ -14,3 +14,12 @@ Includes three original dust sprites and nine original sandstorm wind sounds.
 See src/main/resources/sandstorm-NOTICE.txt (also embedded in both jars) for
 exact adaptation paths, corresponding source, changes and audio provenance
 limitations. No CC0 attribution or third-party audio relicensing is asserted.
+
+Standalone freezing wind and thunder snowstorm presentation adapted from
+Frostiful by TheDeathlyCow (f017b15a2b23a6474d03d8e4b4e9e244247ffa24) and
+Immersive Storms by TheDeathlyCow (66c883b5c1facba2219c9a31e1f93acfe2e333c9).
+Repository-declared GNU LGPLv3; modified for IW 2026-11-02.
+Includes six Frostiful wind frames, its frozen-torch texture and three shared
+Immersive Storms grain sprites. No new upstream audio recordings imported.
+See embedded freezing-wind-NOTICE.txt and weather-adaptations-LGPL-3.0.txt for
+pinned sources, paths, modifications, corresponding source and provenance limits.

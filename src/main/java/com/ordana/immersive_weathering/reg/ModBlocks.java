@@ -106,6 +106,15 @@ public class ModBlocks {
 
     public static final Map<LeavesType, LeafPileBlock> LEAF_PILES = new LinkedHashMap<>();
 
+    public static final Supplier<Block> UNLIT_TORCH = regBlock("unlit_torch", () ->
+            new UnlitTorchBlock(false, Properties.copy(Blocks.TORCH).lightLevel(state -> 0)));
+    public static final Supplier<Block> UNLIT_SOUL_TORCH = regBlock("unlit_soul_torch", () ->
+            new UnlitTorchBlock(true, Properties.copy(Blocks.SOUL_TORCH).lightLevel(state -> 0)));
+    public static final Supplier<Block> UNLIT_WALL_TORCH = regBlock("unlit_wall_torch", () ->
+            new UnlitWallTorchBlock(false, Properties.copy(Blocks.WALL_TORCH).lightLevel(state -> 0)));
+    public static final Supplier<Block> UNLIT_SOUL_WALL_TORCH = regBlock("unlit_soul_wall_torch", () ->
+            new UnlitWallTorchBlock(true, Properties.copy(Blocks.SOUL_WALL_TORCH).lightLevel(state -> 0)));
+
     public static final Supplier<LeafPileBlock> AZALEA_FLOWER_PILE = regBlock("azalea_flower_pile", () ->
         new LeafPileBlock(LEAF_PILE_PROPERTIES.sound(SoundType.AZALEA), LeavesTypeRegistry.OAK_TYPE));
 

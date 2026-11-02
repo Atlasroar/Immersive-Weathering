@@ -13,6 +13,13 @@ and thunderstorm fire suppression. See the [feature guide](docs/wiki/players/Fea
 and [manual checklist](docs/wiki/players/Feature-testing.md#sand-and-thunder).
 These changes are not part of the immutable published 2.3.0 artifacts.
 
+**Unreleased:** standalone freezing wind and cold thunder snowstorms, adapted
+from pinned Frostiful/Immersive Storms source and artwork without thermal-system
+dependencies or new recordings. See [behavior and controls](docs/wiki/players/Features.md#freezing-wind-and-thunder-snowstorms)
+and [FW01-FW08](docs/wiki/players/Feature-testing.md#freezing-wind-and-thunder-snowstorms),
+all **Not run**. Version remains 2.4.0; published 2.4.0 artifacts are unchanged
+and do not contain this work.
+
 The default development branch is `1.20.1-fabric`. Historical
 branches were retired after preserving their tips as `archive/2026-11-01/*` tags;
 fully merged feature branches are removed after landing. See the

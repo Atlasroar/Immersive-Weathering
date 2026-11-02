@@ -89,6 +89,34 @@ still require user testing.
 
 ## Verification by change type
 
+### Freezing wind and snowstorm harness
+
+Unreleased source adds `.\gradlew.bat windMechanicsTest --console=plain` to
+`check`/`build`. It executes production probability/block/lifecycle helpers with
+native Mojang state containers, original thin-ice/icicle/torch implementations
+and explicit bounded world/config/registration fixtures, plus cold thunder
+classification/deposition and client-policy checks. Registration substitutes
+avoid requiring a running Fabric loader; they are not mock rewrites of gameplay
+rules. The source set lives in `src/windTest`, separately from original
+snow/fire/sand regression suites.
+
+```powershell
+.\gradlew.bat windMechanicsTest --console=plain
+python tools\wind_resources.py --check
+python tools\wind_resources.py --jar build\libs\immersive_weathering-2.4.0.jar --sources build\libs\immersive_weathering-2.4.0-sources.jar
+```
+
+The resource guard verifies ten pinned upstream PNGs, particle inventories,
+ordinary/soul native torch loot/facing inventory, both license/notices and
+corresponding Java source membership in the sources jar. Source and artifact
+checks run in the existing cross-platform workflow. These checks do **not**
+establish real Mixin weaving, networking/rendering/audio, dedicated-server
+startup, optional-mod coexistence or visual/gameplay acceptance. No external
+Minecraft profile/world is mutated or launched, no EULA accepted by this work.
+Record manual [FW01-FW08](../players/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+separately; all start Not run. Original SP/ST/snow/fire ledger entries remain
+historical, not passes for these features.
+
 | Change | Minimum relevant checks |
 | --- | --- |
 | Java behavior | Targeted compile/build plus a Fabric reproduction and unchanged comparison behavior |

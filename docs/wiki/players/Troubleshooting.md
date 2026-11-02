@@ -2,6 +2,24 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
+For **Unreleased freezing wind / thunder snowstorms**, the published 2.4.0 jar
+does not contain this work. Record the implementation commit and local binary
+hash. Natural ambient gusts require night, natural skylit dimensions, exposed
+loaded space, nonzero chance/budget/cap; cold thunder can generate them in daytime.
+Do not raise randomTickSpeed to accelerate wind. Below Y100/hot biomes are
+intentionally rare. Use the [exact formula](Configuration.md#freezing-wind-and-thunder-snowstorms).
+No flame/ice/icicle changes with mobGriefing=false is expected, not a bug;
+disable_icicles/light/occupied-cell guards still apply. Unlit torches retain
+their normal/soul identity: relight, do not replace them to recover illumination.
+F3 distinguishes the two unlit types despite their shared frozen artwork.
+
+Snowstorm requires **thunder**, unlike sandstorm. Snow still needs its global
+accumulation/cap/gamerule/support rules; bonus0/disabled storm preserves ordinary
+snow behavior rather than disabling snowfall. Check client snowstorm toggles,
+vanilla particle/Weather settings and actually installed Immersive Storms
+(which owns presentation only). No new upstream wind recordings were imported.
+FW01-FW08 remain **Not run**, not inferred compatibility or rendering passes.
+
 For the **2.3.0 standalone sandstorms**, check vanilla rain first, then the
 new dry-biome subtype tags and common/client `sandstorms` settings. Thunder is
 unnecessary; wet-biome `has_sandstorm` legacy growth does not imply new dust/fog
