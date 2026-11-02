@@ -44,6 +44,18 @@ public class CommonConfigs {
     public static final Supplier<Double> FIRE_CHARS_WOOD_CHANCE;
     public static final Supplier<Boolean> SOOT_SPAWN;
     public static final Supplier<Boolean> FLAMMABLE_COBWEBS;
+    public static final Supplier<Boolean> FIRE_ENTITY_SPREAD;
+    public static final Supplier<Boolean> FIRE_TORCH_ATTACKS;
+    public static final Supplier<Boolean> FIRE_FLAMMABLE_GRASS;
+    public static final Supplier<Integer> FIRE_SPREAD_INTERVAL;
+    public static final Supplier<Integer> FIRE_SPREAD_RADIUS;
+    public static final Supplier<Integer> FIRE_HEAT_RADIUS;
+    public static final Supplier<Integer> FIRE_HEAT_SOURCE_CAP;
+    public static final Supplier<Double> FIRE_SPREAD_CHANCE;
+    public static final Supplier<Double> FIRE_PROJECTILE_MULTIPLIER;
+    public static final Supplier<Double> FIRE_HEAT_BONUS;
+    public static final Supplier<Double> FIRE_TEMPERATURE_BONUS;
+    public static final Supplier<Double> FIRE_SPREAD_CHANCE_CAP;
 
 
     public static final Supplier<Boolean> PICKAXE_CRACKING;
@@ -148,6 +160,33 @@ public class CommonConfigs {
         FIRE_CHARS_WOOD_CHANCE = builder.define("fire_chars_wood", 0.3, 0, 1);
         SOOT_SPAWN = builder.define("soot_spawn", true);
         FLAMMABLE_COBWEBS = builder.define("flammable_cobweb", true);
+        builder.pop();
+
+        builder.push("fire");
+        FIRE_ENTITY_SPREAD = builder.comment("Allow non-sun burning entities to ignite nearby flammable blocks. Requires doFireTick.")
+                .define("entity_spread", true);
+        FIRE_TORCH_ATTACKS = builder.comment("Successful direct melee with a torch or soul torch burns a living target for 4 seconds; consumes one item outside Creative.")
+                .define("torch_attacks", true);
+        FIRE_FLAMMABLE_GRASS = builder.comment("Grass blocks can burn into dirt at the same position, without drops. Requires doFireTick.")
+                .define("flammable_grass", true);
+        FIRE_SPREAD_INTERVAL = builder.comment("Ticks between entity-staggered spread trials.")
+                .define("spread_interval", 20, 1, 1200);
+        FIRE_SPREAD_RADIUS = builder.comment("Cube radius in blocks for nearby air cells adjacent to flammable blocks.")
+                .define("spread_radius", 1, 1, 3);
+        FIRE_HEAT_RADIUS = builder.comment("Cube radius in blocks for counting fire, soul fire, magma and lava. No torches or campfires.")
+                .define("heat_radius", 2, 0, 4);
+        FIRE_HEAT_SOURCE_CAP = builder.comment("Maximum counted heat sources per trial.")
+                .define("heat_source_cap", 8, 1, 64);
+        FIRE_SPREAD_CHANCE = builder.comment("Base probability of one spread trial, not a probability per nearby cell.")
+                .define("spread_chance", 0.02, 0, 1);
+        FIRE_PROJECTILE_MULTIPLIER = builder.comment("Projectile multiplier applied after the chance cap; 0 disables projectile spreading.")
+                .define("projectile_multiplier", 0.0625, 0, 1);
+        FIRE_HEAT_BONUS = builder.comment("Additive multiplier bonus per counted heat source.")
+                .define("heat_bonus", 0.125, 0, 1);
+        FIRE_TEMPERATURE_BONUS = builder.comment("Additive multiplier bonus per biome temperature above 0.8, clamped to temperature 2. Seasons are not integrated.")
+                .define("temperature_bonus", 0.5, 0, 4);
+        FIRE_SPREAD_CHANCE_CAP = builder.comment("Maximum trial probability before the projectile reduction.")
+                .define("spread_chance_cap", 0.25, 0, 1);
         builder.pop();
 
 

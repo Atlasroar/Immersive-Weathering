@@ -48,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0.jar --sources build\libs\immersive_weathering-2.1.0-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.2.0.jar --sources build\libs\immersive_weathering-2.2.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -56,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0.jar -
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.1.0.jar`; install that remapped
+`build\libs\immersive_weathering-2.2.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -111,6 +111,27 @@ python -m unittest discover -s tools -p "test_*.py"
 The [documentation workflow](../../../.github/workflows/docs.yml) runs the checks
 on pushes and pull requests independently of the Minecraft build. It does not
 launch Minecraft, validate external URLs, or prove narrative/gameplay accuracy.
+
+## Fire mechanics harness
+
+Run `.\gradlew.bat fireMechanicsTest` for dependency-free, production-executing
+fire rules with Mojang 1.20.1 block/entity states and explicit bounded server
+storage fixtures. It covers small default thresholds, source/temperature/cap
+math, projectile ordering, interval staggering, loaded/border/height/rain/air/
+fuel/survival gates, gamerules, known/unknown ignition NBT/reset, successful/
+failed torch actions and item counts, grass odds/config updates and dirt
+preservation. Structural ASM checks verify the exact vanilla descriptors and
+successful-burn/direct-melee ordinals, including the retained soot hook.
+It is wired into `check` and the root build alongside snow/growth checks.
+
+The harness does **not** weave Mixins or emulate a running chunk engine,
+networking, damage protection from every mod, rendering or client/server
+gameplay. Its test-only bridge supplies access to private vanilla fire queries
+and applies production grass rules; it is not shipped in the jar. Development
+server `runServer --args="--initSettings nogui"` can check initialization and
+Mixin loading without accepting the EULA or opening a world. Neither check
+replaces the [unrun manual F01-F06 run checklist](../players/Feature-testing.md#standalone-fire).
+No external profile/world or published 2.1.0 artifact is changed by these tasks.
 
 ## Snow mechanics harness
 

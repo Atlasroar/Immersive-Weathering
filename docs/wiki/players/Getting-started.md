@@ -15,10 +15,13 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-The current stable release is [**2.1.0**](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0).
-Its mod version follows Semantic Versioning; Minecraft **1.20.1** is declared
-separately as compatibility. Install `immersive_weathering-2.1.0.jar`
-from the release assets. The development dependency set
+This source targets stable **2.2.0**. Its mod version follows Semantic Versioning;
+Minecraft **1.20.1** is declared separately as compatibility.
+For 2.2.0, install `immersive_weathering-2.2.0.jar` from the
+[published release assets](https://github.com/Atlasroar/Immersive-Weathering/releases)
+when available; source changes alone are not proof of publication. The immutable
+[2.1.0 release](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0)
+and earlier assets are unchanged. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
 (CurseForge file **5619072**). Moonlight and Fabric API must be installed
 separately; neither is bundled. Replace the previous IW jar, and never install
@@ -31,8 +34,14 @@ This is not a promise to fix every catalogued gameplay report.
 Growth chances and seeded traversal are unchanged; in-game performance and the
 [beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
 
-The current source builds **2.1.0**: `build\libs\immersive_weathering-2.1.0.jar`.
+The current source builds **2.2.0**: `build\libs\immersive_weathering-2.2.0.jar`.
 It includes temporary frosty appearances for both covered short grass and ferns.
+New standalone fire features add low-chance non-sun entity block spreading,
+reduced projectile spreading, bounded local heat/hot-biome bonuses, ordinary
+torch combat ignition and grass-to-dirt burning, without a new dependency.
+Review [fire controls](Configuration.md#standalone-fire) before opening a world:
+they are enabled by default, and environmental spreading requires `doFireTick`.
+The [F01-F06 checklist](Feature-testing.md#standalone-fire) remains **Not run**.
 Earlier prerelease downloads are unchanged; install only one active IW jar.
 The recorded N01-N11 passes were on beta.2, not a new complete stable-version
 acceptance run; N12-N14 and the final fern appearance remain unreported.

@@ -58,6 +58,7 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 | Soils and plants | [`blocks/soil_types`](../../../src/main/java/com/ordana/immersive_weathering/blocks/soil_types), [`CropBlockMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/CropBlockMixin.java) | Fertile tags, placement/survival, plant-specific mixins, growth speed |
 | Cold and fire | [`blocks/frosted`](../../../src/main/java/com/ordana/immersive_weathering/blocks/frosted), [`blocks/charred`](../../../src/main/java/com/ordana/immersive_weathering/blocks/charred), [`TemperatureManager`](../../../src/main/java/com/ordana/immersive_weathering/util/TemperatureManager.java) | Biome/weather predicates, thin ice, icicles, freezing, smoldering, fire/lightning events |
 | Standalone snow | [`snow`](../../../src/main/java/com/ordana/immersive_weathering/snow) | Explicit vanilla host schemas, placement hooks, scheduled falling, one sampled weather hook, static multipart models |
+| Standalone fire | [`fire`](../../../src/main/java/com/ordana/immersive_weathering/fire) | Per-entity ignition provenance, bounded server trials, successful direct torch combat, dynamic grass odds/ground preservation |
 | Entities and visuals | [`entities`](../../../src/main/java/com/ordana/immersive_weathering/entities), [`ImmersiveWeatheringClient`](../../../src/main/java/com/ordana/immersive_weathering/ImmersiveWeatheringClient.java), [`network`](../../../src/main/java/com/ordana/immersive_weathering/network) | Physics/persistence, renderers, particles, color blending, server-to-client decay notifications |
 | Compatibility | [`integrations`](../../../src/main/java/com/ordana/immersive_weathering/integrations) | Fabric EMI and Mod Menu entrypoints; external integrations must be verified individually |
 
@@ -107,6 +108,78 @@ not mean its mixin is actually registered. Registered mixins appear in the
 Do not conflate logical server authority with physical client initialization.
 Verify side-safe class loading, authoritative world mutation, packet handling,
 and dedicated-server behavior when touching shared code.
+
+## Standalone fire ownership
+
+The 2.2.0 `fire` package is independently authored using vanilla/IW
+facilities; no external fire mod code/assets, library, component API or newer
+Minecraft API is imported. The immutable published 2.1.0 artifacts are unchanged.
+The [player contract](../players/Features.md#standalone-fire)
+and [common controls](../players/Configuration.md#standalone-fire)
+are authoritative; season integration is deferred.
+
+`EntityFireMixin` owns one `IgnitionHistory` per entity. Server-side authorization
+requires positive vanilla fire ticks and a non-immune entity. Living
+`setSecondsOnFire` calls are **not** blanket-authorized: sunlight from zombie,
+skeleton and phantom ticks is naturally unknown. Explicit hooks authorize fire
+contact (`BaseFireBlock.entityInside`), lava and lightning; successful
+player/mob Fire Aspect, burning-arrow and small-fireball damage; and successful
+torch combat. Nonliving projectiles' `setSecondsOnFire` calls are known non-sun
+ignition, covering Flame bows, enchanted mob arrows and burning fireballs.
+Arrow/fireball authorization follows successful `hurt`, not the provisional
+pre-hit ignition, so a failed hit that restores old fire ticks cannot authorize
+a sun burn. Enderman arrow ignition remains excluded. Zombie's vanilla melee
+ignition propagates permission only from an already-authorized zombie; it
+does not remove vanilla burning damage from a sunlight-only attack.
+
+`setRemainingFireTicks <= 0` resets provenance immediately, including natural
+expiry and vanilla water/rain/powder-snow extinguishing. The namespaced boolean
+NBT key `immersive_weathering:non_sun_fire` is saved/loaded with vanilla `Fire`;
+missing/false keys and nonpositive loaded burns are ineligible. Dimension copies
+use vanilla save/load. A later real source authorizes an existing sun burn even
+when the vanilla duration does not increase. Unsupported mod ignition APIs do
+not automatically authorize living entities.
+
+`EntityFire.tick` runs at `Entity.baseTick` tail and exits before scanning unless
+the carrier is alive, burning with known provenance, non-immune, dry, outside
+current/previous powder snow, enabled, and permitted by gamerules. Trials are
+staggered by entity ID modulo the current interval. Non-player carriers respect
+`mobGriefing`; players and player-owned projectiles are exempt. Each due trial
+reads current settings, counts at most the configured source cap in a bounded
+heat cube, and uses the biome's vanilla **base temperature**, not daylight,
+species, altitude or a season adapter. Probability is capped before projectile
+reduction. One successful roll uses reservoir selection of at most 343 candidate
+cells, not a chance per cell. Heat radius is at most four (729 cells); no world
+state/cache, entity-list scan, chunk forcing or world-wide scan is retained.
+
+Candidate and all six neighboring cells must be in build height/world border
+and already loaded before block queries. Air/fluid, exposed rain including
+horizontal neighbors, original `FireBlock.getIgniteOdds(LevelReader, BlockPos)`
+(including IW's existing `FIRE_REPLACEABLE` query), and actual vanilla fire-state
+survival must all pass. Placement uses `BaseFireBlock.getState` and normal block
+updates. An invocation-scoped thread-local flag suppresses only the portal-shape
+lookup during that placement; `finally` removes/restores it even on failure.
+No portal scan or portal creation occurs from entity spread; ordinary ignition's
+portal behavior and survival checks remain untouched.
+
+`PlayerFireMixin` wraps only the first direct `Entity.hurt` invocation in
+`Player.attack`, not sweep damage or owner-attributed projectile damage.
+`afterMeleeHit` handles only successful server hits. Torch targets are living,
+alive, non-immune, non-fire-resistant and dry. Main-hand TORCH/SOUL_TORCH uses
+vanilla `setSecondsOnFire(4)` (fire protection still applies), preserves a longer
+duration, and consumes one item unless `instabuild`. This direct combat action
+does not depend on environmental gamerules. There is no separate soul burn.
+
+`FireMixin` adds exact GRASS_BLOCK odds at return (5 ignition/20 burn minimum)
+with priority 900, after Fabric's priority-1000 registry overrides. External
+larger values survive; disabling IW grass stops supplementing native/other-mod
+values without mutating a global registry on config reload. At the second
+`Level.getBlockState` in `checkBurnOut`, vanilla has already won its random burn
+trial. `GrassFire.consume` replaces only that grass surface with DIRT and cancels
+the fire/air replacement, preserving ground and emitting no drops. It also
+guards `doFireTick`. Other soils, snow-host fire registration, existing charring
+events, `tick` soot removeBlock ordinal 3 and the FIRE_REPLACEABLE query are
+unchanged. No loot, datapack or growth schema is added.
 
 ## Standalone snow ownership
 

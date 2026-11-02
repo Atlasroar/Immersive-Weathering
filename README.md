@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.1.0** is the stable release, with a single root
+**2.2.0** is the stable release target, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,11 +31,14 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.1.0.jar`; the matching
+`build\libs\immersive_weathering-2.2.0.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Installation
 
+For published downloads, use the repository's
+[Releases](https://github.com/Atlasroar/Immersive-Weathering/releases).
+The source version alone does not establish that its release has been published.
 Use a backed-up or disposable Minecraft **1.20.1** instance with Java 17,
 Fabric Loader **0.16.14+**, Fabric API **0.92.12+1.20.1**, and the Fabric
 Moonlight Lib **1.20-2.12.11** build (CurseForge file **5619072**).
@@ -55,6 +58,19 @@ This release also includes the paired plant placement correction from
 chances. N01-N11 were reported Pass on 2.1.0-beta.2; N12-N14 and the final fern
 appearance remain unreported. Stable release status does not imply that every
 catalogued gameplay report is fixed; see the [test ledger](docs/wiki/players/Feature-testing.md).
+
+**New in 2.2.0:** standalone fire mechanics without another fire mod or library.
+Known non-sun burning entities can ignite nearby flammable blocks with a small
+configurable chance; projectiles default to one sixteenth the ordinary rate.
+Bounded fire/soul-fire/magma/lava heat and hot-biome bonuses increase that chance.
+Successful direct main-hand Torch or Soul Torch attacks use ordinary four-second
+burning and consume one Survival item. Grass Blocks burn into Dirt without
+removing the ground. Environmental changes obey `doFireTick`, and non-player
+carriers respect `mobGriefing` with a player-projectile exemption.
+See [fire controls](docs/wiki/players/Configuration.md#standalone-fire) and the
+[F01-F06 runnable checklist](docs/wiki/players/Feature-testing.md#standalone-fire).
+Those manual fire cases remain **Not run**; automated checks are not gameplay
+acceptance. The immutable 2.1.0 release and historical results are unchanged.
 
 ## Versioning
 

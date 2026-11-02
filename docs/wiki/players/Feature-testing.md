@@ -2,13 +2,258 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.1.0**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.2.0**, Minecraft **1.20.1**, Fabric.
 The latest recorded snow round below is **2.1.0-beta.2**, not a new stable-version pass.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
 their `Not run` cells are template defaults, not the current test-round verdicts.
 Use the dated ledger for recorded outcomes.
 Datapacks, configuration, other mods, and later releases can change expectations.
+
+## Standalone fire
+
+All F01-F06 cases below are **Not run** for 2.2.0. They are runnable acceptance
+instructions, not a claim that the immutable 2.1.0 contains these features or that
+stable versioning establishes gameplay acceptance. Automated fixtures and hook checks
+are described in the [fire harness](../developers/Development.md#fire-mechanics-harness).
+Use a new disposable Creative flat world with cheats, the remapped 2.2.0 jar and
+matching server/client dependencies. Back up the instance configuration first.
+Record the release/source SHA, jar SHA-256, server config, gamerules, difficulty,
+weather, biome, trial count and singleplayer/dedicated-client setup.
+Probabilistic controls need counted trials, not a short wait or accelerated
+`randomTickSpeed`; the entity interval uses ordinary entity ticks.
+
+| Case | Setup and controls | Required result | Manual verdict |
+| --- | --- | --- | --- |
+| F01 | Sun-burning zombie/skeleton/phantom beside dry wood/grass; then independently ignite the same burn with fire, lava, lightning, player/mob Fire Aspect, burning arrow or small fireball | Sun-only never spreads; each supported later source can authorize; owner-attributed projectiles never consume held torches | Not run |
+| F02 | Successful, blocked, failed and repeated direct torch/soul-torch melee; Survival/Creative, offhand, long existing burn, wet/dead/fire-immune/fire-resistant targets | Four seconds ordinary burning subject to vanilla protection, no shortening; exactly one Survival item only on supported successful ignition; no soul state/renderer | Not run |
+| F03 | Same fixtures in temperate/hot biomes, zero/eight/excess heat cells; FIRE/SOUL_FIRE/MAGMA_BLOCK/LAVA versus torches/campfires; ordinary carrier versus projectile | Measured low per-interval chance, bounded heat/temperature and one-sixteenth projectile reduction; at most one cell per trial | Not run |
+| F04 | Rain/exposed neighbors/roof, water/waterlogged/occupied cells, chunk edge, build limits, border, obsidian portal frame; change doFireTick/mobGriefing and all fire controls | Dry supported air and loaded neighbors only; no overwrite, chunk forcing or portal creation; documented gamerule/player exemptions and live settings | Not run |
+| F05 | Burn exact grass versus dirt/podzol/mycelium; toggle grass/firetick; add external flammability; preserve adjacent snow-covered plants and native wood/soot behavior | Successful vanilla grass consumption leaves dirt at same position, no drops; unrelated soils/config/host flammability and charring/soot remain unchanged | Not run |
+| F06 | Save/reopen while authorized or sun-only burning; extinguish by expiry/water/rain/powder snow then sun-ignite again; vanilla zombie melee from sun-only versus known fire | Provenance persists only for active known burns; extinguishing clears it; natural zombie melee cannot launder sunlight into spread permission; dedicated clients agree | Not run |
+
+### Shared fixture and diagnostic settings
+
+These commands **overwrite the small area around 0,64,0**. Run them only in the
+disposable test world, not a build or existing production world. Keep other
+flammable builds and burning entities away. Start without fuel; ignition sources
+must be removed before adding fuel so vanilla source fire cannot fake a carrier
+spread result.
+
+```text
+/gamemode creative
+/difficulty normal
+/gamerule doMobSpawning false
+/gamerule doDaylightCycle false
+/gamerule doWeatherCycle false
+/gamerule doFireTick true
+/gamerule mobGriefing true
+/weather clear
+/time set noon
+/fill -4 63 -4 4 63 4 minecraft:stone
+/fill -4 64 -4 4 67 4 minecraft:air
+/tp @s 0.5 64 -3.5
+/summon minecraft:pig 0.5 64 0.5 {Tags:["iw_fire"],NoAI:1b,PersistenceRequired:1b,Silent:1b,Attributes:[{Name:"minecraft:generic.max_health",Base:200.0d}],Health:200.0f}
+```
+
+In the **server/common `fire` section**, temporarily use `spread_interval=1`,
+`spread_chance=1`, `spread_chance_cap=1`, `projectile_multiplier=1`,
+`heat_bonus=0`, `temperature_bonus=0`, with the three feature toggles enabled and
+`spread_radius=1`. Save/restart as required by the active config integration,
+then verify the effective server values. These **non-default diagnostic settings**
+make positive placement deterministic once an eligible carrier/cell exists.
+Restore ordinary probabilities for F03; never report diagnostic rates as defaults.
+
+For real fire-contact ignition, place `/setblock 0 64 0 minecraft:fire`, wait
+two seconds, then `/setblock 0 64 0 minecraft:air`. Query the tagged carrier:
+
+```text
+/data get entity @e[tag=iw_fire,limit=1] Fire
+/data get entity @e[tag=iw_fire,limit=1] "immersive_weathering:non_sun_fire"
+```
+
+Expect positive `Fire` and provenance `1b` after real contact. **Do not write the
+provenance key yourself**; that would manufacture the condition under test.
+Only now add `/setblock 2 64 0 minecraft:oak_planks`: the one eligible air cell
+inside radius one is `1,64,0`. An authorized carrier should place fire there.
+Remove that fire immediately before a repeat; never count later vanilla spreading.
+For long fixtures, after real authorization use
+`/data merge entity @e[tag=iw_fire,limit=1] {Fire:32000s}` to extend the existing
+burn without inventing its origin. Living carriers can receive
+`/effect give @e[tag=iw_fire,limit=1] minecraft:fire_resistance 1200 0 true`
+**after** ignition to survive long counts; that effect does not extinguish them.
+It intentionally makes them unsuitable for the positive torch-consumption case.
+
+### F01: sunlight and real ignition sources
+
+Remove the pig (`/kill @e[tag=iw_fire]`) and fuel. Summon a zombie using the same
+NBT fixture above but entity ID `minecraft:zombie`; it must have no helmet and
+remain exposed at noon. Wait until `Fire` is positive. Its provenance must be
+`0b`, and diagnostic fuel must remain unlit. Repeat separately with
+`minecraft:skeleton` and `minecraft:phantom` (use `NoGravity:1b` for the phantom).
+Keep each run separate; clear fuel/fire and kill the previous tagged carrier.
+
+For each real source below, use a fresh sun-burning zombie or fresh pig, inspect
+provenance before/after, remove the source, then add diagnostic fuel:
+
+- **Fire:** use the two-second contact sequence above, including during an
+  already-active sunlight burn.
+- **Lava:** replace the carrier's cell with `minecraft:lava` until burning, then
+  remove the lava and any flowed lava before installing fuel.
+- **Lightning:** `/summon minecraft:lightning_bolt 0.5 64 0.5`; remove all resulting
+  fire before installing fuel.
+- **Player Fire Aspect:** give
+  `/give @s minecraft:wooden_sword{Enchantments:[{id:"minecraft:fire_aspect",lvl:1s}]} 1`
+  and land one successful melee hit.
+- **Mob Fire Aspect:** at midnight, summon an active zombie beside a NoAI tagged
+  villager. Give the zombie a wooden sword in `HandItems[0]` with
+  `tag:{Enchantments:[{id:"minecraft:fire_aspect",lvl:1s}]}`, and let it land a
+  hit on the villager. Inspect the victim, not just the attacker.
+- **Burning arrow:** give
+  `/give @s minecraft:bow{Enchantments:[{id:"minecraft:flame",lvl:1s}]} 1` and
+  `/give @s minecraft:arrow 64`, then shoot the fixture.
+- **Small fireball:** with the pig at the shared coordinates, run
+  `/summon minecraft:small_fireball -3 64.5 0.5 {power:[0.1d,0.0d,0.0d],Motion:[0.5d,0.0d,0.0d]}`.
+- **Torch and Soul Torch:** use the successful-hit procedure in F02.
+
+**Expected:** successful supported ignition authorizes the target (`1b`), even
+without extending a longer existing burn. Repeat arrow/fireball shots against
+an invulnerable target (`/data merge entity @e[tag=iw_fire,limit=1] {Invulnerable:1b}`)
+that started with unknown/sun provenance: failed hits must not authorize it.
+Holding torches while shooting must never consume the held torches.
+
+### F02: torch consumption and ordinary burning
+
+Use a fresh non-resistant pig, no source fire/fuel, Survival, and a main-hand
+stack from `/give @s minecraft:torch 16`. Record count and target `Fire`, land
+one hit, then recheck: one torch is used and the new burn is at most 80 ticks
+(four seconds, minus elapsed ticks/vanilla fire protection). Repeat with
+`minecraft:soul_torch`: ordinary fire and damage, no blue state/renderer.
+
+Repeat with Creative (count unchanged), offhand torch/main-hand stick (no
+ignition), an invulnerable target (failed hit, no consumption), and rapid hits
+during vanilla hurt immunity (only actual successful hits consume). With a
+second player, repeat against a raised shield from the front. Remove
+invulnerability before positive controls. Repeat with water/rain/powder snow,
+Fire Resistance, a NoAI blaze, and a dead/dying target: no torch consumption.
+For the longer-burn control, give the pig `Fire:400s` before the hit; torch use
+must not reduce the remaining duration to 80. Toggle `torch_attacks=false`,
+save/restart, and repeat: no IW ignition or consumption.
+
+### F03: counted probabilities, heat and biome temperature
+
+Use `spread_interval=1` for faster counted trials but restore **all other fire
+probability/heat settings to their defaults**. Record this interval deviation.
+Use only stone flooring, fuel at `2,64,0`, and one authorized stationary carrier
+at the shared origin. Plains base temperature is 0.8; set the fixture biome with
+`/fillbiome -4 63 -4 4 67 4 minecraft:plains`.
+
+Create objective `/scoreboard objectives add iw_fire_counts dummy`, then set
+`ticks` and `fires` to zero in that objective. Outside the fixture, place one
+always-active repeating command block and two always-active **unconditional**
+chain blocks in order, containing:
+
+```text
+scoreboard players add ticks iw_fire_counts 1
+execute if score ticks iw_fire_counts matches ..10000 if block 1 64 0 minecraft:fire run scoreboard players add fires iw_fire_counts 1
+setblock 1 64 0 minecraft:air
+```
+
+The count freezes after 10,000 game ticks (about 8 minutes 20 seconds at 20 TPS);
+read `/scoreboard players get fires iw_fire_counts`, disable the controller,
+and record ticks/count/config. Clearing every tick prevents vanilla fire
+propagation or a previous placed fire adding heat. At interval one this is
+approximately 10,000 trials (at most one boundary-tick discrepancy).
+Default no-heat plains expectations are about **200 normal** versus **12.5
+projectile** ignitions, not exact quotas or a guaranteed short-run 16:1 ratio.
+Repeat noisy results; automated fixtures establish the exact probability math.
+
+For a stationary projectile, remove the pig and summon
+`/summon minecraft:arrow 0.5 64.4 0.5 {Tags:["iw_fire"],NoGravity:1b,pickup:0b,Motion:[0.0d,0.0d,0.0d]}`.
+Use **real fire contact** and verify authorization before extending `Fire`;
+setting a raw NBT burn alone is not valid provenance. Keep the tester clear of
+its collision box and verify it remains stationary throughout the run.
+
+Use eight magma floor cells for uncontaminated heat-rate measurements:
+`/fill -2 63 -2 -2 63 2 minecraft:magma_block`, plus magma at
+`-1,63,-2`, `-1,63,2` and `0,63,-2`. They are inside heat radius two and do not
+replace the carrier's support or fuel. Add a ninth at `0,63,2`: the capped result
+must not increase. Repeat in `minecraft:desert` using the same `/fillbiome`
+box: eight heat cells and temperature 2 give about **640 normal** versus
+**40 projectile** successes per 10,000 default-probability trials.
+Test FIRE/SOUL_FIRE/LAVA inventory separately in contained fixtures; direct
+vanilla fire/lava spread must not be counted as carrier events. Torches and
+campfires add no heat. Zero base chance, zero cap, or zero projectile multiplier
+must give zero events in their respective control.
+
+### F04: gates, placement and configuration
+
+Restore deterministic diagnostic settings and a fresh known carrier. With
+`/gamerule doFireTick false`, the eligible cell stays empty; successful direct
+torch combat still works. Restore true, then set `mobGriefing=false`: pig,
+ownerless arrow and mob-owned projectile spreading stops. A burning Survival
+player and a Flame arrow actually shot by a player remain exempt. Do not assign
+an NBT owner to an ownerless arrow and call it a player-shot reproduction.
+
+Restore `mobGriefing=true` and repeat with a torch, water, waterlogged block
+or other occupied block at `1,64,0`: no replacement. Set plains biome,
+`/weather rain`, and expose the carrier/cell or a horizontal cell neighbor;
+compare a fully roofed, dry control. Also test powder-snow carriers and a cell
+with no fuel/support. Use fresh fixtures at build-height/world-border edges and
+at the simulation-distance boundary; inspect server chunk/profiler evidence
+for loading rather than assuming a client render boundary means unloaded.
+The automated fixture separately checks the exact unloaded-neighbor rejection.
+
+Put the carrier and nearby flammable support inside an empty obsidian frame:
+entity placement may make supported fire, never portal blocks. Ordinary flint
+and steel must still form a valid portal as a separate positive control.
+Open Common -> Standalone fire, inspect every name/tooltip, change/save/reopen
+and restart, then compare effective server behavior with `entity_spread=false`,
+other toggles, interval/radii/cap changes and a connected client. Restore defaults.
+
+### F05: grass ground and existing systems
+
+Disable `entity_spread` to isolate vanilla fire trials. In separate stone-edged
+samples place grass, dirt, podzol and mycelium, then actual fire beside each.
+With `doFireTick=true` and `flammable_grass=true`, wait for a successful grass
+burn: record coordinates/state before/after, verify **DIRT at the same position**,
+no air/fire hole and no grass-consumption drops. Other soils must not convert.
+Repeat `flammable_grass=false` and `doFireTick=false`; IW must not consume grass.
+External mods may retain their own flammability when IW's addition is disabled.
+
+Compare supported wood charring, soot formation/config, and fire beside
+snow-covered plants against 2.1.0 in a separate disposable baseline instance.
+Use matched settings/dependencies and fresh fixtures; do not overwrite immutable
+release files or infer that the open soot-toggle report is fixed. Repeat the
+existing snow N10/N11 and growth comparison controls; record any integration
+mod's ID/version and flammability override.
+
+### F06: persistence, reset and zombie melee
+
+Save/quit/reopen while one fixture has real authorized fire and another has only
+sunlight fire, using different tags. Query both `Fire` and provenance after
+reload: only the still-active known burn retains `1b`. Extinguish the known
+zombie separately by water, rain, powder snow, and natural expiry. For expiry,
+set midnight first so sunlight cannot continually refresh it; a short positive
+`Fire` duration may shorten an already-known burn for this test.
+After each extinction verify nonpositive `Fire`/false provenance, then clear
+weather/set noon: a new sun-only burn must remain false until real ignition.
+
+At night, let an **unarmed active zombie** with a recorded sun-only burn hit a
+NoAI villager at close range. Repeat until vanilla's random melee ignition
+actually occurs; not every successful attack ignites. Victim fire from that
+source remains unauthorized. Repeat with the attacker independently ignited by
+real fire before attacking: an actual vanilla melee ignition may propagate
+authorization. Inspect source and victim separately and repeat save/reload with
+a dedicated client connected. Damage/fire rendering remain vanilla.
+
+### Cleanup and result recording
+
+Disable/remove the three controller blocks, `/kill @e[tag=iw_fire]`, remove
+fixture fire/lava/temporary mobs, and restore the backed-up common config and
+recorded gamerules. Remove the test scoreboard only if this run created it.
+Do not delete or alter another world's data. Record F01-F06 individually with
+evidence and subcase limits; this document starts all six as **Not run**.
 
 ## Standalone snow candidate retest
 
