@@ -54,6 +54,9 @@ their distinct soul/normal block IDs. Right-click with flint and steel, a fire
 charge or either lit torch to restore the matching vanilla torch. Survival uses
 one durability/one charge, but does not consume a held torch. Breaking/picking
 returns the matching vanilla torch, not sticks or a Silk Touch requirement.
+If the world rejects relighting, the torch stays unlit and the action fails
+without spending a charge/durability or playing success effects. Rejected wind
+extinguishing likewise leaves the flame and produces no extinguishing effects.
 Lanterns, redstone torches and lit machines are not extinguished.
 
 Wind freezes only exposed **water source blocks** into existing IW thin ice,

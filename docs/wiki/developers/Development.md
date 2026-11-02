@@ -99,6 +99,11 @@ classification/deposition and client-policy checks. Registration substitutes
 avoid requiring a running Fabric loader; they are not mock rewrites of gameplay
 rules. The source set lives in `src/windTest`, separately from original
 snow/fire/sand regression suites.
+Rejected-write fixtures cover all four relighting tools, ordinary/soul standing
+torches and every wall orientation, with failure results and zero inventory
+cost/effects. Extinguishing checks cover failed/successful fire removal, torch
+replacement and lit-state writes, native candle flags/wick particles and
+campfire dowse ordering without duplicate writes/events.
 
 ```powershell
 .\gradlew.bat windMechanicsTest --console=plain
@@ -116,6 +121,22 @@ Minecraft profile/world is mutated or launched, no EULA accepted by this work.
 Record manual [FW01-FW08](../players/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
 separately; all start Not run. Original SP/ST/snow/fire ledger entries remain
 historical, not passes for these features.
+
+On 2026-11-02 the separate dedicated initialization-only check passed:
+
+```powershell
+.\gradlew.bat runServer --args="--initSettings nogui" --console=plain
+```
+
+Fabric 0.16.14/Minecraft 1.20.1 loaded IW 2.4.0, Moonlight 1.20-2.12.11,
+the common config and server Mixin initialization/audit without injection or
+registration exceptions. The command exited after generating local server
+settings; `eula=false` and no `run/server/world` were verified. First-run
+missing-properties/EULA diagnostics preceded successful settings generation.
+Nonfatal missing-data-fixer messages for IW entities remain, including the
+pre-existing falling entities and the unsaved gust. This is **init-only** evidence,
+not a world tick, client rendering, gameplay, network or full server/world pass.
+FW01-FW08 and all earlier manual ledgers are unchanged.
 
 | Change | Minimum relevant checks |
 | --- | --- |

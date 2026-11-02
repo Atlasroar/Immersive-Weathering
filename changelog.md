@@ -9,6 +9,10 @@
   eligible source water into existing thin ice, and grow native-survival
   underside icicles without restricting support materials. Block changes require
   mobGriefing; existing thin-ice light rules and disable_icicles remain.
+- Relighting and wind extinguishing honor rejected world writes: failure leaves
+  state/inventory unchanged, without success sounds/events/particles or campfire
+  bookkeeping. Successful candles retain native wick offsets and campfires their
+  native dowse effects; normal/soul/wall orientation remains unchanged.
 - Cold vanilla thunder snowstorms run day or night, add a capped bonus through
   the existing single sampled snow deposition authority, and generate more wind.
   Guarded white fog, shared upstream grain artwork, cloud hiding and intermittent

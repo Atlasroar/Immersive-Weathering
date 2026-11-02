@@ -4,6 +4,7 @@ import com.ordana.immersive_weathering.configs.CommonConfigs;
 import com.ordana.immersive_weathering.reg.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -66,17 +67,29 @@ public final class WindBlocks {
     public static boolean extinguish(ServerLevel level, BlockPos pos, BlockState state) {
         BlockState torch = unlitTorch(state);
         if (torch != null) {
-            level.setBlockAndUpdate(pos, torch);
+            if (!level.setBlockAndUpdate(pos, torch)) return false;
         } else if (state.is(BlockTags.FIRE)) {
-            level.removeBlock(pos, false);
+            if (!level.removeBlock(pos, false)) return false;
         } else if (applicableFlame(state) && state.hasProperty(BlockStateProperties.LIT)
                 && state.getValue(BlockStateProperties.LIT)) {
-            if (state.getBlock() instanceof AbstractCandleBlock) {
-                AbstractCandleBlock.extinguish(null, state, level, pos);
+            BlockState unlit = state.setValue(BlockStateProperties.LIT, false);
+            if (state.getBlock() instanceof AbstractCandleBlock candle) {
+                // Native extinguish ignores write failure; preserve its offsets/effects only after our write succeeds.
+                if (!level.setBlock(pos, unlit, 11)) return false;
+                for (Vec3 offset : candle.getParticleOffsets(state)) {
+                    level.addParticle(ParticleTypes.SMOKE, pos.getX() + offset.x, pos.getY() + offset.y,
+                            pos.getZ() + offset.z, 0, 0.1F, 0);
+                }
+                level.playSound(null, pos, SoundEvents.CANDLE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
+                level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
                 return true;
             }
-            if (state.getBlock() instanceof CampfireBlock) CampfireBlock.dowse(null, level, pos, state);
-            level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, false));
+            if (!level.setBlockAndUpdate(pos, unlit)) return false;
+            if (state.getBlock() instanceof CampfireBlock) {
+                CampfireBlock.dowse(null, level, pos, state);
+                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1);
+                return true;
+            }
         } else {
             return false;
         }

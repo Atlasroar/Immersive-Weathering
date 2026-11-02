@@ -95,13 +95,21 @@ Existing IW wind sound uses WEATHER category, not imported Frostiful recordings.
 `WindBlocks` scans only **36 cells** (3x4x3, including surface below), tests
 loaded/build/border/line-of-sight before interaction, and requires mobGriefing
 for every block effect. Explicit fire/candle/candle-cake/campfire tags exclude
-arbitrary LIT machines/lanterns. Native candle/campfire extinguish side effects
-run; other changes emit sound/game event. Only exact vanilla normal/soul torch
+arbitrary LIT machines/lanterns. Extinguishing returns false on rejected writes
+without effects. Candles retain native flags (11), per-wick smoke offsets,
+sound and game event, but only after a successful explicit write: the vanilla
+helper itself discards the write result. A narrowly access-widened
+`AbstractCandleBlock.getParticleOffsets` reuses native/modded candle geometry
+without hardcoding offsets or making a second write. Campfire native `dowse`
+bookkeeping/event likewise follows a successful update, without a duplicate
+custom event. Other changes emit sound/game event. Only exact vanilla normal/soul torch
 states map to four registered `UnlitTorchBlock`/`UnlitWallTorchBlock` counterparts.
 The wall FACING property is copied; native survival and vanilla identity loot
 remain. Native `use` restores the matching lit vanilla state with ordinary
 ignition-item durability/charge handling; there is no replacement block item,
 stick-only loot or permanent torch deletion.
+Rejected relighting writes return `InteractionResult.FAIL` before sound/events
+or inventory/durability consumption.
 
 Exact source WATER blocks alone reach existing `ThinIceBlock.canSurvive`;
 flowing/waterlogged cells are excluded and native light/surface/melting rules

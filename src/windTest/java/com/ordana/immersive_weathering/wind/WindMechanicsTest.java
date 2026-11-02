@@ -95,27 +95,35 @@ public final class WindMechanicsTest {
     }
 
     private static void torches() throws Exception {
-        Fixture level = world();
         for (boolean soul : new boolean[]{false, true}) {
             Block standing = soul ? Blocks.SOUL_TORCH : Blocks.TORCH;
             Block wall = soul ? Blocks.SOUL_WALL_TORCH : Blocks.WALL_TORCH;
-            BlockState unlit = WindBlocks.unlitTorch(standing.defaultBlockState());
-            check(unlit.getLightEmission() == 0, "Unlit means zero light");
-            check(unlit.getBlock().getCloneItemStack(level, POS, unlit).is(soul ? Items.SOUL_TORCH : Items.TORCH), "Pick preserves identity");
+            List<BlockState> litStates = new ArrayList<>();
+            litStates.add(standing.defaultBlockState());
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockState litWall = wall.defaultBlockState().setValue(WallTorchBlock.FACING, direction);
-                BlockState unlitWall = WindBlocks.unlitTorch(litWall);
-                check(unlitWall.getValue(WallTorchBlock.FACING) == direction, "Every wall orientation preserved");
+                litStates.add(wall.defaultBlockState().setValue(WallTorchBlock.FACING, direction));
+            }
+            for (BlockState lit : litStates) {
+                BlockState unlit = WindBlocks.unlitTorch(lit);
+                check(unlit.getLightEmission() == 0, "Unlit means zero light");
+                check(unlit.getBlock().getCloneItemStack(world(), POS, unlit).is(soul ? Items.SOUL_TORCH : Items.TORCH), "Pick preserves identity");
                 for (Item ignition : List.of(Items.FLINT_AND_STEEL, Items.FIRE_CHARGE, Items.TORCH, Items.SOUL_TORCH)) {
-                    ProbePlayer player = new ProbePlayer(level, ignition);
-                    unlitWall.use(level, player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(POS), Direction.UP, POS, false));
-                    check(level.states.get(POS).equals(litWall), "Relight restores exact native wall identity/state");
-                    check(player.held.getCount() == (ignition == Items.FIRE_CHARGE ? 1 : 2), "Charge consumed; torch not consumed");
+                    for (boolean rejected : new boolean[]{false, true}) {
+                        Fixture level = world();
+                        level.states.put(POS, unlit);
+                        level.rejectWrites = rejected;
+                        ProbePlayer player = new ProbePlayer(level, ignition);
+                        InteractionResult result = unlit.use(level, player, InteractionHand.MAIN_HAND,
+                                new BlockHitResult(Vec3.atCenterOf(POS), Direction.UP, POS, false));
+                        check(rejected ? result == InteractionResult.FAIL : result.consumesAction(), "Relight result reflects actual write");
+                        check(level.states.get(POS).equals(rejected ? unlit : lit), "Success preserves identity/orientation; rejected state unchanged");
+                        check(player.held.getCount() == (!rejected && ignition == Items.FIRE_CHARGE ? 1 : 2), "Consume charge only after successful write");
+                        check(player.held.getDamageValue() == (!rejected && ignition == Items.FLINT_AND_STEEL ? 1 : 0), "Consume durability only after successful write");
+                        check(level.sounds.size() == (rejected ? 0 : 1) && level.events == (rejected ? 0 : 1), "Effects only after successful relight");
+                        check(level.attempts == 1, "Single relight write attempt");
+                    }
                 }
             }
-            ProbePlayer player = new ProbePlayer(level, Items.FLINT_AND_STEEL);
-            unlit.use(level, player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(POS), Direction.UP, POS, false));
-            check(level.states.get(POS).is(standing), "Standing torch relights normally");
         }
         check(WindBlocks.unlitTorch(Blocks.REDSTONE_TORCH.defaultBlockState()) == null, "Redstone excluded");
         for (Block block : List.of(Blocks.FURNACE, Blocks.LANTERN, Blocks.REDSTONE_LAMP)) {
@@ -124,6 +132,7 @@ public final class WindMechanicsTest {
     }
 
     private static void blocks() throws Exception {
+        extinguishingWrites();
         Fixture level = world();
         FreezingWindEntity gust = new FreezingWindEntity(ModEntities.FREEZING_WIND.get(), level);
         gust.setPos(0.5, 64, 0.5);
@@ -178,6 +187,52 @@ public final class WindMechanicsTest {
         WindBlocks.interact(level, gust);
         check(level.writes == 0 && level.reads == 0, "Build-height gate before storage");
         CommonConfigs.icicles = 0.05;
+    }
+
+    private static void extinguishingWrites() throws Exception {
+        List<BlockState> flames = new ArrayList<>();
+        for (Block block : List.of(Blocks.FIRE, Blocks.SOUL_FIRE, Blocks.TORCH, Blocks.SOUL_TORCH,
+                Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE, Blocks.CANDLE_CAKE)) {
+            BlockState state = block.defaultBlockState();
+            if (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)) {
+                state = state.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT, true);
+            }
+            flames.add(state);
+        }
+        for (Block wall : List.of(Blocks.WALL_TORCH, Blocks.SOUL_WALL_TORCH)) {
+            for (Direction facing : Direction.Plane.HORIZONTAL) flames.add(wall.defaultBlockState().setValue(WallTorchBlock.FACING, facing));
+        }
+        for (int count = 1; count <= 4; count++) {
+            flames.add(Blocks.CANDLE.defaultBlockState().setValue(CandleBlock.CANDLES, count).setValue(CandleBlock.LIT, true));
+        }
+        for (BlockState flame : flames) {
+            for (boolean rejected : new boolean[]{false, true}) {
+                Fixture level = world();
+                level.states.put(POS, flame);
+                level.rejectWrites = rejected;
+                ProbeCampfire campfire = new ProbeCampfire(flame);
+                level.campfire = campfire;
+                check(WindBlocks.extinguish(level, POS, flame) != rejected, "Extinguish reports write result");
+                check(level.attempts == 1, "Native candle offsets/effects without duplicate world write");
+                if (rejected) {
+                    check(level.states.get(POS).equals(flame), "Rejected extinguish leaves original state");
+                    check(level.sounds.isEmpty() && level.events == 0 && level.particles.isEmpty()
+                            && level.blockEntityReads == 0 && campfire.dowses == 0, "No custom/native effects or campfire bookkeeping on rejection");
+                } else {
+                    check(!level.states.get(POS).equals(flame), "Successful extinguish updates state");
+                    check(level.sounds.size() == 1 && level.events == 1, "Exactly one sound and block-change event on success");
+                    if (flame.getBlock() instanceof AbstractCandleBlock candle) {
+                        List<Vec3> expected = new ArrayList<>();
+                        candle.getParticleOffsets(flame).forEach(offset -> expected.add(offset.add(POS.getX(), POS.getY(), POS.getZ())));
+                        check(level.flags == 11 && level.particles.equals(expected), "Native candle flags and per-wick smoke offsets preserved");
+                        check(level.sounds.get(0) == SoundEvents.CANDLE_EXTINGUISH, "Native candle extinguishing sound");
+                    }
+                    if (flame.getBlock() instanceof CampfireBlock) {
+                        check(campfire.dowses == 1 && level.blockEntityReads == 1, "Native campfire block-entity dowse invoked after success");
+                    }
+                }
+            }
+        }
     }
 
     private static void lifecycle() throws Exception {
@@ -309,6 +364,8 @@ public final class WindMechanicsTest {
         level.rules = new GameRules();
         level.entities = new ArrayList<>();
         level.spawns = new ArrayList<>();
+        level.sounds = new ArrayList<>();
+        level.particles = new ArrayList<>();
         level.biome = nativeBiome(2);
         level.night = true;
         level.loaded = true;
@@ -327,8 +384,11 @@ public final class WindMechanicsTest {
         boolean night, rain, thunder;
         long time;
         GameRules rules;
-        boolean loaded;
-        int reads, writes;
+        boolean loaded, rejectWrites;
+        int reads, writes, attempts, flags, events, blockEntityReads;
+        List<SoundEvent> sounds;
+        List<Vec3> particles;
+        ProbeCampfire campfire;
         private Fixture() { super(null, null, null, null, null, null, null, false, 0, List.of(), false, null); throw new AssertionError(); }
         @Override public BlockState getBlockState(BlockPos pos) {
             check(loaded && !isOutsideBuildHeight(pos), "No invalid storage read");
@@ -337,6 +397,9 @@ public final class WindMechanicsTest {
         }
         @Override public FluidState getFluidState(BlockPos pos) { return getBlockState(pos).getFluidState(); }
         @Override public boolean setBlock(BlockPos pos, BlockState state, int flags, int recursion) {
+            attempts++;
+            this.flags = flags;
+            if (rejectWrites) return false;
             writes++;
             states.put(pos.immutable(), state);
             return true;
@@ -367,9 +430,17 @@ public final class WindMechanicsTest {
         @Override public WorldBorder getWorldBorder() { return new WorldBorder(); }
         @Override public RegistryAccess registryAccess() { return RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY); }
         @Override public net.minecraft.world.flag.FeatureFlagSet enabledFeatures() { return net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS; }
-        @Override public void gameEvent(GameEvent event, Vec3 pos, GameEvent.Context context) {}
-        @Override public void playSeededSound(Player player, double x, double y, double z, Holder<SoundEvent> event, SoundSource source, float volume, float pitch, long seed) {}
+        @Override public void gameEvent(GameEvent event, Vec3 pos, GameEvent.Context context) { events++; }
+        @Override public void playSeededSound(Player player, double x, double y, double z, Holder<SoundEvent> event, SoundSource source, float volume, float pitch, long seed) { sounds.add(event.value()); }
+        @Override public void addParticle(net.minecraft.core.particles.ParticleOptions particle, double x, double y, double z, double dx, double dy, double dz) { particles.add(new Vec3(x, y, z)); }
+        @Override public net.minecraft.world.level.block.entity.BlockEntity getBlockEntity(BlockPos pos) { blockEntityReads++; return campfire; }
         @Override public net.minecraft.util.profiling.ProfilerFiller getProfiler() { return InactiveProfiler.INSTANCE; }
+    }
+
+    private static final class ProbeCampfire extends net.minecraft.world.level.block.entity.CampfireBlockEntity {
+        int dowses;
+        ProbeCampfire(BlockState state) { super(POS, state); }
+        @Override public void dowse() { dowses++; super.dowse(); }
     }
 
     private static final class ProbeChunk extends net.minecraft.world.level.chunk.LevelChunk {

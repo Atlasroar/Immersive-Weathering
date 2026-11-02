@@ -21,7 +21,7 @@ final class UnlitTorches {
                 || !(item.is(Items.FLINT_AND_STEEL) || item.is(Items.FIRE_CHARGE)
                 || item.is(Items.TORCH) || item.is(Items.SOUL_TORCH))) return InteractionResult.PASS;
         if (!level.isClientSide) {
-            level.setBlockAndUpdate(pos, lit);
+            if (!level.setBlockAndUpdate(pos, lit)) return InteractionResult.FAIL;
             level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1, 1);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
             if (!player.getAbilities().instabuild) {
