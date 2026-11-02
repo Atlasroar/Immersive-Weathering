@@ -1,4 +1,4 @@
-"""Generate deterministic vanilla-host snow blockstates and semantic tags (no copied models/textures)."""
+"""Generate deterministic dry-host snow blockstates and semantic tags (no copied models/textures)."""
 
 import argparse
 import json
@@ -11,8 +11,14 @@ RESOURCES = ROOT / "src/main/resources"
 
 
 def hosts():
-    source = SOURCE.read_text(encoding="utf-8").split("return List.of(", 1)[1].split(");", 1)[0]
-    return [name.lower() for name in re.findall(r"Blocks\.([A-Z_]+)", source)]
+    source = SOURCE.read_text(encoding="utf-8")
+    vanilla = source.split("return List.of(", 1)[1].split(");", 1)[0]
+    return [name.lower() for name in re.findall(r"Blocks\.([A-Z_]+)", vanilla)] + immersive_hosts()
+
+
+def immersive_hosts():
+    source = SOURCE.read_text(encoding="utf-8").split("List<Block> immersiveHosts()", 1)[1].split(");", 1)[0]
+    return [name.lower() for name in re.findall(r"ModBlocks\.([A-Z_]+)\.get\(\)", source)]
 
 
 def multipart(name):
@@ -34,7 +40,27 @@ def multipart(name):
                 if angle:
                     model["y"] = angle
                 parts.append({"when": {direction: side}, "apply": model})
-    elif name in ("grass", "fern"):
+    elif name == "grass":
+        parts.append({"apply": {"model": "immersive_weathering:block/frosty_grass"}})
+    elif name == "pink_petals":
+        for amount in range(1, 5):
+            for direction, angle in zip(("north", "east", "south", "west"), (0, 90, 180, 270)):
+                model = {"model": f"minecraft:block/pink_petals_{amount}"}
+                if angle:
+                    model["y"] = angle
+                parts.append({"when": {"facing": direction, "flower_amount": "|".join(str(i) for i in range(amount, 5))},
+                              "apply": model})
+    elif name == "mangrove_propagule":
+        parts.append({"when": {"hanging": "false"}, "apply": {"model": "minecraft:block/mangrove_propagule"}})
+        for age in range(5):
+            parts.append({"when": {"hanging": "true", "age": str(age)},
+                          "apply": {"model": f"minecraft:block/mangrove_propagule_hanging_{age}"}})
+    elif name == "weeds":
+        for age in range(8):
+            parts.append({"when": {"age": str(age)}, "apply": {"model": f"immersive_weathering:block/weeds_{age}"}})
+    elif name in immersive_hosts():
+        parts.append({"apply": {"model": f"immersive_weathering:block/{name}"}})
+    elif name not in ("tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony"):
         parts.append({"apply": {"model": f"minecraft:block/{name}"}})
     else:
         for half, suffix in (("lower", "bottom"), ("upper", "top")):
@@ -54,12 +80,20 @@ def outputs():
     fences = [n for n in names if n.endswith("_fence")]
     walls = [n for n in names if n.endswith("_wall")]
     wood = [n for n in fences if n != "nether_brick_fence"]
+    plants = [n for n in names if n not in fences and n not in walls]
+    tall_flowers = ["sunflower", "lilac", "rose_bush", "peony"]
+    small_flowers = ["dandelion", "poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip",
+                     "white_tulip", "pink_tulip", "oxeye_daisy", "cornflower", "lily_of_the_valley",
+                     "wither_rose", "torchflower"]
     tags = {
         "fences": fences, "wooden_fences": wood, "walls": walls,
         "mineable/axe": wood + ["grass", "fern", "tall_grass", "large_fern"],
         "mineable/pickaxe": walls + ["nether_brick_fence"],
-        "tall_flowers": ["sunflower", "lilac", "rose_bush", "peony"],
-        "sword_efficient": ["grass", "fern", "tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony"],
+        "tall_flowers": tall_flowers,
+        "small_flowers": small_flowers,
+        "flowers": small_flowers + tall_flowers + ["pink_petals"],
+        "saplings": [n for n in plants if n.endswith("_sapling")] + ["mangrove_propagule"],
+        "sword_efficient": plants,
     }
     # Separate IW-owned tags are referenced by append-only vanilla tag files.
     for tag, values in tags.items():
@@ -98,7 +132,7 @@ def main():
             path.write_text(text, encoding="utf-8", newline="\n")
     if errors:
         raise SystemExit("Stale generated snow resources: " + ", ".join(errors))
-    print(f"Snow resources {'checked' if args.check else 'generated'} for {len(hosts())} explicit vanilla hosts.")
+    print(f"Snow resources {'checked' if args.check else 'generated'} for {len(hosts())} explicit dry hosts.")
 
 
 if __name__ == "__main__":

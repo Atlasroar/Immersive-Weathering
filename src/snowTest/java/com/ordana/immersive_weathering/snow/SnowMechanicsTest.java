@@ -56,6 +56,8 @@ public final class SnowMechanicsTest {
     private static final Unsafe UNSAFE = unsafe();
     private static int cases;
     private static ProbeSnow probe;
+    private static ProbeSapling saplingProbe;
+    private static ProbePlant plantProbe;
     private static net.minecraft.world.level.storage.loot.LootDataManager loot;
 
     public static void main(String[] args) throws Exception {
@@ -64,22 +66,38 @@ public final class SnowMechanicsTest {
         bootstrapped.setAccessible(true);
         bootstrapped.setBoolean(null, true);
         BuiltInRegistries.REGISTRY.keySet();
-        for (Block host : SnowHosts.vanillaHosts()) {
-            SnowCoveredBlock covered = SnowCoveredBlock.create(host);
-            Registry.register(BuiltInRegistries.BLOCK, "iw_snow_test:" + BuiltInRegistries.BLOCK.getKey(host).getPath(), covered);
-            SnowHosts.register(host, () -> covered);
+        SnowHosts.init();
+        check(SnowHosts.entries().size() == 68, "Common initialization resolved deferred IW plants");
+        com.ordana.immersive_weathering.reg.ModBlocks.resolvePlants();
+        List<Block> immersive = SnowHosts.immersiveHosts();
+        var weedsFire = net.mehvahdjukaar.moonlight.api.platform.RegHelper
+                .registeredFire(com.ordana.immersive_weathering.reg.ModBlocks.WEEDS.get());
+        check(weedsFire.spread() == 60 && weedsFire.flammability() == 100, "Weed fire registration changed");
+        List<String> immersiveNames = List.of("weeds", "dune_grass", "frosty_grass", "frosty_fern");
+        for (int i = 0; i < immersive.size(); i++) {
+            Block host = Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:" + immersiveNames.get(i), immersive.get(i));
+            var item = new net.minecraft.world.item.BlockItem(host, new net.minecraft.world.item.Item.Properties());
+            Registry.register(BuiltInRegistries.ITEM, "immersive_weathering:" + immersiveNames.get(i), item);
+            item.registerBlocks(net.minecraft.world.item.Item.BY_BLOCK, item);
         }
+        com.ordana.immersive_weathering.reg.ModBlocks.registerSnowBlocks();
+        check(SnowHosts.entries().size() == 72, "Deferred IW snow registrations are incomplete");
+        saplingProbe = registerProbe("sapling", new ProbeSapling());
+        plantProbe = registerProbe("plant", new ProbePlant());
         probe = Registry.register(BuiltInRegistries.BLOCK, "iw_snow_test:probe", new ProbeSnow());
         Registry.register(BuiltInRegistries.ENTITY_TYPE, "iw_snow_test:falling",
                 com.ordana.immersive_weathering.reg.ModEntities.FALLING_LAYER.get());
         bootstrapped.setBoolean(null, false);
         Bootstrap.bootStrap();
+        SnowHosts.entries().keySet().forEach(block -> block.getStateDefinition().getPossibleStates().forEach(BlockState::initCache));
         SnowHosts.entries().values().forEach(block -> block.get().getStateDefinition().getPossibleStates().forEach(BlockState::initCache));
         bindTags();
         loadLoot();
         resources(java.nio.file.Path.of(args[0]));
         mappingsAndShapes();
         placement();
+        plantGrowth();
+        nativePlantIdentity();
         pairs();
         falling();
         weather();
@@ -87,8 +105,16 @@ public final class SnowMechanicsTest {
         System.out.println("Snow mechanics: " + cases + " production state/placement/physics/weather cases passed");
     }
 
+    private static <T extends Block> T registerProbe(String name, T host) {
+        Registry.register(BuiltInRegistries.BLOCK, "iw_snow_test:" + name, host);
+        SnowCoveredBlock covered = SnowCoveredBlock.create(host);
+        Registry.register(BuiltInRegistries.BLOCK, "iw_snow_test:covered_" + name, covered);
+        SnowHosts.register(host, () -> covered);
+        return host;
+    }
+
     private static void resources(java.nio.file.Path root) throws Exception {
-        for (Block host : SnowHosts.vanillaHosts()) {
+        for (Block host : SnowHosts.hosts()) {
             String name = BuiltInRegistries.BLOCK.getKey(host).getPath();
             java.nio.file.Path path = root.resolve("assets/immersive_weathering/blockstates/snow_covered_" + name + ".json");
             var json = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(path)).getAsJsonObject();
@@ -107,7 +133,7 @@ public final class SnowMechanicsTest {
     private static void loadLoot() throws Exception {
         loot = new net.minecraft.world.level.storage.loot.LootDataManager();
         Map<net.minecraft.world.level.storage.loot.LootDataId<?>, Object> tables = new HashMap<>();
-        List<Block> blocks = new ArrayList<>(SnowHosts.vanillaHosts());
+        List<Block> blocks = new ArrayList<>(SnowHosts.hosts());
         blocks.add(Blocks.SNOW);
         for (Block block : blocks) {
             var id = block.getLootTable();
@@ -124,7 +150,7 @@ public final class SnowMechanicsTest {
     }
 
     private static void lifecycleAndDrops() throws Exception {
-        for (Block host : SnowHosts.vanillaHosts()) {
+        for (Block host : SnowHosts.hosts()) {
             for (int layers = 1; layers <= 8; layers++) {
                 BlockState raw = host.defaultBlockState();
                 BlockState covered = SnowHosts.cover(raw, layers);
@@ -183,7 +209,7 @@ public final class SnowMechanicsTest {
         SnowPhysics.checkSupport(unsupported, POS, covered);
         check(unsupported.entities.isEmpty() && unsupported.getBlockState(POS).is(Blocks.OAK_FENCE), "Falling-disable retained unsupported snow");
         CommonConfigs.falling = true;
-        for (Block host : SnowHosts.vanillaHosts()) {
+        for (Block host : SnowHosts.hosts()) {
             if (!(host instanceof DoublePlantBlock)) continue;
             for (DoubleBlockHalf half : DoubleBlockHalf.values()) {
                 for (int layers = 1; layers <= 8; layers++) {
@@ -211,6 +237,8 @@ public final class SnowMechanicsTest {
     private static void bindTags() {
         Map<net.minecraft.tags.TagKey<Block>, List<Holder<Block>>> tags = new HashMap<>();
         tags.put(BlockTags.DIRT, List.of(Blocks.DIRT.builtInRegistryHolder()));
+        tags.put(BlockTags.MUSHROOM_GROW_BLOCK, List.of(Blocks.MYCELIUM.builtInRegistryHolder()));
+        tags.put(BlockTags.SAND, List.of(Blocks.SAND.builtInRegistryHolder()));
         for (var entry : Map.of(BlockTags.FENCES, FenceBlock.class, BlockTags.WOODEN_FENCES, FenceBlock.class,
                 BlockTags.WALLS, WallBlock.class).entrySet()) {
             List<Holder<Block>> values = new ArrayList<>();
@@ -230,7 +258,7 @@ public final class SnowMechanicsTest {
 
     private static void mappingsAndShapes() throws Exception {
         Fixture level = world();
-        for (Block host : SnowHosts.vanillaHosts()) {
+        for (Block host : SnowHosts.hosts()) {
             for (BlockState raw : host.getStateDefinition().getPossibleStates()) {
                 if (!raw.getFluidState().isEmpty()) {
                     check(SnowHosts.cover(raw, 1) == null, "Accepted wet host");
@@ -255,7 +283,7 @@ public final class SnowMechanicsTest {
             }
         }
         for (Block invalid : List.of(Blocks.CHEST, Blocks.FURNACE, Blocks.OAK_FENCE_GATE, Blocks.OAK_SLAB,
-                Blocks.OAK_STAIRS, Blocks.POPPY, Blocks.STONE, Blocks.WATER)) {
+                Blocks.OAK_STAIRS, Blocks.WHEAT, Blocks.SEAGRASS, Blocks.VINE, Blocks.STONE, Blocks.WATER)) {
             check(SnowHosts.cover(invalid.defaultBlockState(), 1) == null, "Wrapped unsupported " + invalid);
             cases++;
         }
@@ -318,16 +346,32 @@ public final class SnowMechanicsTest {
         CallbackInfoReturnable<BlockState> result = new CallbackInfoReturnable<>("test", true);
         cover.invoke(mixin, context(level, Items.SNOW.getDefaultInstance()), result);
         check(SnowHosts.raw(result.getReturnValue()).is(Blocks.OAK_FENCE), "Raw host snow placement");
+        for (Block host : SnowHosts.hosts()) {
+            for (int layers = 0; layers < 8; layers++) {
+                Fixture stacked = world();
+                stacked.states.put(POS, layers == 0 ? host.defaultBlockState() : SnowHosts.cover(host.defaultBlockState(), layers));
+                BlockPlaceContext snowContext = context(stacked, Items.SNOW.getDefaultInstance());
+                CallbackInfoReturnable<BlockState> stackedResult = new CallbackInfoReturnable<>("test", true);
+                cover.invoke(mixin, snowContext, stackedResult);
+                check(stackedResult.isCancelled(), "Snow-into-host path was not selected");
+                placement.invoke(new SnowHostPlacementMixin(), snowContext, stackedResult);
+                check(SnowHosts.layers(stackedResult.getReturnValue()) == layers + 1,
+                        "Outer item placement undid snow stacking on " + host);
+                check(SnowHosts.raw(stackedResult.getReturnValue()).is(host), "Snow stacking changed the host");
+                cases++;
+            }
+        }
         coveredReplacement(placement);
     }
 
     private static void coveredReplacement(Method placement) throws Exception {
         List<Block> hosts = new ArrayList<>(List.of(Blocks.OAK_FENCE, Blocks.COBBLESTONE_WALL));
-        SnowHosts.vanillaHosts().stream().filter(host -> host instanceof BushBlock).forEach(hosts::add);
+        SnowHosts.hosts().stream().filter(host -> host instanceof BushBlock).forEach(hosts::add);
         List<Block> incoming = new ArrayList<>(hosts);
         incoming.addAll(List.of(Blocks.STONE, Blocks.CHEST, Blocks.SNOW));
         for (Block host : hosts) {
             for (BlockState raw : host.getStateDefinition().getPossibleStates()) {
+                if (!raw.getFluidState().isEmpty()) continue;
                 if (!(host instanceof BushBlock) && !raw.equals(host.defaultBlockState())) continue;
                 for (int layers = 1; layers <= 8; layers++) {
                     for (boolean replacement : new boolean[]{true, false}) {
@@ -349,8 +393,13 @@ public final class SnowMechanicsTest {
                                         new CallbackInfoReturnable<>("test", true, nextState);
                                 placement.invoke(new SnowHostPlacementMixin(), context, result);
                                 boolean preserve = expected && mixing && SnowHosts.supported(nextState);
+                                BlockState preservedState = nextState;
+                                if (expected && raw.getBlock() instanceof PinkPetalsBlock && nextState.is(raw.getBlock())) {
+                                    preservedState = raw.setValue(PinkPetalsBlock.AMOUNT,
+                                            Math.min(4, raw.getValue(PinkPetalsBlock.AMOUNT) + 1));
+                                }
                                 check(result.getReturnValue().equals(preserve
-                                                ? SnowHosts.cover(nextState, layers) : nextState),
+                                                ? SnowHosts.cover(preservedState, layers) : preservedState),
                                         "Replacement lost cover or wrapped an ineligible target: " + raw + " -> " + next);
                                 cases++;
                             }
@@ -380,9 +429,9 @@ public final class SnowMechanicsTest {
                 BlockPos.class, BlockState.class, net.minecraft.world.entity.LivingEntity.class, ItemStack.class,
                 org.spongepowered.asm.mixin.injection.callback.CallbackInfo.class);
         preserve.setAccessible(true);
-        for (Block block : SnowHosts.vanillaHosts()) {
+        for (Block block : SnowHosts.hosts()) {
             if (!(block instanceof DoublePlantBlock)) continue;
-            for (Block next : SnowHosts.vanillaHosts()) {
+            for (Block next : SnowHosts.hosts()) {
                 if (!(next instanceof DoublePlantBlock)) continue;
                 for (int layers = 1; layers <= 8; layers++) {
                     for (boolean replacement : new boolean[]{true, false}) {
@@ -556,8 +605,9 @@ public final class SnowMechanicsTest {
         Fixture level = world();
         level.thunder = false;
         check(SnowWeather.sample(cold, level, POS), "Suppressed vanilla first snow in ordinary snowfall");
-        for (Block host : SnowHosts.vanillaHosts()) {
+        for (Block host : SnowHosts.hosts()) {
             level = world();
+            if (host instanceof MushroomBlock) level.states.put(POS.below(), Blocks.MYCELIUM.defaultBlockState());
             level.states.put(POS, host.defaultBlockState());
             if (host instanceof DoublePlantBlock) level.states.put(POS.above(),
                     host.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER));
@@ -566,6 +616,86 @@ public final class SnowMechanicsTest {
             check(SnowHosts.layers(level.getBlockState(POS)) == 8
                     && SnowHosts.raw(level.getBlockState(POS)).is(host), "Host accumulation lost host or cap " + host);
             cases++;
+        }
+    }
+
+    private static void plantGrowth() throws Exception {
+        Block weeds = com.ordana.immersive_weathering.reg.ModBlocks.WEEDS.get();
+        for (int layers = 1; layers <= 8; layers++) {
+            Fixture level = world();
+            level.states.put(POS, SnowHosts.cover(weeds.defaultBlockState(), layers));
+            for (int ticks = 0; ticks < 1000 && SnowHosts.raw(level.getBlockState(POS)).getValue(CropBlock.AGE) < 7; ticks++) {
+                BlockState state = level.getBlockState(POS);
+                state.randomTick(level, POS, level.random);
+                check(SnowHosts.layers(level.getBlockState(POS)) == layers, "Weed aging removed snow");
+            }
+            check(SnowHosts.raw(level.getBlockState(POS)).getValue(CropBlock.AGE) == 7, "Covered weeds stopped aging");
+            level.states.put(POS, SnowHosts.cover(weeds.defaultBlockState(), layers));
+            ((BonemealableBlock) level.getBlockState(POS).getBlock())
+                    .performBonemeal(level, level.random, POS, level.getBlockState(POS));
+            check(SnowHosts.layers(level.getBlockState(POS)) == layers
+                    && SnowHosts.raw(level.getBlockState(POS)).getValue(CropBlock.AGE) > 0, "Weed bonemeal lost state or snow");
+            level = world();
+            level.states.put(POS, SnowHosts.cover(Blocks.OAK_SAPLING.defaultBlockState(), layers));
+            for (int ticks = 0; ticks < 100 && SnowHosts.raw(level.getBlockState(POS)).getValue(SaplingBlock.STAGE) == 0; ticks++) {
+                BlockState state = level.getBlockState(POS);
+                state.randomTick(level, POS, level.random);
+            }
+            check(SnowHosts.layers(level.getBlockState(POS)) == layers
+                    && SnowHosts.raw(level.getBlockState(POS)).getValue(SaplingBlock.STAGE) == 1, "Sapling stage lost snow");
+            cases += 3;
+        }
+        for (boolean grows : new boolean[]{true, false}) {
+            saplingProbe.grows = grows;
+            for (int layers = 1; layers <= 8; layers++) {
+                Fixture level = world();
+                List<BlockPos> positions = List.of(POS, POS.east(), POS.south(), POS.east().south());
+                for (int i = 0; i < positions.size(); i++) {
+                    level.states.put(positions.get(i), SnowHosts.cover(saplingProbe.defaultBlockState()
+                            .setValue(SaplingBlock.STAGE, 1), 1 + (layers + i) % 8));
+                }
+                BlockState state = level.getBlockState(POS);
+                ((BonemealableBlock) state.getBlock()).performBonemeal(level, level.random, POS, state);
+                for (int i = 0; i < positions.size(); i++) {
+                    BlockState result = level.getBlockState(positions.get(i));
+                    check(grows ? result.is(Blocks.OAK_LOG)
+                                    : SnowHosts.raw(result).is(saplingProbe)
+                                        && SnowHosts.layers(result) == 1 + (layers + i) % 8,
+                            "2x2 growth rollback lost a cover or overwrote a trunk");
+                    cases++;
+                }
+            }
+        }
+        Fixture level = world();
+        BlockState state = SnowHosts.cover(plantProbe.defaultBlockState(), 3);
+        level.states.put(POS, state);
+        state.entityInside(level, POS, new ProbeFalling(level, 1));
+        state.getBlock().animateTick(state, level, POS, level.random);
+        check(plantProbe.contacts == 1 && plantProbe.animations == 1, "Plant contact/visual effects were swallowed");
+        cases++;
+    }
+
+    private static void nativePlantIdentity() throws Exception {
+        com.llamalad7.mixinextras.injector.wrapoperation.Operation<Boolean> original =
+                arguments -> ((BlockState) arguments[0]).is((Block) arguments[1]);
+        for (Class<?> mixin : List.of(com.ordana.immersive_weathering.mixins.CropBlockMixin.class,
+                com.ordana.immersive_weathering.mixins.SnowMushroomMixin.class,
+                com.ordana.immersive_weathering.mixins.SnowMegaSaplingMixin.class)) {
+            Method identity = mixin.getDeclaredMethod("snowHostIdentity", BlockState.class, Block.class,
+                    com.llamalad7.mixinextras.injector.wrapoperation.Operation.class);
+            identity.setAccessible(true);
+            for (Block host : List.of(com.ordana.immersive_weathering.reg.ModBlocks.WEEDS.get(),
+                    Blocks.BROWN_MUSHROOM, Blocks.SPRUCE_SAPLING)) {
+                for (int layers = 1; layers <= 8; layers++) {
+                    check((Boolean) identity.invoke(null, SnowHosts.cover(host.defaultBlockState(), layers), host, original),
+                            "Wrapped plant did not count toward native growth rules");
+                    check(!(Boolean) identity.invoke(null, SnowHosts.cover(host.defaultBlockState(), layers), Blocks.STONE, original),
+                            "Wrapped plant matched a different native block");
+                    check((Boolean) identity.invoke(null, host.defaultBlockState(), host, original),
+                            "Uncovered native identity changed");
+                    cases += 3;
+                }
+            }
         }
     }
 
@@ -610,6 +740,31 @@ public final class SnowMechanicsTest {
         private ProbeSnow() { super(BlockBehaviour.Properties.of()); }
     }
 
+    private static final class ProbeSapling extends SaplingBlock {
+        private boolean grows;
+        private ProbeSapling() {
+            super(new net.minecraft.world.level.block.grower.OakTreeGrower(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING));
+        }
+        @Override public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+            for (BlockPos target : List.of(pos, pos.east(), pos.south(), pos.east().south())) {
+                level.setBlockAndUpdate(target, grows ? Blocks.OAK_LOG.defaultBlockState() : state);
+            }
+        }
+    }
+
+    private static final class ProbePlant extends BushBlock {
+        private int contacts, animations;
+        private ProbePlant() { super(BlockBehaviour.Properties.copy(Blocks.POPPY)); }
+        @Override public void entityInside(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, Entity entity) {
+            check(state.is(this), "Contact received a composite instead of the native host");
+            contacts++;
+        }
+        @Override public void animateTick(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, RandomSource random) {
+            check(state.is(this), "Animation received a composite instead of the native host");
+            animations++;
+        }
+    }
+
     private static final class ProbeFalling extends FallingLayerEntity {
         private boolean ground;
         private ProbeFalling(Fixture level, int layers) { super(level, POS.above(), snow(layers)); }
@@ -637,6 +792,7 @@ public final class SnowMechanicsTest {
         @Override public int getHeight() { return 384; }
         @Override public boolean isLoaded(BlockPos pos) { return loaded; }
         @Override public int getBrightness(LightLayer layer, BlockPos pos) { return layer == LightLayer.BLOCK ? light : 15; }
+        @Override public int getMaxLocalRawBrightness(BlockPos pos) { return 15; }
         @Override public boolean isRaining() { return raining; }
         @Override public boolean isThundering() { return thunder; }
         @Override public boolean isRainingAt(BlockPos pos) { return false; }

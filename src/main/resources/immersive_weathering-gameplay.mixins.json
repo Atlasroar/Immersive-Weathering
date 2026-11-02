@@ -29,6 +29,8 @@
     "SnowDoublePlantMixin",
     "SnowPlantLootPredicateMixin",
     "SnowWallPostMixin",
+    "SnowMushroomMixin",
+    "SnowMegaSaplingMixin",
     "StemBlockMixin",
     "SugarCaneBlockMixin",
     "SweetBerryBushMixin",

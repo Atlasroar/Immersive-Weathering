@@ -110,20 +110,24 @@ and dedicated-server behavior when touching shared code.
 
 ## Standalone snow ownership
 
-`SnowHosts` explicitly registers 42 `snow_covered_<vanilla_path>` blocks: 12 fences,
-22 walls and eight plants. This does not replace existing `snowy_*` masonry IDs,
+`SnowHosts` explicitly registers 72 `snow_covered_<host_path>` blocks: 12 fences,
+22 walls and 38 dry plants (34 vanilla, four IW). This does not replace existing `snowy_*` masonry IDs,
 `SnowGrowth`, their datapacks/configs, or leaf/sand mechanics. No automatic
 modded-host discovery or dependency is added. `register` is an explicit startup
 integration point: register a block/supplier before registry freeze, preserve
 the host schema and supply matching resources/semantics. Block entities,
 wet hosts, nested wrappers and mappings that lose host properties are rejected.
+IW suppliers are resolved inside their deferred block registration callbacks,
+not during `commonInit`, before Moonlight has instantiated the original plants.
 
 The evaluated inheritance approach cannot safely pass a `LAYERS`-extended state
-to vanilla `WallBlock`'s exact-state shape maps. Instead, the four schema classes
+to vanilla `WallBlock`'s exact-state shape maps. Instead, explicit schema classes
 inside `SnowCoveredBlock` share a deterministic delegating implementation:
 vanilla methods receive a reconstructed **raw host state**, never a composite.
 Every property except `WATERLOGGED` is stored with its original property object;
 only dry hosts are eligible, so raw restoration always retains false waterlogging.
+Saplings retain `stage`; propagules also retain `age`/`hanging`; petals retain
+`facing`/`flower_amount`; weeds retain `age`; frosty plants retain `natural`.
 There is no per-cell block entity, NBT payload, packet, render attachment, mutable
 world cache or global scratch position. Ordinary block-state persistence and
 vanilla block updates provide save/client synchronization.
@@ -135,11 +139,14 @@ post detection additionally recognizes wrapped upper walls through the narrow
 their relevant semantics. Rotation/mirroring, cloning, bonemeal and interaction
 delegate through raw states. Wrapped plants omit vanilla's visual XZ jitter so
 their snow plane stays aligned with the cell; biome tint is delegated to the raw
-plant, while snow quads are untinted.
+plant, while snow quads are untinted. Covered normal short grass alone delegates
+its model and both tint channels to IW frosty grass; its stored raw identity and
+restoration remain normal grass.
 
 `tools/snow_resources.py` emits reviewable, checked-in multipart blockstates,
-eight ordinary snow models and IW semantic tags. Host parts reference vanilla
-models, including bamboo's four special side models. Snow references the vanilla
+eight ordinary snow models and IW semantic tags. Host parts reference existing
+vanilla/IW models, including bamboo's four special side models, weed age models,
+propagule variants and petal segments. Snow references the vanilla
 sprite; a 1/1024-block depth bias separates coplanar post/arm surfaces from snow.
 There is no FRAPI custom model, Kiwi/Indium requirement, copied SnowRealMagic
 model/texture, or client import in shared snow code. Actual alternate-pack/Sodium
@@ -150,11 +157,14 @@ with normal `BlockPlaceContext`/`BlockItem` placement rather than reimplementing
 permissions, collision tests, callbacks, advancements, sounds or stack consumption.
 Partial covered plants permit ordinary block-item replacement only when
 `replace_partial_layers` is enabled and their reconstructed raw host accepts
-the item. Same-host items, full eight-layer covers, fences/walls and non-block
-items are not widened. A supported dry replacement keeps the old layer count
+the item. Full eight-layer covers, fences/walls and non-block
+items are not widened. Native same-item petal stacking is preserved with the
+original facing/count; other same-host plant items remain rejected.
+A supported dry replacement keeps the old layer count
 through the same placement injection while mixing is enabled; unsupported
 solids or mixing-disabled replacements consume the cover normally. Snow items
-remain a separate mixing/add-layer path.
+remain a separate mixing/add-layer path and bypass the replacement preservation
+hook, so adding snow cannot reset the newly incremented layer count.
 The normal double-plant placement callback applies the same eligibility check
 to a covered upper cell, preserving its independent layer count too.
 `SnowDoublePlantMixin` recognizes raw/wrapped partners and preserves an existing
@@ -170,6 +180,15 @@ snapshot once. Creative upper destruction suppresses partner drops. An invalid
 host remains until its two-tick scheduled resolution, then host loot is evaluated
 and snow becomes a plain layer or falls. Melt restores the host without loot.
 Disabling mixing does not unregister existing states.
+
+Native random growth, bonemeal, interaction, animation and entity-contact
+callbacks receive raw plant states. Eligible state changes are rewrapped with
+the original layer count; successful tree/mushroom growth into solid structures
+is not overwritten. Narrow identity hooks in crop growth-speed checks, mushroom
+density checks and mega-sapling recognition compare raw hosts. A stage-1 sapling
+snapshots only covered matching neighbors in its 3x3 cell neighborhood, restoring
+independent covers if a failed native 2x2 tree attempt restores raw saplings.
+This is a bounded operation-local snapshot, not a world cache or extra tick.
 
 `SnowPhysics` detaches only the snow state into the existing falling-layer entity
 type; the leaf/sand branch is unchanged. The snow branch advances its own time,
@@ -194,9 +213,14 @@ Source was inspected during research; this is not a clean-room/source-unread
 claim. The implementation and static resources here are independently authored
 against IW/Mojang behavior; no SnowRealMagic source or assets were ported.
 
-English `block.immersive_weathering.snow_covered_*` display names cover all 42
+English `block.immersive_weathering.snow_covered_*` display names cover all 72
 registered hosts; the resource tests enforce exact inventory coverage without
 rewriting existing translations or other locales.
+
+The six snow options already belong to the synchronized common spec and the
+existing Mod Menu/Moonlight config screen. Builder comments opt each control into
+Moonlight's description-key support; matching English tooltips explain scope,
+defaults and the gamerule sentinel without introducing a second config system.
 
 ## Branch policy and historical reference
 

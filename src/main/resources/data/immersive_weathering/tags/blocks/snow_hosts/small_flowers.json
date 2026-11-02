@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "immersive_weathering:snow_covered_dandelion",
+    "immersive_weathering:snow_covered_poppy",
+    "immersive_weathering:snow_covered_blue_orchid",
+    "immersive_weathering:snow_covered_allium",
+    "immersive_weathering:snow_covered_azure_bluet",
+    "immersive_weathering:snow_covered_red_tulip",
+    "immersive_weathering:snow_covered_orange_tulip",
+    "immersive_weathering:snow_covered_white_tulip",
+    "immersive_weathering:snow_covered_pink_tulip",
+    "immersive_weathering:snow_covered_oxeye_daisy",
+    "immersive_weathering:snow_covered_cornflower",
+    "immersive_weathering:snow_covered_lily_of_the_valley",
+    "immersive_weathering:snow_covered_wither_rose",
+    "immersive_weathering:snow_covered_torchflower"
+  ]
+}

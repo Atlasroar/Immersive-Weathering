@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.1.0-beta.1** is a feature prerelease, with a single root
+**2.1.0-beta.2** is an unreleased snow/plant follow-up, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,7 +31,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.1.0-beta.1.jar`; the matching
+`build\libs\immersive_weathering-2.1.0-beta.2.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Beta installation
@@ -42,9 +42,13 @@ Moonlight Lib **1.20-2.12.11** build (CurseForge file **5619072**).
 Install only the remapped IW jar, replacing any older IW jar rather than keeping
 both. Dependencies are not bundled. Optional client integrations are EMI,
 Mod Menu, and Cloth Config; see [installation](docs/wiki/players/Getting-started.md).
-This beta adds standalone snow mixing, falling, storm accumulation, and
+The published beta.1 adds standalone snow mixing, falling, storm accumulation, and
 partial-layer replacement without SnowRealMagic or Kiwi. See the
 [snow controls](docs/wiki/players/Configuration.md#standalone-snow).
+The unreleased follow-up expands sharing to small flowers, saplings, mushrooms,
+dead bushes and IW weeds/dune grass/frosty plants. Covered short grass looks
+frosty while retaining its normal underlying state. All six common snow
+settings have names and explanatory tooltips.
 It also retains beta.3's paired plant placement correction (grass, fern, seagrass and double flowers)
 without changing growth chances. A fresh in-game G07 retest is still required;
 this is not a blanket fix for the existing gameplay issue catalog.

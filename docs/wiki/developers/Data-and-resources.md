@@ -107,17 +107,28 @@ This is a broad existing contract, not a recommendation for new API design.
 ## Snow host data and persistence
 
 The [snow architecture](Architecture.md#standalone-snow-ownership) defines the
-new deterministic `immersive_weathering:snow_covered_<vanilla_path>` IDs. These
+new deterministic `immersive_weathering:snow_covered_<host_path>` IDs. These
 are ordinary block states with `layers=1..8` and the dry host's property values;
-double plants retain `half`. They do not have block items or block entities.
+double plants retain `half`; added saplings, propagules, petals, weeds and frosty
+plants retain their native stage/age/facing/amount/natural properties. The 72-host
+list is explicit, not an arbitrary plant-class discovery rule.
+They do not have block items or block entities.
 Do not remap old `snowy_*` masonry IDs, change their growth JSON, or migrate world
 data into these containers.
+Exact block/state predicates still distinguish a covered ID from its raw host;
+datapacks must explicitly include the covered ID and retained properties where
+that distinction should be ignored. The narrow native plant-identity hooks are
+not global RuleTest overrides. Shipped growth definitions and their existing
+snow-target eligibility are unchanged by this placement/cohabitation follow-up.
 
 `tools/snow_resources.py` derives the explicit host inventory from `SnowHosts`
 and generates static multipart blockstates, eight snow models and IW semantic
 tags. Run it after intentional host/resource changes, then `--check`. Vanilla
-append-only tags reference these IW tags for fences, walls, mining and flowers;
-keep existing tag values. The supported vanilla hosts do not require a raised
+append-only tags reference these IW tags for fences, walls, mining, flowers and
+saplings; keep existing tag values. Native weed age models and frosty-grass
+appearance are reused rather than copied. Covered normal grass retains its raw
+normal-grass identity and loot despite the temporary frosty model/tint.
+The supported vanilla hosts do not require a raised
 mining tier: do not infer `needs_stone_tool` from a blackstone/deepslate name.
 Original host loot tables remain authoritative and can still be overridden by
 datapacks. The snow half evaluates the vanilla snow table with the current

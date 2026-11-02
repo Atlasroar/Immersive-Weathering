@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "immersive_weathering:snow_covered_oak_sapling",
+    "immersive_weathering:snow_covered_spruce_sapling",
+    "immersive_weathering:snow_covered_birch_sapling",
+    "immersive_weathering:snow_covered_jungle_sapling",
+    "immersive_weathering:snow_covered_acacia_sapling",
+    "immersive_weathering:snow_covered_dark_oak_sapling",
+    "immersive_weathering:snow_covered_cherry_sapling",
+    "immersive_weathering:snow_covered_mangrove_propagule"
+  ]
+}

@@ -34,14 +34,46 @@ public final class SnowHosts {
                 Blocks.POLISHED_BLACKSTONE_BRICK_WALL, Blocks.COBBLED_DEEPSLATE_WALL, Blocks.POLISHED_DEEPSLATE_WALL,
                 Blocks.DEEPSLATE_BRICK_WALL, Blocks.DEEPSLATE_TILE_WALL, Blocks.MUD_BRICK_WALL,
                 Blocks.GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN,
-                Blocks.SUNFLOWER, Blocks.LILAC, Blocks.ROSE_BUSH, Blocks.PEONY);
+                Blocks.SUNFLOWER, Blocks.LILAC, Blocks.ROSE_BUSH, Blocks.PEONY,
+                Blocks.DANDELION, Blocks.POPPY, Blocks.BLUE_ORCHID, Blocks.ALLIUM, Blocks.AZURE_BLUET,
+                Blocks.RED_TULIP, Blocks.ORANGE_TULIP, Blocks.WHITE_TULIP, Blocks.PINK_TULIP,
+                Blocks.OXEYE_DAISY, Blocks.CORNFLOWER, Blocks.LILY_OF_THE_VALLEY,
+                Blocks.WITHER_ROSE, Blocks.TORCHFLOWER, Blocks.PINK_PETALS,
+                Blocks.OAK_SAPLING, Blocks.SPRUCE_SAPLING, Blocks.BIRCH_SAPLING, Blocks.JUNGLE_SAPLING,
+                Blocks.ACACIA_SAPLING, Blocks.DARK_OAK_SAPLING, Blocks.CHERRY_SAPLING, Blocks.MANGROVE_PROPAGULE,
+                Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM, Blocks.DEAD_BUSH);
+    }
+
+    public static List<Block> immersiveHosts() {
+        return List.of(ModBlocks.WEEDS.get(), ModBlocks.DUNE_GRASS.get(),
+                ModBlocks.FROSTY_GRASS.get(), ModBlocks.FROSTY_FERN.get());
+    }
+
+    public static List<Block> hosts() {
+        return java.util.stream.Stream.concat(vanillaHosts().stream(), immersiveHosts().stream()).toList();
     }
 
     public static void init() {
-        for (Block block : vanillaHosts()) {
-            String name = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block).getPath();
-            register(block, ModBlocks.regBlock("snow_covered_" + name, () -> SnowCoveredBlock.create(block)));
-        }
+        for (Block block : vanillaHosts()) registerHost(block);
+        registerImmersiveHost("weeds", ModBlocks.WEEDS);
+        registerImmersiveHost("dune_grass", ModBlocks.DUNE_GRASS);
+        registerImmersiveHost("frosty_grass", ModBlocks.FROSTY_GRASS);
+        registerImmersiveHost("frosty_fern", ModBlocks.FROSTY_FERN);
+    }
+
+    private static void registerImmersiveHost(String name, Supplier<? extends Block> host) {
+        // Moonlight resolves block suppliers during registration, after commonInit returns.
+        ModBlocks.regBlock("snow_covered_" + name, () -> {
+            Block block = host.get();
+            SnowCoveredBlock covered = SnowCoveredBlock.create(block);
+            register(block, () -> covered);
+            return covered;
+        });
+    }
+
+    private static void registerHost(Block block) {
+        String name = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block).getPath();
+        register(block, ModBlocks.regBlock("snow_covered_" + name, () -> SnowCoveredBlock.create(block)));
     }
 
     private SnowHosts() {}

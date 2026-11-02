@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "minecraft:block/grass"
+        "model": "immersive_weathering:block/frosty_grass"
       }
     },
     {

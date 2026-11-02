@@ -192,12 +192,17 @@ public class CommonConfigs {
         builder.pop();
 
         builder.push("snow");
-        SNOW_HOSTS = builder.define("host_mixing", true);
-        FALLING_SNOW = builder.define("falling", true);
-        REPLACE_PARTIAL_SNOW = builder.define("replace_partial_layers", true);
-        SNOW_ACCUMULATION = builder.define("accumulation", true);
-        SNOW_ACCUMULATION_WITHOUT_THUNDER = builder.define("accumulate_without_thunder", false);
-        SNOW_COLUMN_CAP = builder.comment("Maximum weather-deposited layers in one column; never spills above.")
+        SNOW_HOSTS = builder.comment("Allow snow to share a cell with supported dry fences, walls and plants.")
+                .define("host_mixing", true);
+        FALLING_SNOW = builder.comment("Unsupported snow falls without moving the plant, fence or wall.")
+                .define("falling", true);
+        REPLACE_PARTIAL_SNOW = builder.comment("Allow ordinary block items to replace partial snow and eligible covered plants, but not eight-layer covers.")
+                .define("replace_partial_layers", true);
+        SNOW_ACCUMULATION = builder.comment("Add weather snow up to the column cap; vanilla initial snowfall remains when disabled.")
+                .define("accumulation", true);
+        SNOW_ACCUMULATION_WITHOUT_THUNDER = builder.comment("Allow extra accumulation during ordinary snowfall instead of thunderstorms only.")
+                .define("accumulate_without_thunder", false);
+        SNOW_COLUMN_CAP = builder.comment("Maximum weather-deposited layers in one cell. Gamerule 0 disables weather snow; 1 uses this cap; other positive values limit it.")
                 .define("column_cap", 8, 1, 8);
         builder.pop();
 

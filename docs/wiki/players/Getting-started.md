@@ -31,6 +31,11 @@ This is not a promise to fix every catalogued gameplay report.
 Growth chances and seeded traversal are unchanged; in-game performance and the
 [beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
 
+The current source builds **2.1.0-beta.2**, an **unreleased** plant/snow follow-up:
+`build\libs\immersive_weathering-2.1.0-beta.2.jar`. Its extra dry-plant support,
+temporary frosty-grass appearance and common-config tooltips are not retroactive
+changes to the beta.1 download. Do not mix the two jars in an instance.
+
 Moonlight is required for core registration, configuration, generated bark/leaf
 content, and gameplay hooks. It is not an optional visual enhancement.
 

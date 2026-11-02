@@ -35,6 +35,15 @@ snow (layers 1-7). Host properties and plant halves are retained. Gates, slabs,
 stairs, waterlogged hosts, block entities, and arbitrary modded blocks are not
 snow containers. Existing IW snowy masonry remains a separate, unchanged system.
 
+The unreleased **2.1.0-beta.2** follow-up expands the explicit list to **72 hosts**:
+all vanilla small flowers, including torchflowers and pink petals; the seven
+tree saplings and dry mangrove propagules; red/brown mushrooms; dead bushes;
+and IW weeds, dune grass, frosty grass and frosty fern. Other crops, aquatic
+plants, vines and arbitrary modded plants remain excluded. Plant-first and
+snow-first placement keep the existing layer count. Snow-covered short grass
+uses the existing frosty-grass appearance only while covered; removing the
+snow restores normal grass rather than permanently converting the plant.
+
 Right-click a covered host with a shovel to remove its snow and retain the host.
 Survival uses one durability and vanilla snow loot, including Silk Touch;
 Creative produces no cover loot. Bright block light or rain melts the cover
@@ -59,12 +68,17 @@ compatibility sentinel and independent toggles. Any block item can replace plain
 vanilla partial snow layers 1-7 in place; this override does not replace layer 8
 or a nonreplaceable snow-covered fence/wall.
 At layers 1-7, covered plants also retain their raw plant's replacement rules
-when partial-layer replacement is enabled: the same plant item remains rejected.
+when partial-layer replacement is enabled: ordinary same-plant replacement stays
+rejected, but native pink-petal stacking retains its count and orientation.
 Replacing one with another supported dry host retains its snow when mixing is
 enabled; an ordinary solid block replaces the plant and cover together.
 Disabling mixing stops that preservation but does not prevent an otherwise
 eligible ordinary replacement. Full eight-layer covers cannot be replaced this
 way, and snow items still require mixing and room for another layer.
+Weed aging/bonemeal, sapling stages, mushroom density checks and native plant
+contact effects are retained. Failed 2x2 tree growth preserves each sapling's
+independent snow count; successful tree growth replaces the affected plants
+with the tree, not a snow-covered trunk.
 
 The [snow acceptance matrix](Feature-testing.md#standalone-snow-candidate-retest)
 separates automated fixture evidence from outstanding in-game checks.

@@ -3,6 +3,7 @@ package com.ordana.immersive_weathering.mixins;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ordana.immersive_weathering.reg.ModTags;
+import com.ordana.immersive_weathering.snow.SnowHosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -36,5 +37,10 @@ public abstract class CropBlockMixin extends Block {
         return original.call(instance, block);
     }
 
+    @WrapOperation(method = "getGrowthSpeed", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+    private static boolean snowHostIdentity(BlockState state, Block block, Operation<Boolean> original) {
+        return original.call(SnowHosts.raw(state), block);
+    }
 
 }

@@ -1,3 +1,24 @@
+## 2.1.0-beta.2 (unreleased)
+
+- Added snow sharing for vanilla small flowers (including petals), saplings,
+  mushrooms and dead bushes, plus IW weeds, dune grass and frosty grass/fern.
+  Placement in either order retains snow instead of discarding it.
+- Rendered snow-covered short grass with IW's frosty-grass model and tint.
+  Shoveling or melting the cover restores the original normal grass.
+- Exposed explanations for all six existing common `snow` controls without
+  renaming keys, changing defaults, or requiring a new configuration dependency.
+- Preserved weed ages, sapling stages, propagule state, petal amounts/orientation,
+  native plant contact/animation effects, and delegated growth/bonemeal behavior.
+  Growth identity hooks retain weed crowding, mushroom density and 2x2 sapling
+  recognition; failed multi-sapling growth retains each original snow count.
+- Fixed the replacement hook resetting a snow-item addition back to its old count.
+  Petals still stack according to their native placement rules.
+
+This follow-up is not a new published release or profile installation. Published
+beta.1 and its assets remain unchanged. Other crops, aquatic plants, vines, block
+entities and arbitrary modded plants remain outside the supported dry-host list.
+Manual validation of the expanded plants is still required.
+
 ## 2.1.0-beta.1
 
 - Added snow cohabitation with explicitly supported vanilla fences, walls,

@@ -5,13 +5,17 @@ import snow_resources
 
 
 class SnowResourceTests(unittest.TestCase):
-    def test_explicit_vanilla_inventory(self):
+    def test_explicit_dry_host_inventory(self):
         names = snow_resources.hosts()
-        self.assertEqual(len(names), 42)
+        self.assertEqual(len(names), 72)
         self.assertEqual(len(set(names)), len(names))
         self.assertEqual(sum(name.endswith("_fence") for name in names), 12)
         self.assertEqual(sum(name.endswith("_wall") for name in names), 22)
         self.assertFalse(any(name.endswith(("_gate", "_slab", "_stairs")) for name in names))
+        self.assertEqual(set(snow_resources.immersive_hosts()), {"weeds", "dune_grass", "frosty_grass", "frosty_fern"})
+        self.assertTrue({"poppy", "torchflower", "pink_petals", "oak_sapling", "mangrove_propagule",
+                         "brown_mushroom", "red_mushroom", "dead_bush"}.issubset(names))
+        self.assertTrue({"wheat", "carrots", "seagrass", "vine"}.isdisjoint(names))
 
     def test_generated_files_are_current(self):
         for path, data in snow_resources.outputs().items():
@@ -37,9 +41,26 @@ class SnowResourceTests(unittest.TestCase):
     def test_host_models_and_connectivity_remain_vanilla(self):
         for name in snow_resources.hosts():
             host = [p for p in snow_resources.multipart(name)["multipart"] if "layers" not in p.get("when", {})]
-            self.assertTrue(all(p["apply"]["model"].startswith(f"minecraft:block/{name}") for p in host))
-            count = 5 if name.endswith("_fence") else 9 if name.endswith("_wall") else 1 if name in ("grass", "fern") else 2
+            namespace = "immersive_weathering" if name == "grass" or name in snow_resources.immersive_hosts() else "minecraft"
+            model_name = "frosty_grass" if name == "grass" else name
+            self.assertTrue(all(p["apply"]["model"].startswith(f"{namespace}:block/{model_name}") for p in host))
+            count = (5 if name.endswith("_fence") else 9 if name.endswith("_wall")
+                     else 16 if name == "pink_petals" else 6 if name == "mangrove_propagule"
+                     else 8 if name == "weeds"
+                     else 2 if name in ("tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony") else 1)
             self.assertEqual(len(host), count)
+
+    def test_common_snow_controls_have_names_and_descriptions(self):
+        language = json.loads((snow_resources.RESOURCES / "assets/immersive_weathering/lang/en_us.json")
+                              .read_text(encoding="utf-8"))
+        source = (snow_resources.ROOT / "src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.java").read_text(encoding="utf-8")
+        section = source.split('builder.push("snow");', 1)[1].split("builder.pop();", 1)[0]
+        for key in ("host_mixing", "falling", "replace_partial_layers", "accumulation",
+                    "accumulate_without_thunder", "column_cap"):
+            self.assertIn(f'.define("{key}",', section)
+            self.assertIn(f"config.immersive_weathering.snow.{key}", language)
+            self.assertIn(f"config.immersive_weathering.snow.{key}.descriptionKey", language)
+        self.assertEqual(section.count("builder.comment("), 6)
 
     def test_static_snow_geometry_is_depth_separated_and_untinted(self):
         models = [data for path, data in snow_resources.outputs().items() if path.parent.name == "block"]
@@ -57,6 +78,16 @@ class SnowResourceTests(unittest.TestCase):
             if "tags" in path.parts:
                 self.assertFalse(data["replace"])
                 self.assertTrue(all(value.startswith("immersive_weathering:snow_covered_") for value in data["values"]))
+        for name in ("small_flowers", "flowers", "saplings"):
+            path = snow_resources.RESOURCES / f"data/minecraft/tags/blocks/{name}.json"
+            data = json.loads(path.read_text(encoding="utf-8"))
+            self.assertFalse(data["replace"])
+            self.assertIn(f"#immersive_weathering:snow_hosts/{name}", data["values"])
+        original_flowers = {"immersive_weathering:flowering_azalea_leaf_pile",
+                            "immersive_weathering:azalea_flower_pile"}
+        small_flowers = json.loads((snow_resources.RESOURCES / "data/minecraft/tags/blocks/small_flowers.json")
+                                  .read_text(encoding="utf-8"))
+        self.assertTrue(original_flowers.issubset(small_flowers["values"]))
 
 
 if __name__ == "__main__":

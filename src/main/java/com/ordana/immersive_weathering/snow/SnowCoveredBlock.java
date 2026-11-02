@@ -7,6 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShovelItem;
@@ -47,7 +48,12 @@ public class SnowCoveredBlock extends Block implements BonemealableBlock {
         if (host instanceof FenceBlock) return new Fence(host);
         if (host instanceof WallBlock) return new Wall(host);
         if (host instanceof DoublePlantBlock) return new DoublePlant(host);
-        if (host == Blocks.GRASS || host == Blocks.FERN) return new SnowCoveredBlock(host);
+        if (host instanceof MangrovePropaguleBlock) return new Propagule(host);
+        if (host instanceof SaplingBlock) return new Sapling(host);
+        if (host instanceof PinkPetalsBlock) return new Petals(host);
+        if (host instanceof com.ordana.immersive_weathering.blocks.WeedsBlock) return new Weeds(host);
+        if (host instanceof com.ordana.immersive_weathering.blocks.frosted.FrostyGrassBlock) return new FrostedPlant(host);
+        if (host instanceof BushBlock && host.defaultBlockState().getProperties().isEmpty()) return new SnowCoveredBlock(host);
         throw new IllegalArgumentException("No snow state schema for " + host);
     }
 
@@ -141,7 +147,57 @@ public class SnowCoveredBlock extends Block implements BonemealableBlock {
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.getBrightness(LightLayer.BLOCK, pos) > 11 || level.isRainingAt(pos.above())) {
             level.setBlockAndUpdate(pos, raw(state));
+            return;
         }
+        BlockState hostState = raw(state);
+        if (hostState.isRandomlyTicking()) {
+            List<SaplingCover> neighbours = saplingCovers(hostState, level, pos);
+            host.randomTick(hostState, level, pos, random);
+            retainGrowthCover(level, pos, state, neighbours);
+        }
+    }
+
+    private record SaplingCover(BlockPos pos, BlockState state) {}
+
+    private List<SaplingCover> saplingCovers(BlockState hostState, LevelReader level, BlockPos pos) {
+        if (!(host instanceof SaplingBlock) || hostState.getValue(SaplingBlock.STAGE) == 0) return List.of();
+        List<SaplingCover> result = new ArrayList<>();
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                if (x == 0 && z == 0) continue;
+                BlockPos other = pos.offset(x, 0, z);
+                BlockState state = level.getBlockState(other);
+                if (state.getBlock() instanceof SnowCoveredBlock && SnowHosts.raw(state).is(host)) {
+                    result.add(new SaplingCover(other, state));
+                }
+            }
+        }
+        return result;
+    }
+
+    private void retainGrowthCover(Level level, BlockPos pos, BlockState state, List<SaplingCover> neighbours) {
+        retainCover(level, pos, state);
+        // Failed 2x2 tree growth restores raw saplings in all four cells, not only the tick owner.
+        for (SaplingCover cover : neighbours) {
+            if (SnowHosts.raw(level.getBlockState(cover.pos())).is(host)) retainCover(level, cover.pos(), cover.state());
+        }
+    }
+
+    private void retainCover(Level level, BlockPos pos, BlockState previous) {
+        BlockState current = level.getBlockState(pos);
+        if (current == previous) return;
+        BlockState covered = SnowHosts.cover(current, SnowHosts.layers(previous));
+        if (covered != null && covered != current) level.setBlockAndUpdate(pos, covered);
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        host.animateTick(raw(state), level, pos, random);
+    }
+
+    @Override
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        host.entityInside(raw(state), level, pos, entity);
     }
 
     @Override
@@ -171,7 +227,9 @@ public class SnowCoveredBlock extends Block implements BonemealableBlock {
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return host.use(raw(state), level, pos, player, hand, hit);
+        InteractionResult result = host.use(raw(state), level, pos, player, hand, hit);
+        retainCover(level, pos, state);
+        return result;
     }
 
     @Override
@@ -238,9 +296,9 @@ public class SnowCoveredBlock extends Block implements BonemealableBlock {
     @Override
     public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
         if (host instanceof BonemealableBlock plant) {
+            List<SaplingCover> neighbours = saplingCovers(raw(state), level, pos);
             plant.performBonemeal(level, random, pos, raw(state));
-            BlockState grown = SnowHosts.cover(level.getBlockState(pos), SnowHosts.layers(state));
-            if (grown != null) level.setBlockAndUpdate(pos, grown);
+            retainGrowthCover(level, pos, state, neighbours);
         }
     }
 
@@ -266,6 +324,46 @@ public class SnowCoveredBlock extends Block implements BonemealableBlock {
         @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
             super.createBlockStateDefinition(builder);
             builder.add(DoublePlantBlock.HALF);
+        }
+    }
+
+    public static final class Sapling extends SnowCoveredBlock {
+        private Sapling(Block host) { super(host); }
+        @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+            super.createBlockStateDefinition(builder);
+            builder.add(SaplingBlock.STAGE);
+        }
+    }
+
+    public static final class Propagule extends SnowCoveredBlock {
+        private Propagule(Block host) { super(host); }
+        @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+            super.createBlockStateDefinition(builder);
+            builder.add(SaplingBlock.STAGE, MangrovePropaguleBlock.AGE, MangrovePropaguleBlock.HANGING);
+        }
+    }
+
+    public static final class Petals extends SnowCoveredBlock {
+        private Petals(Block host) { super(host); }
+        @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+            super.createBlockStateDefinition(builder);
+            builder.add(PinkPetalsBlock.FACING, PinkPetalsBlock.AMOUNT);
+        }
+    }
+
+    public static final class Weeds extends SnowCoveredBlock {
+        private Weeds(Block host) { super(host); }
+        @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+            super.createBlockStateDefinition(builder);
+            builder.add(CropBlock.AGE);
+        }
+    }
+
+    public static final class FrostedPlant extends SnowCoveredBlock {
+        private FrostedPlant(Block host) { super(host); }
+        @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+            super.createBlockStateDefinition(builder);
+            builder.add(com.ordana.immersive_weathering.blocks.frosted.Frosty.NATURAL);
         }
     }
 }

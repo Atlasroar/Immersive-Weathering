@@ -1,0 +1,121 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "hanging": "false"
+      },
+      "apply": {
+        "model": "minecraft:block/mangrove_propagule"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true",
+        "age": "0"
+      },
+      "apply": {
+        "model": "minecraft:block/mangrove_propagule_hanging_0"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true",
+        "age": "1"
+      },
+      "apply": {
+        "model": "minecraft:block/mangrove_propagule_hanging_1"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true",
+        "age": "2"
+      },
+      "apply": {
+        "model": "minecraft:block/mangrove_propagule_hanging_2"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true",
+        "age": "3"
+      },
+      "apply": {
+        "model": "minecraft:block/mangrove_propagule_hanging_3"
+      }
+    },
+    {
+      "when": {
+        "hanging": "true",
+        "age": "4"
+      },
+      "apply": {
+        "model": "minecraft:block/mangrove_propagule_hanging_4"
+      }
+    },
+    {
+      "when": {
+        "layers": "1"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_1"
+      }
+    },
+    {
+      "when": {
+        "layers": "2"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_2"
+      }
+    },
+    {
+      "when": {
+        "layers": "3"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_3"
+      }
+    },
+    {
+      "when": {
+        "layers": "4"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_4"
+      }
+    },
+    {
+      "when": {
+        "layers": "5"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_5"
+      }
+    },
+    {
+      "when": {
+        "layers": "6"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_6"
+      }
+    },
+    {
+      "when": {
+        "layers": "7"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_7"
+      }
+    },
+    {
+      "when": {
+        "layers": "8"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_snow_8"
+      }
+    }
+  ]
+}

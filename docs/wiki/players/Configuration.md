@@ -44,12 +44,19 @@ falling-block particles.
 
 The common `snow` section is server-authoritative and synchronized by Moonlight.
 Restart after file edits, and test fresh fixtures with the effective server config.
+In Mod Menu, open **Immersive Weathering -> Configs -> Common -> Snow**.
+The existing optional Cloth Config (or Moonlight-supported YACL) integration
+provides the settings screen; snow does not add another config dependency.
+All six existing keys remain in the common spec, with named controls and
+explanatory hover text in the beta.2 source. The client spec does not own them.
+If these controls are absent, confirm the active instance/jar and optional screen
+integration before editing another profile's files.
 
 | Key | Default | Effect |
 | --- | --- | --- |
 | `host_mixing` | `true` | Allows new snow/host combinations and snow-item additions. Existing covered states remain registered/removable when disabled. |
 | `falling` | `true` | Detaches unsupported snow into falling entities. When disabled, newly unsupported covered hosts lose the cover rather than the host; plain snow follows vanilla neighbor removal. |
-| `replace_partial_layers` | `true` | Widens ordinary block-item replacement of plain snow to layers 1-7 and allows raw-plant-eligible replacement of partial covered plants. Same-plant items, layer 8 and covered nonreplaceable hosts are excluded. |
+| `replace_partial_layers` | `true` | Widens ordinary block-item replacement of plain snow to layers 1-7 and allows raw-plant-eligible replacement of partial covered plants. Native petal stacking is retained; ordinary same-plant replacement, layer 8 and covered nonreplaceable hosts remain protected. |
 | `accumulation` | `true` | Enables extra weather layers and weather mixing. Disabling it retains vanilla initial snow, not extra layering. |
 | `accumulate_without_thunder` | `false` | Opts into extra layers during ordinary snowfall; clear weather and warm rain still cannot accumulate snow. |
 | `column_cap` | `8` (1-8) | Maximum weather-deposited layers, in one cell. Lowering it does not delete existing snow. |

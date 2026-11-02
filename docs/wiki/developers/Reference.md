@@ -18,7 +18,7 @@ The build is a single root Fabric Loom project for Minecraft 1.20.1.
 | `maven_group` | `com.ordana` |
 | `minecraft_version` | `1.20.1` |
 | `mod_id` | `immersive_weathering` |
-| `mod_version` | `2.1.0-beta.1` |
+| `mod_version` | `2.1.0-beta.2` |
 | `modmenu_version` | `7.2.2` |
 | `moonlight_file_id` | `5619072` |
 | `moonlight_min_version` | `1.20-2.12.11` |
@@ -101,6 +101,8 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowDoublePlantMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowPlantLootPredicateMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SnowWallPostMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowMushroomMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.SnowMegaSaplingMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.StemBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SugarCaneBlockMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.SweetBerryBushMixin` |

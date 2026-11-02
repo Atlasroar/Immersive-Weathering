@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "#immersive_weathering:snow_hosts/small_flowers",
     "immersive_weathering:flowering_azalea_leaf_pile",
     "immersive_weathering:azalea_flower_pile"
   ]
