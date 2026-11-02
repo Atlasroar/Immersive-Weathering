@@ -41,14 +41,27 @@ class SnowResourceTests(unittest.TestCase):
     def test_host_models_and_connectivity_remain_vanilla(self):
         for name in snow_resources.hosts():
             host = [p for p in snow_resources.multipart(name)["multipart"] if "layers" not in p.get("when", {})]
-            namespace = "immersive_weathering" if name == "grass" or name in snow_resources.immersive_hosts() else "minecraft"
-            model_name = "frosty_grass" if name == "grass" else name
+            namespace = "immersive_weathering" if name in ("grass", "fern") or name in snow_resources.immersive_hosts() else "minecraft"
+            model_name = f"frosty_{name}" if name in ("grass", "fern") else name
             self.assertTrue(all(p["apply"]["model"].startswith(f"{namespace}:block/{model_name}") for p in host))
             count = (5 if name.endswith("_fence") else 9 if name.endswith("_wall")
                      else 16 if name == "pink_petals" else 6 if name == "mangrove_propagule"
                      else 8 if name == "weeds"
                      else 2 if name in ("tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony") else 1)
             self.assertEqual(len(host), count)
+
+    def test_covered_grass_and_fern_use_matching_frosty_models(self):
+        for name in ("grass", "fern"):
+            parts = snow_resources.multipart(name)["multipart"]
+            host = [part for part in parts if "layers" not in part.get("when", {})]
+            self.assertEqual(host, [{"apply": {"model": f"immersive_weathering:block/frosty_{name}"}}])
+            model = snow_resources.RESOURCES / f"assets/immersive_weathering/models/block/frosty_{name}.json"
+            data = json.loads(model.read_text(encoding="utf-8"))
+            self.assertEqual(data["parent"], "immersive_weathering:block/frosty_tinted_cross")
+        for name in ("tall_grass", "large_fern"):
+            parts = snow_resources.multipart(name)["multipart"]
+            host = [part for part in parts if "layers" not in part.get("when", {})]
+            self.assertTrue(all(part["apply"]["model"].startswith(f"minecraft:block/{name}_") for part in host))
 
     def test_common_snow_controls_have_names_and_descriptions(self):
         language = json.loads((snow_resources.RESOURCES / "assets/immersive_weathering/lang/en_us.json")

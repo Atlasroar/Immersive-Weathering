@@ -125,9 +125,10 @@ snow-target eligibility are unchanged by this placement/cohabitation follow-up.
 and generates static multipart blockstates, eight snow models and IW semantic
 tags. Run it after intentional host/resource changes, then `--check`. Vanilla
 append-only tags reference these IW tags for fences, walls, mining, flowers and
-saplings; keep existing tag values. Native weed age models and frosty-grass
-appearance are reused rather than copied. Covered normal grass retains its raw
-normal-grass identity and loot despite the temporary frosty model/tint.
+saplings; keep existing tag values. Native weed age models and frosty-grass/fern
+appearances are reused rather than copied. Covered normal grass and short ferns
+retain their raw identities and loot despite their temporary frosty models/tints.
+The fern model/tint mapping is new in unreleased beta.3.
 The supported vanilla hosts do not require a raised
 mining tier: do not infer `needs_stone_tool` from a blackstone/deepslate name.
 Original host loot tables remain authoritative and can still be overridden by

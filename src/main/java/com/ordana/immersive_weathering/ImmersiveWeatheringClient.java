@@ -170,11 +170,8 @@ public class ImmersiveWeatheringClient {
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
         com.ordana.immersive_weathering.snow.SnowHosts.entries().values().forEach(block ->
-                event.register((state, level, pos, tint) -> {
-                    BlockState raw = com.ordana.immersive_weathering.snow.SnowHosts.raw(state);
-                    return event.getColor(raw.is(Blocks.GRASS) ? ModBlocks.FROSTY_GRASS.get().defaultBlockState() : raw,
-                            level, pos, tint);
-                }, block.get()));
+                event.register((state, level, pos, tint) ->
+                        event.getColor(snowHostColorState(state), level, pos, tint), block.get()));
         ModBlocks.LEAF_PILES.forEach((type, leafPile) ->
                 event.register((blockState, blockAndTintGetter, blockPos, i) ->
                 getLeafTypeColor(event, type, blockState, blockAndTintGetter, blockPos, i), leafPile));
@@ -191,6 +188,13 @@ public class ImmersiveWeatheringClient {
             ModBlocks.ROOTED_GRASS_BLOCK.get(),
             ModBlocks.FROSTY_GRASS.get(),
             ModBlocks.FROSTY_FERN.get());
+    }
+
+    private static BlockState snowHostColorState(BlockState state) {
+        BlockState raw = com.ordana.immersive_weathering.snow.SnowHosts.raw(state);
+        if (raw.is(Blocks.GRASS)) return ModBlocks.FROSTY_GRASS.get().defaultBlockState();
+        if (raw.is(Blocks.FERN)) return ModBlocks.FROSTY_FERN.get().defaultBlockState();
+        return raw;
     }
 
     private static int getLeafTypeColor(ClientHelper.BlockColorEvent event, LeavesType type, BlockState state, BlockAndTintGetter level, BlockPos pos, int i) {

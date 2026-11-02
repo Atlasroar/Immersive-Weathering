@@ -95,6 +95,7 @@ public final class SnowMechanicsTest {
         loadLoot();
         resources(java.nio.file.Path.of(args[0]));
         mappingsAndShapes();
+        coveredPlantColors();
         placement();
         plantGrowth();
         nativePlantIdentity();
@@ -147,6 +148,29 @@ public final class SnowMechanicsTest {
         Field elements = net.minecraft.world.level.storage.loot.LootDataManager.class.getDeclaredField("elements");
         elements.setAccessible(true);
         elements.set(loot, Map.copyOf(tables));
+    }
+
+    private static void coveredPlantColors() throws Exception {
+        Method colorState = com.ordana.immersive_weathering.ImmersiveWeatheringClient.class
+                .getDeclaredMethod("snowHostColorState", BlockState.class);
+        colorState.setAccessible(true);
+        Map<Block, Block> frosty = Map.of(Blocks.GRASS,
+                com.ordana.immersive_weathering.reg.ModBlocks.FROSTY_GRASS.get(), Blocks.FERN,
+                com.ordana.immersive_weathering.reg.ModBlocks.FROSTY_FERN.get());
+        for (Block host : List.of(Blocks.GRASS, Blocks.FERN, Blocks.POPPY, Blocks.OAK_FENCE,
+                com.ordana.immersive_weathering.reg.ModBlocks.FROSTY_GRASS.get(),
+                com.ordana.immersive_weathering.reg.ModBlocks.FROSTY_FERN.get())) {
+            BlockState raw = host.defaultBlockState();
+            for (int layers = 1; layers <= 8; layers++) {
+                BlockState covered = SnowHosts.cover(raw, layers);
+                BlockState appearance = (BlockState) colorState.invoke(null, covered);
+                check(appearance.equals(frosty.getOrDefault(host, host).defaultBlockState()),
+                        "Covered plant delegated the wrong color state: " + host);
+                check(SnowHosts.raw(covered).equals(raw), "Frosty appearance changed the underlying host");
+                check(SnowHosts.layers(covered) == layers, "Frosty appearance changed snow count");
+                cases++;
+            }
+        }
     }
 
     private static void lifecycleAndDrops() throws Exception {

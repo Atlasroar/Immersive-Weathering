@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.1.0-beta.2** is a snow/plant feature prerelease, with a single root
+**2.1.0-beta.3** is an unreleased frosty-fern follow-up, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -31,7 +31,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.1.0-beta.2.jar`; the matching
+`build\libs\immersive_weathering-2.1.0-beta.3.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Beta installation
@@ -49,6 +49,8 @@ The beta.2 follow-up expands sharing to small flowers, saplings, mushrooms,
 dead bushes and IW weeds/dune grass/frosty plants. Covered short grass looks
 frosty while retaining its normal underlying state. All six common snow
 settings have names and explanatory tooltips.
+Unreleased beta.3 gives covered short ferns the matching frosty-fern appearance,
+restoring normal ferns when their snow is removed, just like short grass.
 It also retains beta.3's paired plant placement correction (grass, fern, seagrass and double flowers)
 without changing growth chances. A fresh in-game G07 retest is still required;
 this is not a blanket fix for the existing gameplay issue catalog.

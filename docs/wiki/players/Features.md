@@ -43,6 +43,10 @@ plants, vines and arbitrary modded plants remain excluded. Plant-first and
 snow-first placement keep the existing layer count. Snow-covered short grass
 uses the existing frosty-grass appearance only while covered; removing the
 snow restores normal grass rather than permanently converting the plant.
+Unreleased **2.1.0-beta.3** applies the same rule to short ferns: covered ferns
+use the existing frosty-fern model/tint and become normal ferns again when the
+cover is removed or melts. This does not change large ferns or permanently
+convert plants to IW frosty blocks.
 
 Right-click a covered host with a shovel to remove its snow and retain the host.
 Survival uses one durability and vanilla snow loot, including Silk Touch;

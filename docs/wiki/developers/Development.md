@@ -46,7 +46,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0-beta.2.jar --sources build\libs\immersive_weathering-2.1.0-beta.2-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0-beta.3.jar --sources build\libs\immersive_weathering-2.1.0-beta.3-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -54,7 +54,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0-beta.
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.1.0-beta.2.jar`; install that remapped
+`build\libs\immersive_weathering-2.1.0-beta.3.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -151,7 +151,11 @@ Snow-item additions invoke both placement hooks in their real order to catch
 layer-count resets. New controls cover native weed aging/bonemeal, sapling stage
 progression, petal stacking, raw animation/contact forwarding, identity-hook
 bodies and failed/successful multi-sapling restoration probes with independent
-cover counts. The current harness run passed **176,617 cases**.
+cover counts. Direct calls into the actual client color-state selector cover
+grass/fern frost matching and unchanged hosts at all eight layer counts; the
+existing melt checks retain the original normal plants. These are selection/state
+checks, not a GPU render or full tint-provider invocation.
+The current harness run passed **176,665 cases**.
 
 The explicit fixture uses `Unsafe` to bypass server/level constructors, with
 in-memory storage, a supplied vanilla loot-table registry, seeded RNG, native
@@ -177,7 +181,7 @@ multiplayer or whole-world reload acceptance is claimed.
 The client bake preceded the final mixing-disabled petal-stack refinement;
 the final build, replacement matrix and dedicated EULA-gate launch were rerun.
 
-Python checks include the existing 26 wiki/Fabric-tool tests and eight snow-resource
+Python checks include the existing 26 wiki/Fabric-tool tests and nine snow-resource
 tests, including English display-name coverage for all registered snow hosts.
 The artifact guard additionally verifies every generated composite
 blockstate/model/tag is packaged byte-for-byte, retaining all prior license,

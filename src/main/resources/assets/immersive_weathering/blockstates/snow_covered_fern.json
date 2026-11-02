@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "minecraft:block/fern"
+        "model": "immersive_weathering:block/frosty_fern"
       }
     },
     {

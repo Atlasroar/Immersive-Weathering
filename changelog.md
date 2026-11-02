@@ -1,3 +1,16 @@
+## 2.1.0-beta.3 (unreleased)
+
+- Snow-covered short ferns now use the existing frosty-fern model and its matching
+  tint provider, mirroring snow-covered short grass.
+- This is temporary appearance only: the underlying block remains a normal fern,
+  restored when the snow is removed or melts. Tall grass and large ferns are
+  unchanged; no new content IDs, settings or dependencies are added.
+- Added matching model and client color-state regression controls for all eight
+  layer counts, including unchanged-host controls.
+
+Published beta.2 and the installed test-profile jar remain unchanged. The new
+fern appearance needs an in-game retest on this candidate.
+
 ## 2.1.0-beta.2
 
 - Added snow sharing for vanilla small flowers (including petals), saplings,

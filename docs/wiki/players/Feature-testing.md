@@ -2,7 +2,8 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.1.0-beta.2**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.1.0-beta.3 (unreleased)**, Minecraft **1.20.1**, Fabric.
+The latest recorded snow round below is **2.1.0-beta.2**, not a beta.3 pass.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
 their `Not run` cells are template defaults, not the current test-round verdicts.
@@ -29,6 +30,8 @@ assuming every variant within a combined row was individually exercised.
 N11 includes the paired-growth regression controls, but the report does not
 itemize separate grass/fern/seagrass transitions or replace the historical G07
 failure with a separate G07 pass.
+Beta.3 additionally makes covered short ferns look frosty; retest that appearance
+and normal-fern restoration in N02/N12. The beta.2 passes do not certify it.
 
 **November 1 follow-up on 2.1.0-beta.1:** the tester reported that the jar seems
 to work overall, then reported flowers replacing snow and requested shared weeds,
@@ -52,7 +55,7 @@ defaults; the dated results above are the current recorded verdicts.
 | N09 | Replace plain/plant-covered snow 1-8 with stone, chest, oriented fence, flowers, same-plant items and unsupported hosts; mixing/replacement toggles; permission/adventure/obstruction controls | Normal item placement/callbacks/consumption survive; covered plants obey raw replacement rules; supported replacements retain cover only with mixing; solids replace cover; layer 8/fences/walls remain protected | Not run |
 | N10 | Piston push/destroy, explosion, fire, shearing; dedicated client sync; save/reload; vanilla renderer and existing Sodium setup; resource-pack reload | Original host/drop/state semantics; no missing models, plant-tint/snow-tint errors, flickering or rendering-library requirement | Not run |
 | N11 | Existing IW snowy masonry IDs/config/data, old worlds, leaf/sand falling layers, beta.3 G07 cases | No destructive migration or changed independent mechanisms | Not run |
-| N12 | Each small flower, pink petals, sapling/dry propagule, mushroom, dead bush, IW weed/dune grass/frosty plant; snow-first and plant-first; layers 1-8; shovel/melt and both config toggles | Supported dry plants retain layer counts and native state; normal short grass looks frosty only while covered; wet hosts and full-layer replacement stay excluded | Not run |
+| N12 | Each small flower, pink petals, sapling/dry propagule, mushroom, dead bush, IW weed/dune grass/frosty plant; snow-first and plant-first; layers 1-8; shovel/melt and both config toggles | Supported dry plants retain layer counts and native state; normal short grass and (beta.3) short ferns use matching frosty appearances only while covered, then restore their original normal plants; wet hosts and full-layer replacement stay excluded | Not run |
 | N13 | Grow/bonemeal covered weeds and saplings; repeat failed/successful 2x2 tree growth with four different snow counts; mushroom density; stack petals and snow; plant contact effects | Ages, stages, petal amounts/direction and each layer count survive; failed trees restore all covers, successful trees remain trees; snow-item placement actually increments the cover | Not run |
 | N14 | Open Mod Menu -> IW Configs -> Common -> Snow; hover all six controls; change/save/reopen, restart and compare effective server config | Every snow toggle and the 1-8 cap is named/described and persisted in common settings, not client settings; previous values/defaults remain intact | Not run |
 

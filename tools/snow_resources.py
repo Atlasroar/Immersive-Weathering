@@ -40,8 +40,8 @@ def multipart(name):
                 if angle:
                     model["y"] = angle
                 parts.append({"when": {direction: side}, "apply": model})
-    elif name == "grass":
-        parts.append({"apply": {"model": "immersive_weathering:block/frosty_grass"}})
+    elif name in ("grass", "fern"):
+        parts.append({"apply": {"model": f"immersive_weathering:block/frosty_{name}"}})
     elif name == "pink_petals":
         for amount in range(1, 5):
             for direction, angle in zip(("north", "east", "south", "west"), (0, 90, 180, 270)):

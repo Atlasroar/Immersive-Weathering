@@ -24,6 +24,10 @@ unreported**. The [G07 retest](players/Feature-testing.md#beta3-paired-growth-re
 has a broad N11 follow-up, not separately itemized transitions. This is not a
 claim that all independent gameplay reports are fixed.
 
+The source now prepares unreleased **2.1.0-beta.3**, extending the temporary
+frosty appearance from covered short grass to covered short ferns. The beta.2
+passes do not verify that new appearance; retest N02/N12 on the new candidate.
+
 The [generated reference](developers/Reference.md) records source-derived
 versions, settings, entrypoints, mixins, Moonlight imports, and datapack IDs.
 Gameplay descriptions are grounded in source but are not a claim of runtime

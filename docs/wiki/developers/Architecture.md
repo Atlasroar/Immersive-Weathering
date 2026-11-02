@@ -139,9 +139,12 @@ post detection additionally recognizes wrapped upper walls through the narrow
 their relevant semantics. Rotation/mirroring, cloning, bonemeal and interaction
 delegate through raw states. Wrapped plants omit vanilla's visual XZ jitter so
 their snow plane stays aligned with the cell; biome tint is delegated to the raw
-plant, while snow quads are untinted. Covered normal short grass alone delegates
-its model and both tint channels to IW frosty grass; its stored raw identity and
-restoration remain normal grass.
+plant, while snow quads are untinted. Covered normal short grass and short fern
+delegate their models and both tint channels to the matching IW frosty plant;
+their stored raw identities and restoration remain normal grass/fern.
+The fern appearance is new in unreleased beta.3; tall grass and large ferns keep
+their original two-part models. The actual client color-state selector is
+exercised directly without initializing a renderer.
 
 `tools/snow_resources.py` emits reviewable, checked-in multipart blockstates,
 eight ordinary snow models and IW semantic tags. Host parts reference existing
