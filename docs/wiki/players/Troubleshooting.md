@@ -40,8 +40,8 @@ Do not file Forge/NeoForge support requests against this fork.
 
 ## Standalone fire controls
 
-The new fire behavior is currently [unreleased source](Features.md#standalone-fire-unreleased-source),
-not a change to the published 2.1.0 jar. If a carrier does not spread, check
+The new [fire behavior](Features.md#standalone-fire) belongs to the **2.2.0**
+release line, not the immutable 2.1.0 jar. If a carrier does not spread, check
 server/common `fire.entity_spread`, `doFireTick`, and `mobGriefing` before
 increasing probabilities. Sunlight-only or unknown/legacy saved burns are
 intentionally excluded; extinguish and use a supported independent ignition.
@@ -53,7 +53,7 @@ Torch consumption requires a successful direct main-hand hit on a supported
 living target; projectiles, blocked hits and offhand torches do not qualify.
 Soul torches deliberately use ordinary fire. Grass turning into dirt is
 intentional surface consumption, not a restoration bug. Review
-[settings and reload rules](Configuration.md#standalone-fire-unreleased-source)
+[settings and reload rules](Configuration.md#standalone-fire)
 and record counted trials before reporting a probability defect.
 
 ## Before reporting

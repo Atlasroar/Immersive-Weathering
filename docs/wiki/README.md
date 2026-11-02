@@ -12,10 +12,15 @@ The two linked guide hubs serve as the player and developer navigation tabs.
 
 ## Scope and accuracy
 
-The maintenance target is **Minecraft 1.20.1, Fabric only**. The current stable release,
-**2.1.0**, includes standalone snow features,
+The maintenance target is **Minecraft 1.20.1, Fabric only**. The current source
+and stable release target is **2.2.0**, adding
+[standalone fire](players/Features.md#standalone-fire) to standalone snow features,
 the Fabric-only migration, growth optimizations, and a paired-plant placement correction.
 Moonlight remains required; no snow-mod dependency is added.
+Fire adds no dependency either. Its [F01-F06 run checklist](players/Feature-testing.md#standalone-fire)
+remains **Not run**; automated rule checks are not manual acceptance.
+Consult [published releases](https://github.com/Atlasroar/Immersive-Weathering/releases)
+for available binaries rather than inferring publication from source version.
 It includes expanded dry-plant snow sharing and temporary frosty appearances
 for covered short grass and ferns. Published prereleases remain unchanged;
 see the [plant retests](players/Feature-testing.md#standalone-snow-candidate-retest).

@@ -30,7 +30,7 @@ source expressions rather than guessing what a setting's name means.
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
 
-## Standalone fire (unreleased source)
+## Standalone fire
 
 Open **Immersive Weathering -> Configs -> Common -> Standalone fire** using the
 existing optional configuration-screen integration. The common/server spec is
@@ -70,7 +70,7 @@ players and their projectiles do not. Existing external flammability values are
 retained (larger grass values are not reduced); disabling IW grass restores
 native/other-mod behavior rather than removing another mod's registration.
 Grass consumed by IW remains dirt; lowering a setting does not restore grass.
-See [feature rules](Features.md#standalone-fire-unreleased-source) for supported
+See [feature rules](Features.md#standalone-fire) for supported
 ignition sources, wetness and save/reload behavior.
 
 ## Leaf blacklist

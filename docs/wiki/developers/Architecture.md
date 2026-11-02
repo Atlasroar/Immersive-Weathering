@@ -111,11 +111,11 @@ and dedicated-server behavior when touching shared code.
 
 ## Standalone fire ownership
 
-The unreleased `fire` package is independently authored using vanilla/IW
+The 2.2.0 `fire` package is independently authored using vanilla/IW
 facilities; no external fire mod code/assets, library, component API or newer
-Minecraft API is imported. Source version 2.1.0 is not a new release artifact.
-The [player contract](../players/Features.md#standalone-fire-unreleased-source)
-and [common controls](../players/Configuration.md#standalone-fire-unreleased-source)
+Minecraft API is imported. The immutable published 2.1.0 artifacts are unchanged.
+The [player contract](../players/Features.md#standalone-fire)
+and [common controls](../players/Configuration.md#standalone-fire)
 are authoritative; season integration is deferred.
 
 `EntityFireMixin` owns one `IgnitionHistory` per entity. Server-side authorization

@@ -48,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0.jar --sources build\libs\immersive_weathering-2.1.0-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.2.0.jar --sources build\libs\immersive_weathering-2.2.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -56,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.1.0.jar -
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.1.0.jar`; install that remapped
+`build\libs\immersive_weathering-2.2.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -130,7 +130,7 @@ gameplay. Its test-only bridge supplies access to private vanilla fire queries
 and applies production grass rules; it is not shipped in the jar. Development
 server `runServer --args="--initSettings nogui"` can check initialization and
 Mixin loading without accepting the EULA or opening a world. Neither check
-replaces the [unrun manual F01-F06 matrix](../players/Feature-testing.md#standalone-fire-unreleased-source).
+replaces the [unrun manual F01-F06 run checklist](../players/Feature-testing.md#standalone-fire).
 No external profile/world or published 2.1.0 artifact is changed by these tasks.
 
 ## Snow mechanics harness

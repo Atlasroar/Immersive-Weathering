@@ -1,4 +1,14 @@
-## Unreleased
+## 2.2.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Requires Fabric Loader **0.16.14+**, Fabric API **0.92.12+1.20.1** and
+Fabric Moonlight **1.20-2.12.11** (CurseForge file **5619072**).
+Install only `immersive_weathering-2.2.0.jar`, replacing the previous IW jar
+after backing up worlds/configuration. Sources are distributed separately.
+Published 2.1.0 and prerelease artifacts, tags and historical results remain
+unchanged. This heading records the release contents, not proof of publication.
+
+### New standalone fire features
 
 - Independently authored standalone fire mechanics for Fabric 1.20.1: low-chance
   burning-entity block ignition, reduced projectile probability, bounded local
@@ -8,8 +18,41 @@
   legitimate later ignition can authorize the same burn.
 - Exact grass blocks burn into vanilla dirt without removing the ground or
   dropping items. Existing charring, soot, snow and datapack mechanics remain.
-- This is development source, not a second release of the immutable 2.1.0
-  artifacts. No new dependency, soul-burning renderer/state or season integration.
+- No new dependency, soul-burning renderer/state or season integration.
+- Server/common `fire` controls default to 2% per 20-tick entity-staggered trial,
+  at most one new cell, projectile multiplier 1/16, spread radius 1, heat radius 2,
+  eight counted heat cells, heat bonus 0.125, temperature bonus 0.5 above biome
+  base temperature 0.8 (clamped at 2), and pre-projectile probability cap 0.25.
+  Maximum default heat/hot trials are about 6.4%, or 0.4% for projectiles.
+- Only FIRE, SOUL_FIRE, MAGMA_BLOCK and LAVA count as heat. Dry, supported,
+  already-loaded air/fuel checks prevent occupied/wet-cell replacement and
+  chunk forcing. Entity fire does not create portals. `doFireTick=false`
+  disables environmental spread and grass consumption; direct torch combat
+  remains independent. Non-player carriers obey `mobGriefing`, except
+  player-owned projectiles.
+
+### Run checklist and validation limits
+
+All **F01-F06 manual cases are Not run**. Do not treat stable versioning,
+automated fixtures, CI or historical snow passes as a fire gameplay pass.
+Use a disposable/backed-up world, the remapped 2.2.0 binary, aligned client/server
+dependencies, and record source SHA, config, gamerules, biome and weather.
+The [authoritative runnable instructions](docs/wiki/players/Feature-testing.md#standalone-fire)
+include fixture commands, controlled rates, cleanup and expected outcomes.
+
+| Case | Run steps | Expected result | Status |
+| --- | --- | --- | --- |
+| F01 | At noon, summon an unhelmeted zombie with tag `iw_fire`, inspect `Fire` and `immersive_weathering:non_sun_fire`, then apply each real ignition source separately; add fuel only after removing the source fire. Repeat skeleton/phantom sunlight controls and failed projectile hits. | Sun-only/failed-hit provenance remains false; successful independent fire/lava/lightning/torch/Fire Aspect/burning-arrow/small-fireball ignition authorizes the same active burn. | Not run |
+| F02 | In Survival, hit the high-health fixture with a stack of 16 torches, then soul torches; repeat Creative, invulnerable/blocked hits, offhand, wet/fire-resistant/fire-immune/dead targets and an existing `Fire:400s` burn. | One item only for supported successful Survival ignition; ordinary four-second burning with no shortening or soul rendering; Creative and rejected hits keep items. | Not run |
+| F03 | Count created fires in the single eligible cell and clear them every tick; compare normal/projectile carriers and zero/eight/excess magma heat in plains/desert, recording interval and trial count. Test other source types separately. | Small per-trial rates track the configured bounded formula; projectile probability is one sixteenth after the cap; torches/campfires add no heat; no exact short-run ratio is promised. | Not run |
+| F04 | Use deterministic diagnostic settings to test doFireTick/mobGriefing, player/projectile exemptions, occupied/wet/rain-exposed cells, height/border/chunk edges and an obsidian frame; toggle/restart all controls. | Environmental gates and live settings hold; no overwrite, forced loading or entity-created portal; direct torch action remains independent of firetick. | Not run |
+| F05 | Disable entity spread, place actual fire beside separate grass/dirt/podzol/mycelium samples, then repeat grass/firetick toggles and baseline wood/soot/snow fixtures. | Successful grass consumption leaves same-position vanilla dirt and no drops; other soils and existing charring/soot/covered-host behavior remain unchanged. | Not run |
+| F06 | Save/reopen known and sun-only burns; extinguish by expiry/water/rain/powder snow and sun-ignite again; compare vanilla unarmed zombie melee from sun-only versus known ignition. | Only active known provenance survives reload; extinguishing clears it; natural zombie melee cannot turn sunlight into spread permission; clients agree. | Not run |
+
+Production rule fixtures, snow/growth regressions, artifact contracts and wiki
+checks cover automated behavior only. Interactive client rendering, multiplayer,
+in-world rates, external flammability/config integrations and these manual cases
+still need recorded results.
 
 ## 2.1.0
 

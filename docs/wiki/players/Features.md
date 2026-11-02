@@ -25,7 +25,10 @@ a dedicated stone-brick comparison matrix.
 Not every block has every variant. Tool actions can consume items or durability.
 Do not infer that the mod weathers arbitrary blocks from other mods.
 
-## Standalone fire (unreleased source)
+## Standalone fire
+
+Added in the **2.2.0** release line. The [manual run checklist](Feature-testing.md#standalone-fire)
+is still **Not run**; this behavior contract is not a recorded gameplay pass.
 
 Burning entities can ignite **nearby flammable blocks**, not other entities
 directly. The default is one **2% trial every 20 ticks**, staggered per entity,
@@ -62,8 +65,8 @@ are exempt. Fire, soul fire, magma blocks and lava provide a bounded local heat
 bonus; **torches and campfires do not**. Hotter biome base temperatures increase
 the chance above 0.8, clamped at 2; no season integration is included. This
 adjusts entity spread only, not vanilla fire's global probability.
-See [fire settings](Configuration.md#standalone-fire-unreleased-source) and the
-[manual fire checklist](Feature-testing.md#standalone-fire-unreleased-source).
+See [fire settings](Configuration.md#standalone-fire) and the
+[manual fire checklist](Feature-testing.md#standalone-fire).
 These mechanics are independent of `general.block_growths` and do not replace
 existing wood charring, soot, smoldering, snow or datapack mechanics.
 
