@@ -2,8 +2,8 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-For **Unreleased freezing wind / thunder snowstorms**, the published 2.4.0 jar
-does not contain this work. Record the implementation commit and local binary
+For **2.5.0 freezing wind / thunder snowstorms**, the published 2.4.0 jar
+does not contain this work. Record the release/source commit and actual binary
 hash. Natural ambient gusts require night, natural skylit dimensions, exposed
 loaded space, nonzero chance/budget/cap; cold thunder can generate them in daytime.
 Do not raise randomTickSpeed to accelerate wind. Below Y100/hot biomes are

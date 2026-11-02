@@ -27,7 +27,7 @@ Do not infer that the mod weathers arbitrary blocks from other mods.
 
 ## Freezing wind and thunder snowstorms
 
-**Unreleased implementation; version remains 2.4.0.** All new
+**Added in 2.5.0; not present in the published 2.4.0 jar.** All new
 [FW01-FW08 manual scenarios](Feature-testing.md#freezing-wind-and-thunder-snowstorms)
 are **Not run**. Frostiful and Immersive Storms are not required.
 

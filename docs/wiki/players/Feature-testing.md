@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.4.0**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.5.0**, Minecraft **1.20.1**, Fabric.
 The latest recorded snow round below is **2.1.0-beta.2**, not a new stable-version pass.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
@@ -12,10 +12,12 @@ Datapacks, configuration, other mods, and later releases can change expectations
 
 ## Freezing wind and thunder snowstorms
 
-**Unreleased work on 2.4.0; FW01-FW08 are all Not run.** Earlier SP01-SP07
+**2.5.0 release target; FW01-FW08 are all Not run.** Earlier SP01-SP07
 Pass/SP08 N/A, ST01-ST08 Not run and older snow/fire records below are unchanged.
-Use a locally built remapped binary at the implementation commit, record its
-SHA-256 and server/client configs; the published 2.4.0 binary predates this work.
+Use `immersive_weathering-2.5.0.jar` from the verified release when available;
+record merged source/release tag, binary SHA-256, dependencies and server/client
+configs. Source version or deployment alone is not a manual pass. The published
+2.4.0 binary predates this work and its historical test ledger below is unchanged.
 Do not install sources/dev jars, launch an external profile automatically, or
 equate native fixtures/build output with gameplay, visual or audio acceptance.
 
@@ -27,7 +29,7 @@ spawning, `/summon immersive_weathering:freezing_wind ~3 ~ ~` creates a short-li
 gust east of the tester. Clear obstacles for its 2x2 volume and westward path;
 use standing and wall fixtures on separate lanes. Natural spawning still needs
 its own measured tests, not only `/summon`.
-When retesting older SP/fire scenarios on this Unreleased build, temporarily
+When retesting older SP/fire scenarios on 2.5.0, temporarily
 disable `freezing_wind.enabled` to isolate the old thunder-only fire rule from
 the new independent gust extinguishing; record and restore that control.
 
@@ -135,7 +137,7 @@ pass from native fixtures, compilation or a title-screen initialization.
 
 **2.3.0 sandstorm integration; ST01-ST08 are all Not run.** The broad
 reported 2.2.0 fire pass and earlier snow ledger below are preserved and do not
-cover these storms. For this release's retest use the remapped 2.4.0 jar and
+cover these storms. For the current retest use the remapped 2.5.0 jar and
 record its merged source commit, not an earlier release's artifact. Source version alone does not establish
 publication. Do not overwrite historical release assets or an external profile.
 Record source/jar SHA, dependencies, effective config, packs, biome, weather,
@@ -215,7 +217,7 @@ These are runnable acceptance instructions, not a claim that the immutable
 acceptance. Automated fixtures and hook checks
 are described in the [fire harness](../developers/Development.md#fire-mechanics-harness).
 Use a new disposable Creative flat world with cheats, the remapped target-version
-jar (2.4.0 for current checks) and
+jar (2.5.0 for current checks) and
 matching server/client dependencies. Back up the instance configuration first.
 Record the release/source SHA, jar SHA-256, server config, gamerules, difficulty,
 weather, biome, trial count and singleplayer/dedicated-client setup.

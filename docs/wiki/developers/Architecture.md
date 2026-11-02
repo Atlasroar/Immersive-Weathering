@@ -67,7 +67,7 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 
 ## Important execution paths
 
-### Freezing wind and thunder snowstorms (Unreleased)
+### Freezing wind and thunder snowstorms (2.5.0)
 
 The existing `ServerLevelMixin.tickChunk` TAIL also calls `FreezingWind`:
 one staggered trial per chunk per 20 game ticks, independent of randomTickSpeed.

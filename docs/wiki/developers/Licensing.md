@@ -54,7 +54,7 @@ No unrelated Scorchful armor, banner, cauldron or worldgen assets are imported.
 
 ## Freezing wind and snowstorm adaptation
 
-Unreleased integration pins
+The 2.5.0 integration pins
 [Frostiful f017b15a2b23a6474d03d8e4b4e9e244247ffa24](https://github.com/TheDeathlyCow/frostiful/tree/f017b15a2b23a6474d03d8e4b4e9e244247ffa24)
 and [Immersive Storms 66c883b5c1facba2219c9a31e1f93acfe2e333c9](https://github.com/TheDeathlyCow/immersive-storms/tree/66c883b5c1facba2219c9a31e1f93acfe2e333c9),
 both by TheDeathlyCow under repository-declared LGPLv3. This is a standalone

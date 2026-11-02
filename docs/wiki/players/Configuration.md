@@ -35,7 +35,7 @@ source expressions rather than guessing what a setting's name means.
 
 ## Freezing wind and thunder snowstorms
 
-Unreleased; no version bump. Common controls are server-synchronized. Restart
+Added in 2.5.0. Common controls are server-synchronized. Restart
 after editing files; config disable does not erase existing ice/icicles/unlit
 torches or snow. Disabling wind discards active gusts on their next server tick.
 

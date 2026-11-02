@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.4.0** is the stable release target, with a single root
+**2.5.0** is the stable release target, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -13,12 +13,12 @@ and thunderstorm fire suppression. See the [feature guide](docs/wiki/players/Fea
 and [manual checklist](docs/wiki/players/Feature-testing.md#sand-and-thunder).
 These changes are not part of the immutable published 2.3.0 artifacts.
 
-**Unreleased:** standalone freezing wind and cold thunder snowstorms, adapted
+**New in 2.5.0:** standalone freezing wind and cold thunder snowstorms, adapted
 from pinned Frostiful/Immersive Storms source and artwork without thermal-system
 dependencies or new recordings. See [behavior and controls](docs/wiki/players/Features.md#freezing-wind-and-thunder-snowstorms)
 and [FW01-FW08](docs/wiki/players/Feature-testing.md#freezing-wind-and-thunder-snowstorms),
-all **Not run**. Version remains 2.4.0; published 2.4.0 artifacts are unchanged
-and do not contain this work.
+all **Not run**. Source version alone does not establish publication or deployment;
+published 2.4.0 artifacts are unchanged and do not contain this work.
 
 The default development branch is `1.20.1-fabric`. Historical
 branches were retired after preserving their tips as `archive/2026-11-01/*` tags;
@@ -44,7 +44,7 @@ Use Java 17 and the checked-in Gradle wrapper. See the
 [contribution instructions](CONTRIBUTING.md).
 
 Build with `.\gradlew.bat build`. The installable jar is
-`build\libs\immersive_weathering-2.4.0.jar`; the matching
+`build\libs\immersive_weathering-2.5.0.jar`; the matching
 `-sources.jar` is for source distribution, not installation.
 
 ## Installation

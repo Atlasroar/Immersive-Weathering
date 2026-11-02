@@ -1,4 +1,11 @@
-## Unreleased
+## 2.5.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Install only `immersive_weathering-2.5.0.jar` when published, replacing the
+previous IW jar after backing up worlds/configuration. Fabric Loader
+**0.16.14+**, Fabric API **0.92.12+1.20.1** and Fabric Moonlight
+**1.20-2.12.11** remain required. No runtime dependency is added. Source version
+and build output do not establish publication, deployment or manual acceptance.
 
 - Standalone traveling freezing wind adapted from pinned Frostiful source and
   six original particle frames, without Frostiful/Thermoo or player temperature,
@@ -21,7 +28,8 @@
 - Pinned LGPLv3 provenance, packaged-source/resource guards and a separate
   FW01-FW08 acceptance checklist accompany the work. All new manual scenarios
   remain **Not run**; previous 2.4.0 SP01-SP07 Pass/SP08 N/A and ST01-ST08
-  Not run records are unchanged. Version remains 2.4.0; this is not a release.
+  Not run records are unchanged. Published 2.4.0 and earlier artifacts remain
+  immutable and do not contain this feature.
 
 ## 2.4.0
 
