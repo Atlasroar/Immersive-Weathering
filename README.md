@@ -8,9 +8,10 @@ This fork targets **Minecraft 1.20.1 on Fabric only**. Version
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
-The default development branch is `atlasroar-fabric-1-20-1-bugs`. Historical
+The default development branch is `1.20.1-fabric`. Historical
 branches were retired after preserving their tips as `archive/2026-11-01/*` tags;
-see the [branch policy](docs/wiki/developers/Architecture.md).
+fully merged feature branches are removed after landing. See the
+[branch policy](docs/wiki/developers/Architecture.md).
 
 ## Wiki
 

@@ -347,10 +347,16 @@ defaults and the gamerule sentinel without introducing a second config system.
 
 ## Branch policy and historical reference
 
-The GitHub default development branch is `atlasroar-fabric-1-20-1-bugs`.
-Despite its task-oriented name, it is now the active Fabric 1.20.1 line.
+The GitHub default development branch is `1.20.1-fabric`, renamed from
+`atlasroar-fabric-1-20-1-bugs` on November 2, 2026.
 Use the repository's default branch as the base for new contributions; do not
 assume a branch literally named `main` exists.
+
+Fully merged remote feature branches are removed after checking that their tips
+are ancestors of the default branch and that no open pull request uses them.
+Keep active worktree branches and unmerged work. Existing local worktrees may
+retain pre-rename branch names; update their upstream tracking without deleting
+or forcibly switching those checkouts.
 
 On November 1, 2026, the other 11 remote branches were retired after preserving
 their exact tips as lightweight tags named `archive/2026-11-01/BRANCH_NAME`.
