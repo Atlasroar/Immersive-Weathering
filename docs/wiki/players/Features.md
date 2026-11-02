@@ -7,7 +7,7 @@ source. They are not an exhaustive recipe book or a claim that every modded
 variant works. Settings and datapacks can change availability and probabilities.
 
 For reproducible in-game checks, use the
-[feature test sheet](Feature-testing.md). It separates random growth from tool
+[feature test sheet](../developers/Feature-testing.md). It separates random growth from tool
 actions, physics, weather, fluid generators, and world generation, and includes
 a dedicated stone-brick comparison matrix.
 
@@ -27,9 +27,10 @@ Do not infer that the mod weathers arbitrary blocks from other mods.
 
 ## Freezing wind and thunder snowstorms
 
-**Added in 2.5.0; not present in the published 2.4.0 jar.** All new
-[FW01-FW08 manual scenarios](Feature-testing.md#freezing-wind-and-thunder-snowstorms)
-are **Not run**. Frostiful and Immersive Storms are not required.
+**Added in 2.5.0; not present in the published 2.4.0 jar.**
+Frostiful and Immersive Storms are not required. See the
+[FW01-FW08 instructions](../developers/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+and separate [recorded results](../developers/Test-results.md).
 
 Traveling, snowflake-filled 2x2 gusts can spawn **at night in all biomes** in
 natural skylit dimensions, at an exposed sampled surface or up to eight blocks
@@ -89,8 +90,9 @@ See [provenance and limits](../developers/Licensing.md#freezing-wind-and-snowsto
 **Added in 2.3.0**, adapted with original dust sprites and nine wind
 sounds from [Scorchful](../developers/Licensing.md#scorchful-sandstorm-adaptation).
 Requires only IW's existing Fabric API/Moonlight dependencies, not Scorchful,
-Thermoo, CCA or another library. The [ST01-ST08 checklist](Feature-testing.md#standalone-sandstorms)
-has **Not run** manual verdicts; existing snow/fire acceptance does not verify it.
+Thermoo, CCA or another library. Use the
+[ST01-ST08 instructions](../developers/Feature-testing.md#standalone-sandstorms)
+and [results ledger](../developers/Test-results.md); snow/fire acceptance does not verify storms.
 
 Ordinary vanilla rain (`/weather rain`) becomes a sandstorm in tagged
 **precipitation-disabled** desert/badlands biomes. Thunder, daytime and a separate
@@ -168,14 +170,15 @@ weather and snowfall preserve sand. Biomes in either
 are exempt, even if a datapack makes one rainy; temperature alone grants no
 exemption. Erosion depends on `randomTickSpeed`; storm deposition does not.
 See [sand controls](Configuration.md#sand-piles) and
-[SP01-SP08](Feature-testing.md#sand-and-thunder). On 2026-11-02 the tester
-reported **SP01-SP07 Pass; SP08 Not applicable**, at test-ID level without
+[SP01-SP08](../developers/Feature-testing.md#sand-and-thunder). The
+[results ledger](../developers/Test-results.md) preserves the dated test-ID report without
 itemized variant notes. This does not establish a multiplayer/coexistence pass.
 
 ## Standalone fire
 
-Added in the **2.2.0** release line. The [manual run checklist](Feature-testing.md#standalone-fire)
-is still **Not run**; this behavior contract is not a recorded gameplay pass.
+Added in the **2.2.0** release line. The
+[manual run instructions](../developers/Feature-testing.md#standalone-fire) and
+[recorded results](../developers/Test-results.md) are separate from this behavior contract.
 
 Burning entities can ignite **nearby flammable blocks**, not other entities
 directly. The default is one **2% trial every 20 ticks**, staggered per entity,
@@ -223,7 +226,7 @@ by this rule. Fire aging/scheduling and normal rain behavior remain.
 Soul fire, torches and campfires are unchanged. `doFireTick=false` disables
 both new thunder effects. All three thunder controls are configurable.
 See [fire settings](Configuration.md#standalone-fire) and the
-[manual fire checklist](Feature-testing.md#standalone-fire).
+[manual fire checklist](../developers/Feature-testing.md#standalone-fire).
 These mechanics are independent of `general.block_growths` and do not replace
 existing wood charring, soot, smoldering, snow or datapack mechanics.
 
@@ -286,8 +289,8 @@ contact effects are retained. Failed 2x2 tree growth preserves each sapling's
 independent snow count; successful tree growth replaces the affected plants
 with the tree, not a snow-covered trunk.
 
-The [snow acceptance matrix](Feature-testing.md#standalone-snow-candidate-retest)
-separates automated fixture evidence from outstanding in-game checks.
+Use the [snow replication instructions](../developers/Feature-testing.md#standalone-snow)
+and [recorded results](../developers/Test-results.md) separately from automated fixture evidence.
 
 ## Trees, bark, and leaves
 
@@ -316,8 +319,9 @@ Beta.3 corrects placement of paired tall grass, large ferns, tall seagrass, and
 double flowers. Plants still need valid support and an eligible upper position;
 seagrass requires water, and solid or waterlogged obstructions are not replaced.
 Existing chance, biome, and density rules still apply. The
-[G07 retest](Feature-testing.md#beta3-paired-growth-retest) has a later broad
-N11 Pass report on 2.1.0-beta.2; separate transition outcomes were not itemized.
+[G07 retest](../developers/Feature-testing.md#paired-plant-growth) distinguishes each
+transition; its historical observations and broad N11 follow-up are preserved
+in the [results ledger](../developers/Test-results.md).
 
 Cold systems include frost/frosted variants, thin ice, icicles, and freezing
 effects. Icicles have configurable spawning and vibration-related behavior.

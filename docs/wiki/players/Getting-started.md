@@ -32,41 +32,41 @@ snow features. Existing content IDs remain valid; new snow-covered host IDs are
 additions, not a destructive world conversion. No Kiwi, SnowRealMagic, Indium,
 or additional renderer library is required by these snow features.
 This is not a promise to fix every catalogued gameplay report.
-Growth chances and seeded traversal are unchanged; in-game performance and the
-[beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
+Growth chances and seeded traversal are unchanged. See the
+[paired-plant replication](../developers/Feature-testing.md#paired-plant-growth)
+and separate [recorded evidence](../developers/Test-results.md).
 
 The current source builds **2.5.0**: `build\libs\immersive_weathering-2.5.0.jar`.
 Version 2.5.0 adds [freezing wind and cold thunder snowstorms](Features.md#freezing-wind-and-thunder-snowstorms)
 with relightable normal/soul torches, thin ice and icicle integrations, without
 a thermal system or new dependencies/recordings. Review the
 [new settings](Configuration.md#freezing-wind-and-thunder-snowstorms) before
-opening a world; [FW01-FW08](Feature-testing.md#freezing-wind-and-thunder-snowstorms)
-are all **Not run**, not inferred gameplay/visual/audio passes. Publication and
+opening a world; see [FW01-FW08](../developers/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+for replication and the [results ledger](../developers/Test-results.md) for evidence. Publication and
 deployment must be verified separately; the published 2.4.0 jar predates these features.
 New standalone sandstorms add original dust/wind assets, guarded fog, 30%
 exposed-entity slowdown and existing IW sand-layer deposition. Published 2.3.0
 defaults to one weather layer; 2.4.0 defaults fresh configs to eight
 without changing saved settings. Review [sandstorm controls](Configuration.md#standalone-sandstorms)
 before opening a world. No new dependency or cauldron behavior is added.
-[ST01-ST08](Feature-testing.md#standalone-sandstorms) remain **Not run**; stable
-versioning is not visual/audio or multiplayer acceptance.
+[ST01-ST08](../developers/Feature-testing.md#standalone-sandstorms) covers replication;
+stable versioning is not visual/audio or multiplayer acceptance.
 It includes temporary frosty appearances for both covered short grass and ferns.
 New standalone fire features add low-chance non-sun entity block spreading,
 reduced projectile spreading, bounded local heat/hot-biome bonuses, ordinary
 torch combat ignition and grass-to-dirt burning, without a new dependency.
 Review [fire controls](Configuration.md#standalone-fire) before opening a world:
 they are enabled by default, and environmental spreading requires `doFireTick`.
-The tester reported a broad 2.2.0 fire-feature pass; individual
-[F01-F06 variants](Feature-testing.md#standalone-fire) remain unreported.
+Use [F01-F06](../developers/Feature-testing.md#standalone-fire) for individual fire controls;
+the [results ledger](../developers/Test-results.md) keeps broad reports distinct from per-case evidence.
 Earlier prerelease downloads are unchanged; install only one active IW jar.
 Version 2.4.0 adds [sand sharing/rain erosion](Features.md#sand-piles) and
 [thunder fire suppression](Configuration.md#standalone-fire), not present in
-the published 2.3.0 jar. Their [SP01-SP08 checklist](Feature-testing.md#sand-and-thunder)
-records the tester's **SP01-SP07 Pass; SP08 Not applicable** report dated
-2026-11-02, not itemized variant or multiplayer results. Published release
-assets must not be overwritten.
-The recorded N01-N11 passes were on beta.2, not a new complete stable-version
-acceptance run; N12-N14 and the final fern appearance remain unreported.
+the published 2.3.0 jar. Use the
+[SP01-SP08 instructions](../developers/Feature-testing.md#sand-and-thunder)
+and separate [results tables](../developers/Test-results.md) for the documented
+rounds, including earlier snow tests. Historical observations do not automatically
+certify a later artifact or variant. Published release assets must not be overwritten.
 
 Moonlight is required for core registration, configuration, generated bark/leaf
 content, and gameplay hooks. It is not an optional visual enhancement.

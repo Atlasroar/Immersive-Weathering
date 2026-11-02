@@ -289,13 +289,36 @@ def export_wiki(root: Path, output: Path, repo_url: str, ref: str) -> None:
     for audience in ("players", "developers"):
         title = audience.capitalize()
         sidebar.extend([f"## [{title}]({repo_url}/wiki/{title})", ""])
-        for page in pages:
-            if page.parent.name == audience and page.name != "README.md":
-                slug = wiki_slug(page.relative_to(wiki_root))
-                label = page.read_text(encoding="utf-8").splitlines()[0].removeprefix("# ")
-                sidebar.append(f"- [{label}]({repo_url}/wiki/{quote(slug)})")
+        # Match each audience hub's reading order; keep new unlisted pages visible.
+        hub = wiki_root / audience / "README.md"
+        ordered = []
+        for target in markdown_targets(hub.read_text(encoding="utf-8")):
+            parsed = urlsplit(target)
+            if parsed.scheme or parsed.netloc or not parsed.path:
+                continue
+            page = (hub.parent / unquote(parsed.path)).resolve()
+            if page.parent == hub.parent.resolve() and page.suffix == ".md" and page.name != "README.md":
+                if page not in ordered and page in pages:
+                    ordered.append(page)
+        ordered.extend(page for page in pages
+                       if page.parent.name == audience and page.name != "README.md" and page not in ordered)
+        for page in ordered:
+            slug = wiki_slug(page.relative_to(wiki_root))
+            label = page.read_text(encoding="utf-8").splitlines()[0].removeprefix("# ")
+            sidebar.append(f"- [{label}]({repo_url}/wiki/{quote(slug)})")
         sidebar.append("")
     exported["_Sidebar.md"] = "\n".join(sidebar).rstrip() + "\n"
+    if "Developers-Feature-testing.md" in exported and "Developers-Test-results.md" in exported:
+        # Published releases link to this old slug; retain a landing page outside the sidebar.
+        exported["Players-Feature-testing.md"] = (
+            "# Testing has moved\n\n"
+            f"[Home]({repo_url}/wiki/Home) | [Players]({repo_url}/wiki/Players) | "
+            f"[Developers]({repo_url}/wiki/Developers)\n\n"
+            f"Use the [in-game test sheet]({repo_url}/wiki/Developers-Feature-testing) "
+            "for reusable feature replication instructions.\n\n"
+            f"Use [test results]({repo_url}/wiki/Developers-Test-results) "
+            "for dated outcomes, tested versions and coverage limits.\n"
+        )
     exported["_Footer.md"] = (
         f"[Players]({repo_url}/wiki/Players) | [Developers]({repo_url}/wiki/Developers)\n\n"
         f"Published from [repository documentation]({repo_url}/tree/{quote(ref, safe='')}/docs/wiki) "

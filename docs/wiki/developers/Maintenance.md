@@ -19,6 +19,24 @@ Keep the two audience hubs distinct:
 Every wiki page must link to wiki home and both audience hubs, except that a hub
 labels its own audience rather than linking to itself.
 
+The audience hub tables define the exported sidebar reading order. Keep player
+pages ordered Getting started, Features and interactions, Configuration, then
+Troubleshooting. Test instructions and results belong to the developer guide.
+New pages not yet linked in a hub are appended in deterministic filename order
+so they cannot silently disappear from the sidebar.
+The exported former player test-sheet URL remains a short landing page for
+links in published release notes; it is not listed as a player sidebar page.
+
+## Manual testing pages
+
+Keep [replication instructions](Feature-testing.md) reusable and independent
+of a mod release. Preserve test IDs, setup steps, expected behavior and negative
+controls, but do not add verdict columns or release-round narratives there.
+Put tested artifacts, dates, outcomes and coverage limitations in the
+[results tables](Test-results.md). Update summary counts with the per-ID records.
+Never turn a broad feature report into itemized passes, erase an older failure
+without recording its follow-up, or equate automated fixtures with gameplay.
+
 ## Update checklist
 
 | Change | Documentation that needs attention |

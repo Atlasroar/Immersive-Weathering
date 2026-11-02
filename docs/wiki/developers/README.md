@@ -7,6 +7,8 @@
 | [Architecture map](Architecture.md) | Startup, source ownership, dispatch paths, and client/server boundaries |
 | [Moonlight dependency](Moonlight.md) | Required APIs, feature consumers, and Fabric-only migration boundaries |
 | [Development](Development.md) | Build, runtime setup, and validation |
+| [In-game feature test sheet](Feature-testing.md) | Version-neutral fixtures, replication steps and expected behavior by feature |
+| [Test results](Test-results.md) | Per-case outcomes, summary counts, tested versions and evidence limits |
 | [Data and generated resources](Data-and-resources.md) | Growth/fluid definitions, predicates, packs, and reloads |
 | [Adding features and fixing bugs](Contributing.md) | Relevant surfaces, state safety, and reproduction discipline |
 | [Generated reference](Reference.md) | Actual versions, entrypoints, mixins, settings, API imports, and data inventory |

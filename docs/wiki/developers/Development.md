@@ -118,9 +118,9 @@ checks run in the existing cross-platform workflow. These checks do **not**
 establish real Mixin weaving, networking/rendering/audio, dedicated-server
 startup, optional-mod coexistence or visual/gameplay acceptance. No external
 Minecraft profile/world is mutated or launched, no EULA accepted by this work.
-Record manual [FW01-FW08](../players/Feature-testing.md#freezing-wind-and-thunder-snowstorms)
-separately; all start Not run. Original SP/ST/snow/fire ledger entries remain
-historical, not passes for these features.
+Use [FW01-FW08](Feature-testing.md#freezing-wind-and-thunder-snowstorms)
+for manual replication and the [results tables](Test-results.md) for recorded
+outcomes. Original SP/ST/snow/fire entries remain historical.
 
 On 2026-11-02 the separate dedicated initialization-only check passed:
 
@@ -188,7 +188,7 @@ gameplay. Its test-only bridge supplies access to private vanilla fire queries
 and applies production grass rules; it is not shipped in the jar. Development
 server `runServer --args="--initSettings nogui"` can check initialization and
 Mixin loading without accepting the EULA or opening a world. Neither check
-replaces the [manual F01-F06 run checklist](../players/Feature-testing.md#standalone-fire);
+replaces the [manual F01-F06 run checklist](Feature-testing.md#standalone-fire);
 the tester's broad 2.2.0 pass does not itemize its variants.
 No external profile/world or published 2.1.0 artifact is changed by these tasks.
 
@@ -217,7 +217,7 @@ rules, real vanilla/IW loot tables, and one-layer rain erosion/tag exemptions.
 The test fixture binds native fence/sand/dead-bush-support tags explicitly;
 it does not substitute a different dead-bush survival rule. The shared snow
 model generator still emits byte-identical snow resources. For
-[SP01-SP08](../players/Feature-testing.md#sand-and-thunder), the tester reported
+[SP01-SP08](Test-results.md#per-test-records), the tester reported
 **SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02, at test-ID level without
 itemized variant notes. Published 2.3.0 artifacts remain immutable.
 Building alone does not deploy; the 2.4.0 release deployment replaces only the
@@ -244,7 +244,7 @@ guards, stronger-fog clamping, independent cloud toggle, bounded particle emitte
 and world-aware intermittent wind timer. They do **not** run OpenGL, a sound device,
 the Mixin transformer or a real ticking multiplayer world. Hash/PNG/Vorbis header
 checks do not prove the actual particle atlas, decoder or audio mixer loaded.
-Run [ST01-ST08](../players/Feature-testing.md#standalone-sandstorms) for acceptance
+Run [ST01-ST08](Feature-testing.md#standalone-sandstorms) for acceptance
 and record real observations separately. No EULA, world, external profile or
 released artifact changes are part of these checks.
 
@@ -358,7 +358,7 @@ acceptance reproduction. On November 1, after the 2.1.0-beta.2 deployment, the
 tester reported **N01-N11 Pass**, including the combined visual/synchronization
 row. These are user-reported results without a new per-control or mod/resource-pack
 inventory, not independent engine acceptance. **N12-N14 remain unreported** in the
-[manual sheet](../players/Feature-testing.md#standalone-snow-candidate-retest).
+[results ledger](Test-results.md).
 Do not modify an external profile or accept an EULA to make a smoke command pass.
 
 ## Paired-growth regression harness
@@ -401,7 +401,7 @@ propagates actual vanilla `updateShape` calls to neighbors; it is not the chunk
 engine, a real resource reload, a loot/drop simulation, or an in-game tick loop.
 Neither it nor a clean build establishes Fabric lifecycle or a passed manual G07
 retest. See the [placement contract](Data-and-resources.md#paired-output-placement)
-and [manual retest](../players/Feature-testing.md#beta3-paired-growth-retest).
+and [manual retest](Feature-testing.md#paired-plant-growth).
 
 ## Growth performance harness
 

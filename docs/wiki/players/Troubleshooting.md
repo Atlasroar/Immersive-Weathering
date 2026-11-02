@@ -18,7 +18,7 @@ accumulation/cap/gamerule/support rules; bonus0/disabled storm preserves ordinar
 snow behavior rather than disabling snowfall. Check client snowstorm toggles,
 vanilla particle/Weather settings and actually installed Immersive Storms
 (which owns presentation only). No new upstream wind recordings were imported.
-FW01-FW08 remain **Not run**, not inferred compatibility or rendering passes.
+See the [results ledger](../developers/Test-results.md) rather than inferring compatibility or rendering acceptance.
 
 For the **2.3.0 standalone sandstorms**, check vanilla rain first, then the
 new dry-biome subtype tags and common/client `sandstorms` settings. Thunder is
@@ -26,8 +26,8 @@ unnecessary; wet-biome `has_sandstorm` legacy growth does not imply new dust/fog
 or layer deposition. A roof shelters slowdown/deposition, not biome fog/clouds.
 Check the Weather slider, subtitles and particle setting for missing wind/dust.
 IW deliberately yields its new storm features when Scorchful is installed.
-Do not treat [ST01-ST08](Feature-testing.md#standalone-sandstorms)'s Not run
-manual cases as verified graphics, audio or multiplayer results.
+The [ST01-ST08 instructions](../developers/Feature-testing.md#standalone-sandstorms)
+are replication steps, not verified graphics, audio or multiplayer results.
 
 For **2.4.0 sand/thunder changes**, first distinguish that version
 from published 2.3.0. Saved `sandstorms.layer_cap=1` stays one until
@@ -38,9 +38,9 @@ positive randomTickSpeed and absence from **both** sandstorm biome tags;
 temperature alone is irrelevant. Thunder fire suppression uses sky exposure,
 not actual rainfall, and requires `doFireTick`. Covered/indoor fire, soul fire,
 torches and campfires are not extinguished by it. See
-[SP01-SP08](Feature-testing.md#sand-and-thunder): the tester reported
-**SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02. Automated coverage does
-not itself establish gameplay results, and SP08 is not a compatibility pass.
+[SP01-SP08](../developers/Feature-testing.md#sand-and-thunder) and its
+[dated results](../developers/Test-results.md). Automated coverage does not
+itself establish gameplay or compatibility results.
 
 ## Reported Fabric 1.20.1 problems
 
@@ -66,12 +66,12 @@ The current-fork
 was closed at the tester's request on November 1, 2026 after W01-W06 and
 SB01-SB06 passed in the beta.2 test round. This is user-reported confirmation,
 not a new code fix or measured equality of rates. The
-[feature test sheet](Feature-testing.md) preserves the results and limitations.
+[results ledger](../developers/Test-results.md) preserves the results and limitations.
 The same round reports double-tall plant growth failing (G07), and icicle
 support-loss falling passing but vibration-triggered falling failing (C08).
 Beta.3 corrects a deterministically reproduced paired-placement failure behind
 G07. The later 2.1.0-beta.2 snow round reports N11's regression checks passing;
-separate transition outcomes in the [manual retest](Feature-testing.md#beta3-paired-growth-retest)
+separate transition outcomes in the [manual retest](../developers/Feature-testing.md#paired-plant-growth)
 were not itemized. C08 vibration is not fixed by that change. Steel-wool availability/use
 also remains unresolved despite the reported axe-interaction passes.
 
@@ -143,7 +143,7 @@ stationary layers adjacent to water.
 Rendering uses ordinary multipart models with vanilla host textures and the
 vanilla snow sprite, with no Indium/Kiwi requirement. Alternate resource packs
 and Sodium are included in N10's combined row, reported Pass in the
-[2.1.0-beta.2 snow results](Feature-testing.md#standalone-snow-candidate-retest).
+[2.1.0-beta.2 snow results](../developers/Test-results.md).
 The report did not itemize tested renderer/resource-pack combinations, so do not
 assume arbitrary combinations are verified. A model bake or fixture pass alone
 is not visual acceptance. N12-N14 remain unreported.

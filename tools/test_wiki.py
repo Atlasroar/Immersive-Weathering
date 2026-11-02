@@ -1,5 +1,7 @@
+import re
 import tempfile
 import unittest
+from collections import Counter
 from pathlib import Path, PurePosixPath, PureWindowsPath
 
 import wiki
@@ -147,6 +149,77 @@ builder.pop();
             (output / ".wiki-published-pages.json").write_text('["../outside.md"]', encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "Invalid"):
                 wiki.export_wiki(wiki.ROOT, output, "https://github.com/test/repo", "abc123")
+
+    def test_sidebar_uses_hub_order_and_keeps_unlisted_pages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "source"
+            pages = root / "docs" / "wiki"
+            (pages / "players").mkdir(parents=True)
+            (pages / "developers").mkdir()
+            (pages / "README.md").write_text("# Home\n", encoding="utf-8")
+            (pages / "players" / "README.md").write_text(
+                "# Players\n[Z](Z.md) [A](A.md) [Z again](Z.md)\n",
+                encoding="utf-8",
+            )
+            (pages / "developers" / "README.md").write_text("# Developers\n", encoding="utf-8")
+            for name in ("A", "B", "Z"):
+                (pages / "players" / f"{name}.md").write_text(f"# {name}\n", encoding="utf-8")
+            output = Path(directory) / "output"
+            wiki.export_wiki(root, output, "https://github.com/test/repo", "abc123")
+            sidebar = (output / "_Sidebar.md").read_text(encoding="utf-8")
+            self.assertLess(sidebar.index("- [Z]"), sidebar.index("- [A]"))
+            self.assertLess(sidebar.index("- [A]"), sidebar.index("- [B]"))
+            self.assertEqual(sidebar.count("- [Z]"), 1)
+
+    def test_sidebar_separates_players_and_developer_testing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            wiki.export_wiki(wiki.ROOT, output, "https://github.com/test/repo", "abc123")
+            sidebar = (output / "_Sidebar.md").read_text(encoding="utf-8")
+            players, developers = sidebar.split("## [Developers]", 1)
+            self.assertEqual(re.findall(r"^- \[([^\]]+)\]", players, re.M), [
+                "Getting started", "Features and interactions", "Configuration", "Troubleshooting",
+            ])
+            self.assertIn("Developers-Feature-testing", developers)
+            self.assertIn("Developers-Test-results", developers)
+            self.assertLess(developers.index("Developers-Development"),
+                            developers.index("Developers-Feature-testing"))
+            self.assertLess(developers.index("Developers-Feature-testing"),
+                            developers.index("Developers-Test-results"))
+            self.assertNotIn("Players-", developers)
+            legacy = (output / "Players-Feature-testing.md").read_text(encoding="utf-8")
+            self.assertIn("Developers-Feature-testing", legacy)
+            self.assertIn("Developers-Test-results", legacy)
+            self.assertNotIn("Manual verdict", legacy)
+
+    def test_procedures_and_results_have_matching_ids_and_summary(self):
+        pages = wiki.ROOT / "docs" / "wiki" / "developers"
+        procedures = (pages / "Feature-testing.md").read_text(encoding="utf-8")
+        results = (pages / "Test-results.md").read_text(encoding="utf-8")
+        procedure_ids = re.findall(r"^### ([A-Z]+\d{2})$", procedures, re.M)
+        procedure_ids += re.findall(r"^\| (SB\d{2}) \|", procedures, re.M)
+        rows = re.findall(r"^\| ([A-Z]+\d{2}) \| ([^|]+) \|", results, re.M)
+        original_ids = {
+            f"{prefix}{number:02}"
+            for prefix, total in (
+                ("W", 10), ("T", 11), ("G", 14), ("C", 13), ("H", 10),
+                ("R", 14), ("Q", 9), ("SB", 6), ("N", 14), ("F", 6),
+                ("ST", 8), ("SP", 8), ("FW", 8),
+            )
+            for number in range(1, total + 1)
+        }
+        self.assertTrue(original_ids.issubset(procedure_ids))
+        self.assertEqual(len(procedure_ids), len(set(procedure_ids)))
+        self.assertEqual(len(rows), len({case for case, _ in rows}))
+        self.assertEqual(set(procedure_ids), {case for case, _ in rows})
+        counts = Counter(result.strip() for _, result in rows)
+        summary = {status: int(count) for status, count in
+                   re.findall(r"^\| ([^|]+) \| (\d+) \|", results, re.M)}
+        self.assertEqual(dict(counts), summary)
+        self.assertIn(f"| **Total** | **{len(rows)}** |", results)
+        self.assertNotIn("Not run", procedures)
+        self.assertNotIn("Manual verdict", procedures)
+        self.assertNotRegex(procedures, r"\b2\.\d+(?:\.\d+)?(?:-beta\.\d+)?\b|beta\.\d")
 
 
 if __name__ == "__main__":
