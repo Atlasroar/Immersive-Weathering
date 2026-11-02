@@ -4,7 +4,7 @@ A Minecraft mod adding natural weathering, leaf piles, bark, soil variants,
 frost, icicles, and interactions that make the world change over time.
 
 This fork targets **Minecraft 1.20.1 on Fabric only**. Version
-**2.1.0-beta.2** is an unreleased snow/plant follow-up, with a single root
+**2.1.0-beta.2** is a snow/plant feature prerelease, with a single root
 Fabric Loom project and no IW-owned loader bridges. Moonlight Lib remains a
 required dependency for registration, configuration, generated packs, and events.
 
@@ -45,7 +45,7 @@ Mod Menu, and Cloth Config; see [installation](docs/wiki/players/Getting-started
 The published beta.1 adds standalone snow mixing, falling, storm accumulation, and
 partial-layer replacement without SnowRealMagic or Kiwi. See the
 [snow controls](docs/wiki/players/Configuration.md#standalone-snow).
-The unreleased follow-up expands sharing to small flowers, saplings, mushrooms,
+The beta.2 follow-up expands sharing to small flowers, saplings, mushrooms,
 dead bushes and IW weeds/dune grass/frosty plants. Covered short grass looks
 frosty while retaining its normal underlying state. All six common snow
 settings have names and explanatory tooltips.

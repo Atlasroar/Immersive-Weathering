@@ -35,7 +35,7 @@ snow (layers 1-7). Host properties and plant halves are retained. Gates, slabs,
 stairs, waterlogged hosts, block entities, and arbitrary modded blocks are not
 snow containers. Existing IW snowy masonry remains a separate, unchanged system.
 
-The unreleased **2.1.0-beta.2** follow-up expands the explicit list to **72 hosts**:
+The **2.1.0-beta.2** follow-up expands the explicit list to **72 hosts**:
 all vanilla small flowers, including torchflowers and pink petals; the seven
 tree saplings and dry mangrove propagules; red/brown mushrooms; dead bushes;
 and IW weeds, dune grass, frosty grass and frosty fern. Other crops, aquatic

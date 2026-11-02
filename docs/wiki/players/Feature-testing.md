@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-**Target:** Immersive Weathering **2.1.0-beta.2 (unreleased)**, Minecraft **1.20.1**, Fabric.
+**Target:** Immersive Weathering **2.1.0-beta.2**, Minecraft **1.20.1**, Fabric.
 This is a source-backed manual acceptance checklist with a dated user-reported
 results ledger below. The detailed tables remain a **reusable blank checklist**:
 their `Not run` cells are template defaults, not the current test-round verdicts.

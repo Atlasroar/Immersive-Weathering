@@ -1,4 +1,4 @@
-## 2.1.0-beta.2 (unreleased)
+## 2.1.0-beta.2
 
 - Added snow sharing for vanilla small flowers (including petals), saplings,
   mushrooms and dead bushes, plus IW weeds, dune grass and frosty grass/fern.
@@ -14,8 +14,8 @@
 - Fixed the replacement hook resetting a snow-item addition back to its old count.
   Petals still stack according to their native placement rules.
 
-This follow-up is not a new published release or profile installation. Published
-beta.1 and its assets remain unchanged. Other crops, aquatic plants, vines, block
+This is a SemVer feature prerelease. Published beta.1 and its assets remain
+unchanged. Other crops, aquatic plants, vines, block
 entities and arbitrary modded plants remain outside the supported dry-host list.
 Manual validation of the expanded plants is still required.
 

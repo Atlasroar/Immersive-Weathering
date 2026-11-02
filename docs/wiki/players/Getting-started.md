@@ -15,9 +15,9 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-The current beta is [**2.1.0-beta.1**](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0-beta.1).
+The current beta is [**2.1.0-beta.2**](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0-beta.2).
 Its mod version follows Semantic Versioning; Minecraft **1.20.1** is declared
-separately as compatibility. Install `immersive_weathering-2.1.0-beta.1.jar`
+separately as compatibility. Install `immersive_weathering-2.1.0-beta.2.jar`
 from the release assets. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
 (CurseForge file **5619072**). Moonlight and Fabric API must be installed
@@ -31,7 +31,7 @@ This is not a promise to fix every catalogued gameplay report.
 Growth chances and seeded traversal are unchanged; in-game performance and the
 [beta.3 G07 retest](Feature-testing.md#beta3-paired-growth-retest) still need testing.
 
-The current source builds **2.1.0-beta.2**, an **unreleased** plant/snow follow-up:
+The current source builds the **2.1.0-beta.2** plant/snow follow-up:
 `build\libs\immersive_weathering-2.1.0-beta.2.jar`. Its extra dry-plant support,
 temporary frosty-grass appearance and common-config tooltips are not retroactive
 changes to the beta.1 download. Do not mix the two jars in an instance.
