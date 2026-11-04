@@ -1,4 +1,11 @@
-## Unreleased
+## 2.6.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Install only `immersive_weathering-2.6.0.jar`, replacing the previous IW jar
+after backing up worlds/configuration. Fabric Loader **0.16.14+**, Fabric API
+**0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11** remain required.
+No new dependency, texture or recording is added. MP01-MP06 remain **Not run**;
+automated coverage and stable versioning do not establish manual acceptance.
 
 - Snow, regular sand and red sand now share one vegetation inventory and cover
   implementation: 75 vanilla vegetation blocks, all seven IW plants, and the

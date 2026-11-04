@@ -18,7 +18,7 @@ The build is a single root Fabric Loom project for Minecraft 1.20.1.
 | `maven_group` | `com.ordana` |
 | `minecraft_version` | `1.20.1` |
 | `mod_id` | `immersive_weathering` |
-| `mod_version` | `2.5.0` |
+| `mod_version` | `2.6.0` |
 | `modmenu_version` | `7.2.2` |
 | `moonlight_file_id` | `5619072` |
 | `moonlight_min_version` | `1.20-2.12.11` |

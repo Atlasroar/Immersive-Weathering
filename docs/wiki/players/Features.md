@@ -146,7 +146,7 @@ With `sand.host_mixing=true`, sand shares the [common mineral-pile inventory](#s
 in either placement order. Sandstorms and falling sand use that same inventory.
 Connections, collision and plant interactions stay native. Waterlogged states,
 aquatic plants and arbitrary third-party hosts are excluded; a datapack alone
-cannot add a new host schema. The expanded inventory is **Unreleased**, not
+cannot add a new host schema. The expanded inventory is **added in 2.6.0**, not
 part of the published 2.5.0 jar; that jar supports fences and dead bushes only.
 Regular and red sand never merge with one another.
 
@@ -233,7 +233,7 @@ existing wood charring, soot, smoldering, snow or datapack mechanics.
 
 ## Shared mineral-pile plants
 
-**Unreleased source behavior; published 2.5.0 is unchanged.** Snow, regular sand
+**Added in 2.6.0; published 2.5.0 is unchanged.** Snow, regular sand
 and red sand use one inventory: **82 vegetation blocks** (75 vanilla and seven
 IW) plus 12 vanilla fences and 22 vanilla walls, **116 hosts per pile type**.
 
@@ -269,7 +269,7 @@ stairs, waterlogged hosts, block entities, and arbitrary modded blocks are not
 snow containers. Existing IW snowy masonry remains a separate, unchanged system.
 
 The published 2.5.0 inventory contains 72 hosts; the common expanded inventory
-is Unreleased. Plant-first and snow-first placement keep the existing layer count.
+is added in 2.6.0. Plant-first and snow-first placement keep the existing layer count.
 Snow-covered short grass
 uses the existing frosty-grass appearance only while covered; removing the
 snow restores normal grass rather than permanently converting the plant.

@@ -159,7 +159,7 @@ formats suffice; no CCA, custom packets or per-world storm state.
 the same **116 hosts** as snow: **232 wrappers**, no block entities/items.
 The common `PileCoveredBlock` stores every native property object plus LAYERS
 and rejects wet/unsupported host states. The published 2.5.0 inventory is still
-13 hosts/26 sand wrappers; this expanded inventory is Unreleased.
+13 hosts/26 sand wrappers; this expanded inventory starts in 2.6.0.
 Raw host states go to native shape/neighbor/survival/interaction/loot methods.
 Full covers retain native fence replacement rules; a replaceable covered bush
 can become another supported host while retaining its cover. Shovels strip
@@ -355,7 +355,7 @@ unchanged. No loot, datapack or growth schema is added.
 
 ## Standalone snow ownership
 
-The Unreleased `PilePlants` inventory defines **75 vanilla vegetation blocks and
+The 2.6.0 `PilePlants` inventory defines **75 vanilla vegetation blocks and
 seven IW plants**. `SnowHosts.structuralHosts` retains 12 fences and 22 walls.
 Both registries consume the same **116 hosts**: 116 snow wrappers and 232 sand
 wrappers. All pre-existing IDs remain registered; no saved-state migration.

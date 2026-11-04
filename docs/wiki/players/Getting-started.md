@@ -15,12 +15,12 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-This source targets stable **2.5.0**. Its mod version follows Semantic Versioning;
+This source targets stable **2.6.0**. Its mod version follows Semantic Versioning;
 Minecraft **1.20.1** is declared separately as compatibility.
-For 2.5.0, install `immersive_weathering-2.5.0.jar` from the
+For 2.6.0, install `immersive_weathering-2.6.0.jar` from the
 [published release assets](https://github.com/Atlasroar/Immersive-Weathering/releases)
 when available; source changes alone are not proof of publication. Published
-2.4.0/2.3.0/2.2.0 assets and the immutable
+2.5.0/2.4.0/2.3.0/2.2.0 assets and the immutable
 [2.1.0 release](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0)
 and earlier assets are unchanged. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
@@ -36,7 +36,13 @@ Growth chances and seeded traversal are unchanged. See the
 [paired-plant replication](../developers/Feature-testing.md#paired-plant-growth)
 and separate [recorded evidence](../developers/Test-results.md).
 
-The current source builds **2.5.0**: `build\libs\immersive_weathering-2.5.0.jar`.
+The current source builds **2.6.0**: `build\libs\immersive_weathering-2.6.0.jar`.
+Version 2.6.0 unifies [mineral-pile plant sharing](Features.md#shared-mineral-pile-plants):
+snow, sand and red sand use the same 82 dry vanilla/IW vegetation blocks and
+34 vanilla fences/walls. Aquatic/waterlogged plants and leaf/flower litter
+remain separate. Existing IDs and configuration paths are retained. The
+[MP01-MP06 procedures](../developers/Feature-testing.md#shared-mineral-pile-plants)
+have no recorded manual outcomes; earlier passes do not certify this expansion.
 Version 2.5.0 adds [freezing wind and cold thunder snowstorms](Features.md#freezing-wind-and-thunder-snowstorms)
 with relightable normal/soul torches, thin ice and icicle integrations, without
 a thermal system or new dependencies/recordings. Review the

@@ -111,7 +111,7 @@ new deterministic `immersive_weathering:snow_covered_<host_path>` IDs. These
 are ordinary block states with `layers=1..8` and the dry host's property values;
 double plants retain `half`; added saplings, propagules, petals, weeds and frosty
 plants retain their native stage/age/facing/amount/natural properties. The
-Unreleased **116-host** inventory is shared with both sand colors: 82 vegetation
+2.6.0 **116-host** inventory is shared with both sand colors: 82 vegetation
 blocks plus 34 vanilla fences/walls. It is explicit, not arbitrary class discovery.
 They do not have block items or block entities.
 Do not remap old `snowy_*` masonry IDs, change their growth JSON, or migrate world

@@ -41,7 +41,7 @@ percentage that treats these different historical rounds as current acceptance.
 | Sandstorms, introduced in 2.3.0 | ST01-ST08 Not run; old snow/fire observations do not verify storms. |
 | 2026-11-02, 2.4.0 sand/thunder | SP01-SP07 Pass; SP08 Not applicable. These are user-reported test-ID verdicts, not agent reproductions or an inventory of every host/configuration variant. No reason for SP08 was supplied. |
 | Freezing wind/snowstorms, introduced in 2.5.0 | FW01-FW08 Not run. Release, deployment, builds, native fixtures and init-only startup do not establish in-world visuals, audio, gameplay, multiplayer or optional-mod coexistence. |
-| Shared mineral-pile plants, Unreleased | MP01-MP06 Not run. Automated state/model/bonemeal/lifecycle assertions and init-only Mixin audits do not certify real rendering, AI, gameplay, multiplayer or optional-mod coexistence. Earlier SP/N passes cover only their original artifact/scope. |
+| Shared mineral-pile plants, introduced in 2.6.0 | MP01-MP06 Not run. Automated state/model/bonemeal/lifecycle assertions and init-only Mixin audits do not certify real rendering, AI, gameplay, multiplayer or optional-mod coexistence. Earlier SP/N passes cover only their original artifact/scope. |
 
 ### Documented sand/thunder round setup
 
@@ -197,12 +197,12 @@ An introduction/checklist version with no test date is not a tested artifact.
 
 | Test ID | Result | Date | Artifact / round | Evidence / qualification |
 | --- | --- | --- | --- | --- |
-| MP01 | Not run | - | Unreleased checklist | Expanded inventory/placement/state/rendering; no manual evidence. |
-| MP02 | Not run | - | Unreleased checklist | Native growth/bonemeal/head-body transitions; no manual evidence. |
-| MP03 | Not run | - | Unreleased checklist | Harvest/contact/dripleaf/AI interactions; no manual evidence. |
-| MP04 | Not run | - | Unreleased checklist | Cultivated soils, support loss and falling; no manual evidence. |
-| MP05 | Not run | - | Unreleased checklist | Shoveling, mature/paired loot and replacement; no manual evidence. |
-| MP06 | Not run | - | Unreleased checklist | Weather/config/reload/network/coexistence; no manual evidence. |
+| MP01 | Not run | - | 2.6.0 checklist | Expanded inventory/placement/state/rendering; no manual evidence. |
+| MP02 | Not run | - | 2.6.0 checklist | Native growth/bonemeal/head-body transitions; no manual evidence. |
+| MP03 | Not run | - | 2.6.0 checklist | Harvest/contact/dripleaf/AI interactions; no manual evidence. |
+| MP04 | Not run | - | 2.6.0 checklist | Cultivated soils, support loss and falling; no manual evidence. |
+| MP05 | Not run | - | 2.6.0 checklist | Shoveling, mature/paired loot and replacement; no manual evidence. |
+| MP06 | Not run | - | 2.6.0 checklist | Weather/config/reload/network/coexistence; no manual evidence. |
 
 ## Recording another round
 
