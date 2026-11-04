@@ -6,22 +6,21 @@ import re
 from pathlib import Path
 
 from snow_resources import cover_model, host_parts
+from pile_resources import all_hosts
 
 ROOT = Path(__file__).resolve().parents[1]
 RESOURCES = ROOT / "src/main/resources"
 
 
 def hosts():
-    source = (ROOT / "src/main/java/com/ordana/immersive_weathering/sand/SandHosts.java").read_text(encoding="utf-8")
-    inventory = source.split("return List.of(", 1)[1].split(");", 1)[0]
-    return [name.lower() for name in re.findall(r"Blocks\.([A-Z_]+)", inventory)]
+    return all_hosts()
 
 
 def outputs():
     result = {}
     for color in ("sand", "red_sand"):
         for name in hosts():
-            parts = host_parts(name)
+            parts = host_parts(name, frosty=False)
             parts.extend({"when": {"layers": str(layers)}, "apply": {
                 "model": f"immersive_weathering:block/host_{color}_{layers}"}} for layers in range(1, 9))
             result[RESOURCES / f"assets/immersive_weathering/blockstates/{color}_covered_{name}.json"] = {"multipart": parts}
@@ -30,9 +29,11 @@ def outputs():
                 f"minecraft:block/{color}", layers)
     fences = [name for name in hosts() if name.endswith("_fence")]
     wood = [name for name in fences if name != "nether_brick_fence"]
+    walls = [name for name in hosts() if name.endswith("_wall") and name != "hanging_roots_wall"]
+    plants = [name for name in hosts() if name not in fences and name not in walls]
     for tag, names in {
-        "fences": fences, "wooden_fences": wood, "mineable/axe": wood,
-        "mineable/pickaxe": ["nether_brick_fence"], "sword_efficient": ["dead_bush"],
+        "fences": fences, "wooden_fences": wood, "walls": walls, "mineable/axe": wood,
+        "mineable/pickaxe": walls + ["nether_brick_fence"], "sword_efficient": plants,
     }.items():
         result[RESOURCES / f"data/immersive_weathering/tags/blocks/sand_hosts/{tag}.json"] = {
             "replace": False, "values": [

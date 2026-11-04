@@ -153,13 +153,13 @@ occupied cells get no write. Entity push-up precedes the
 ordinary block update. Vanilla block/tag/attribute synchronization and save
 formats suffice; no CCA, custom packets or per-world storm state.
 
-### Sand covers and rain erosion (2.4.0)
+### Sand covers and rain erosion
 
 `SandHosts` registers `sand_covered_*` and `red_sand_covered_*` blocks for
-12 vanilla fences and dead bush: **26 wrappers**, no block entities/items.
-State schemas retain native connection property objects plus LAYERS, exclude
-WATERLOGGED, and reject wet/unsupported hosts. `SnowHosts.copy` is reused for
-generic property copying; snow registration/gameplay remains separate.
+the same **116 hosts** as snow: **232 wrappers**, no block entities/items.
+The common `PileCoveredBlock` stores every native property object plus LAYERS
+and rejects wet/unsupported host states. The published 2.5.0 inventory is still
+13 hosts/26 sand wrappers; this expanded inventory is Unreleased.
 Raw host states go to native shape/neighbor/survival/interaction/loot methods.
 Full covers retain native fence replacement rules; a replaceable covered bush
 can become another supported host while retaining its cover. Shovels strip
@@ -187,9 +187,10 @@ tag. This exemption intentionally checks membership, not dry-storm
 classification or temperature; rainy tagged biomes are immune too. Zero layers
 restore the raw host or air, without drops. No weather-column scan is added.
 
-`tools/sand_resources.py` shares native host multipart/depth-biased model
-generation helpers with `tools/snow_resources.py`. It emits 26 blockstates,
-16 texture-referencing models and five semantic tags, without new binary assets.
+`tools/pile_resources.py` reads the common plant/structural inventory;
+`sand_resources.py` and `snow_resources.py` share its native model references.
+Sand emits 232 blockstates, 16 texture-referencing models and six semantic tags,
+including walls, without new binary assets.
 New modded hosts still need registered schemas/resources; no datapack host
 extension is implemented. See [sand controls](../players/Configuration.md#sand-piles)
 and [native fixture limits](Development.md#sandstorm-mechanics-harness).
@@ -354,9 +355,12 @@ unchanged. No loot, datapack or growth schema is added.
 
 ## Standalone snow ownership
 
-`SnowHosts` explicitly registers 72 `snow_covered_<host_path>` blocks: 12 fences,
-22 walls and 38 dry plants (34 vanilla, four IW). This does not replace existing `snowy_*` masonry IDs,
-`SnowGrowth`, their datapacks/configs, or leaf/sand mechanics. No automatic
+The Unreleased `PilePlants` inventory defines **75 vanilla vegetation blocks and
+seven IW plants**. `SnowHosts.structuralHosts` retains 12 fences and 22 walls.
+Both registries consume the same **116 hosts**: 116 snow wrappers and 232 sand
+wrappers. All pre-existing IDs remain registered; no saved-state migration.
+This does not replace existing `snowy_*` masonry IDs, `SnowGrowth`, their
+datapacks/configs, or leaf/flower-litter mechanics. No automatic
 modded-host discovery or dependency is added. `register` is an explicit startup
 integration point: register a block/supplier before registry freeze, preserve
 the host schema and supply matching resources/semantics. Block entities,
@@ -365,16 +369,38 @@ IW suppliers are resolved inside their deferred block registration callbacks,
 not during `commonInit`, before Moonlight has instantiated the original plants.
 
 The evaluated inheritance approach cannot safely pass a `LAYERS`-extended state
-to vanilla `WallBlock`'s exact-state shape maps. Instead, explicit schema classes
-inside `SnowCoveredBlock` share a deterministic delegating implementation:
+to vanilla `WallBlock`'s exact-state shape maps. Instead, `PileCoveredBlock`
+provides one deterministic delegating implementation; `SnowCoveredBlock` and
+`SandCoveredBlock` supply only pile-specific weather, physics and placement policy:
 vanilla methods receive a reconstructed **raw host state**, never a composite.
-Every property except `WATERLOGGED` is stored with its original property object;
-only dry hosts are eligible, so raw restoration always retains false waterlogging.
+Every property, including `WATERLOGGED` where present, is stored with its original
+property object; only dry host states qualify. A scoped constructor-only
+ThreadLocal supplies the native property schema during Block's superclass
+construction and restores its previous value in `finally`.
 Saplings retain `stage`; propagules also retain `age`/`hanging`; petals retain
 `facing`/`flower_amount`; weeds retain `age`; frosty plants retain `natural`.
 There is no per-cell block entity, NBT payload, packet, render attachment, mutable
 world cache or global scratch position. Ordinary block-state persistence and
 vanilla block updates provide save/client synchronization.
+
+Native plant callbacks run in a world-scoped `PileInteractions` context.
+`PilePlantWriteMixin` retains an existing mineral type/depth when Level.setBlock
+writes another supported dry plant into that cell. AIR/fluids/trees are not
+wrapped, and shoveling/removal does not open that scope. Nested calls restore
+their previous world even on exceptions. Growing-head/body transitions returned
+by native updateShape are covered directly. Failed 2x2 sapling restoration
+retains each original neighbor's independent cover.
+
+`PilePlantIdentityMixin` adds raw block/tag identity to covered states while
+retaining their own identity. Selected native concrete-type consumers (growing
+plant bodies, dripleaf stems, farmland, farmers, rabbits and bees) unwrap
+getBlock locally; world reads are not globally rewritten. Fire fuel queries
+use raw host states. IW growth dispatch and its target/area/neighbor predicates
+see raw vegetation; writes retain existing covers through the same scoped hook.
+Native support, light, age and placement constraints still apply. Farmland
+(including IW subclasses) and soul sand support mineral piles; side/ceiling
+attachment alone does not. Aquatics, wet states, tree/fruit blocks and arbitrary
+third-party plants remain outside the registered inventory.
 
 Shapes union raw host and vanilla snow outline/collision/support shapes.
 Vanilla block-state caches retain these position-independent shapes. Raw wall
@@ -414,9 +440,9 @@ remain a separate mixing/add-layer path and bypass the replacement preservation
 hook, so adding snow cannot reset the newly incremented layer count.
 The normal double-plant placement callback applies the same eligibility check
 to a covered upper cell, preserving its independent layer count too.
-`SnowDoublePlantMixin` recognizes raw/wrapped partners and preserves an existing
-partial-snow upper cell. The location-predicate fallback is restricted to explicit
-vanilla double-plant block-ID predicates against wrapped counterparts, with their
+`SnowDoublePlantMixin` recognizes raw/wrapped partners for all three covers and
+preserves an eligible covered upper cell. The location-predicate fallback handles
+explicit raw-host block-ID predicates against wrapped counterparts, with their
 state/tag checks and no NBT predicate. This retains paired grass/fern loot checks
 without replacing vanilla loot tables or ignoring datapack overrides.
 
@@ -461,7 +487,7 @@ Source was inspected during research; this is not a clean-room/source-unread
 claim. The implementation and static resources here are independently authored
 against IW/Mojang behavior; no SnowRealMagic source or assets were ported.
 
-English `block.immersive_weathering.snow_covered_*` display names cover all 72
+English `block.immersive_weathering.snow_covered_*` display names cover all 116
 registered hosts; the resource tests enforce exact inventory coverage without
 rewriting existing translations or other locales.
 

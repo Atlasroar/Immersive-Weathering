@@ -52,7 +52,7 @@ record AreaCheck(int rX, int rY, int rZ, int requiredAmount, Optional<Integer> y
         var positions = RandomizedBlockPositions.iterator(pos, rX, rY, rZ);
         while (positions.hasNext()) {
             BlockPos p = positions.next();
-            BlockState state = level.getBlockState(p);
+            BlockState state = com.ordana.immersive_weathering.piles.PilePlants.raw(level.getBlockState(p));
             if (config.getPossibleBlocks().contains(state.getBlock()) ||
                     (extraIncluded.isPresent() && state.is(extraIncluded.get()))) count += 1;
             if (!hasRequirement &&

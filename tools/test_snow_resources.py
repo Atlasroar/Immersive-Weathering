@@ -2,20 +2,22 @@ import json
 import unittest
 
 import snow_resources
+import pile_resources
 
 
 class SnowResourceTests(unittest.TestCase):
     def test_explicit_dry_host_inventory(self):
         names = snow_resources.hosts()
-        self.assertEqual(len(names), 72)
+        self.assertEqual(names, pile_resources.all_hosts())
         self.assertEqual(len(set(names)), len(names))
         self.assertEqual(sum(name.endswith("_fence") for name in names), 12)
-        self.assertEqual(sum(name.endswith("_wall") for name in names), 22)
+        self.assertEqual(sum(name.endswith("_wall") for name in pile_resources.structural_hosts()), 22)
         self.assertFalse(any(name.endswith(("_gate", "_slab", "_stairs")) for name in names))
-        self.assertEqual(set(snow_resources.immersive_hosts()), {"weeds", "dune_grass", "frosty_grass", "frosty_fern"})
+        self.assertEqual(set(snow_resources.immersive_hosts()), {"weeds", "dune_grass", "frosty_grass", "frosty_fern", "ivy", "moss", "hanging_roots_wall"})
         self.assertTrue({"poppy", "torchflower", "pink_petals", "oak_sapling", "mangrove_propagule",
                          "brown_mushroom", "red_mushroom", "dead_bush"}.issubset(names))
-        self.assertTrue({"wheat", "carrots", "seagrass", "vine"}.isdisjoint(names))
+        self.assertTrue({"wheat", "carrots", "vine", "cactus", "bamboo", "pitcher_crop", "chorus_flower"}.issubset(names))
+        self.assertTrue({"seagrass", "tall_seagrass", "kelp", "kelp_plant", "lily_pad"}.isdisjoint(names))
 
     def test_generated_files_are_current(self):
         for path, data in snow_resources.outputs().items():
@@ -43,12 +45,17 @@ class SnowResourceTests(unittest.TestCase):
             host = [p for p in snow_resources.multipart(name)["multipart"] if "layers" not in p.get("when", {})]
             namespace = "immersive_weathering" if name in ("grass", "fern") or name in snow_resources.immersive_hosts() else "minecraft"
             model_name = f"frosty_{name}" if name in ("grass", "fern") else name
-            self.assertTrue(all(p["apply"]["model"].startswith(f"{namespace}:block/{model_name}") for p in host))
+            models = [model for part in host for model in
+                      (part["apply"] if isinstance(part["apply"], list) else [part["apply"]])]
+            self.assertTrue(all(p["model"].startswith(f"{namespace}:block/") for p in models))
             count = (5 if name.endswith("_fence") else 9 if name.endswith("_wall")
                      else 16 if name == "pink_petals" else 6 if name == "mangrove_propagule"
                      else 8 if name == "weeds"
                      else 2 if name in ("tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony") else 1)
-            self.assertEqual(len(host), count)
+            if name in pile_resources.structural_hosts() or name in (
+                    "grass", "fern", "pink_petals", "mangrove_propagule", "weeds",
+                    "tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony"):
+                self.assertEqual(len(host), count)
 
     def test_covered_grass_and_fern_use_matching_frosty_models(self):
         for name in ("grass", "fern"):

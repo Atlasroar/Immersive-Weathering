@@ -18,7 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class SandPhysics {
     public static boolean supported(LevelReader level, BlockPos pos) {
         BlockState below = level.getBlockState(pos.below());
-        return below.getFluidState().isEmpty() && below.isFaceSturdy(level, pos.below(), Direction.UP);
+        return below.getFluidState().isEmpty() && (below.isFaceSturdy(level, pos.below(), Direction.UP)
+                || com.ordana.immersive_weathering.piles.PilePlants.cultivatedFloor(below));
     }
 
     public static void checkSupport(ServerLevel level, BlockPos pos, BlockState state) {

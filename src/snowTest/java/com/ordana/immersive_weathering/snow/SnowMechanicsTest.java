@@ -67,13 +67,15 @@ public final class SnowMechanicsTest {
         bootstrapped.setBoolean(null, true);
         BuiltInRegistries.REGISTRY.keySet();
         SnowHosts.init();
-        check(SnowHosts.entries().size() == 68, "Common initialization resolved deferred IW plants");
+        check(SnowHosts.entries().size() == SnowHosts.vanillaHosts().size(), "Common initialization resolved deferred IW plants");
         com.ordana.immersive_weathering.reg.ModBlocks.resolvePlants();
+        Registry.register(BuiltInRegistries.ITEM, "immersive_weathering:moss_clump",
+                com.ordana.immersive_weathering.reg.ModItems.MOSS_ITEM);
         List<Block> immersive = SnowHosts.immersiveHosts();
         var weedsFire = net.mehvahdjukaar.moonlight.api.platform.RegHelper
                 .registeredFire(com.ordana.immersive_weathering.reg.ModBlocks.WEEDS.get());
         check(weedsFire.spread() == 60 && weedsFire.flammability() == 100, "Weed fire registration changed");
-        List<String> immersiveNames = List.of("weeds", "dune_grass", "frosty_grass", "frosty_fern");
+        List<String> immersiveNames = com.ordana.immersive_weathering.piles.PilePlants.immersive().keySet().stream().sorted().toList();
         for (int i = 0; i < immersive.size(); i++) {
             Block host = Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:" + immersiveNames.get(i), immersive.get(i));
             var item = new net.minecraft.world.item.BlockItem(host, new net.minecraft.world.item.Item.Properties());
@@ -81,7 +83,7 @@ public final class SnowMechanicsTest {
             item.registerBlocks(net.minecraft.world.item.Item.BY_BLOCK, item);
         }
         com.ordana.immersive_weathering.reg.ModBlocks.registerSnowBlocks();
-        check(SnowHosts.entries().size() == 72, "Deferred IW snow registrations are incomplete");
+        check(SnowHosts.entries().size() == SnowHosts.hosts().size(), "Deferred IW snow registrations are incomplete");
         saplingProbe = registerProbe("sapling", new ProbeSapling());
         plantProbe = registerProbe("plant", new ProbePlant());
         probe = Registry.register(BuiltInRegistries.BLOCK, "iw_snow_test:probe", new ProbeSnow());
@@ -120,15 +122,99 @@ public final class SnowMechanicsTest {
             java.nio.file.Path path = root.resolve("assets/immersive_weathering/blockstates/snow_covered_" + name + ".json");
             var json = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(path)).getAsJsonObject();
             for (var entry : json.getAsJsonArray("multipart")) {
-                var id = new net.minecraft.resources.ResourceLocation(entry.getAsJsonObject().getAsJsonObject("apply").get("model").getAsString());
+                var apply = entry.getAsJsonObject().get("apply");
+                var models = apply.isJsonArray() ? apply.getAsJsonArray() : new com.google.gson.JsonArray();
+                if (!apply.isJsonArray()) models.add(apply);
+                for (var model : models) {
+                var id = new net.minecraft.resources.ResourceLocation(model.getAsJsonObject().get("model").getAsString());
                 if (id.getNamespace().equals("minecraft")) {
                     check(SnowMechanicsTest.class.getResource("/assets/minecraft/models/" + id.getPath() + ".json") != null, "Missing vanilla model " + id);
                 } else {
                     check(java.nio.file.Files.isRegularFile(root.resolve("assets/" + id.getNamespace() + "/models/" + id.getPath() + ".json")), "Missing composite model " + id);
                 }
+                }
             }
             cases++;
         }
+        for (Block plant : com.ordana.immersive_weathering.piles.PilePlants.vanilla()) {
+            String name = BuiltInRegistries.BLOCK.getKey(plant).getPath();
+            try (var stream = SnowMechanicsTest.class.getResourceAsStream("/assets/minecraft/blockstates/" + name + ".json")) {
+                var nativeModels = com.google.gson.JsonParser.parseReader(
+                        new java.io.InputStreamReader(stream, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+                for (String prefix : List.of("snow", "sand", "red_sand")) {
+                    if (prefix.equals("snow") && (plant == Blocks.GRASS || plant == Blocks.FERN)) continue;
+                    var coveredModels = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(root.resolve(
+                            "assets/immersive_weathering/blockstates/" + prefix + "_covered_" + name + ".json"))).getAsJsonObject();
+                    for (BlockState state : plant.getStateDefinition().getPossibleStates()) {
+                        check(modelParts(nativeModels, state).equals(modelParts(coveredModels, state)),
+                                "Native plant model/state parity: " + prefix + " " + state);
+                    }
+                }
+            }
+        }
+    }
+
+    private static List<String> modelParts(com.google.gson.JsonObject data, BlockState state) {
+        List<String> result = new ArrayList<>();
+        if (data.has("variants")) {
+            data.getAsJsonObject("variants").entrySet().forEach(entry -> {
+                boolean matches = true;
+                if (!entry.getKey().isEmpty()) {
+                    for (String condition : entry.getKey().split(",")) {
+                        String[] pair = condition.split("=");
+                        matches &= stateProperty(state, pair[0]).equals(pair[1]);
+                    }
+                }
+                if (matches) result.add(modelOptions(entry.getValue()));
+            });
+        } else {
+            for (var entry : data.getAsJsonArray("multipart")) {
+                var part = entry.getAsJsonObject();
+                if (!part.has("when") || modelCondition(part.getAsJsonObject("when"), state)) {
+                    result.add(modelOptions(part.get("apply")));
+                }
+            }
+        }
+        java.util.Collections.sort(result);
+        return result;
+    }
+
+    private static boolean modelCondition(com.google.gson.JsonObject condition, BlockState state) {
+        for (var entry : condition.entrySet()) {
+            if (entry.getKey().equals("layers")) return false;
+            if (entry.getKey().equals("OR") || entry.getKey().equals("AND")) {
+                boolean any = false, all = true;
+                for (var child : entry.getValue().getAsJsonArray()) {
+                    boolean matches = modelCondition(child.getAsJsonObject(), state);
+                    any |= matches;
+                    all &= matches;
+                }
+                if (!(entry.getKey().equals("OR") ? any : all)) return false;
+            } else if (!java.util.Arrays.asList(entry.getValue().getAsString().split("\\|"))
+                    .contains(stateProperty(state, entry.getKey()))) return false;
+        }
+        return true;
+    }
+
+    private static String stateProperty(BlockState state, String name) {
+        var property = state.getBlock().getStateDefinition().getProperty(name);
+        return property == null ? "" : state.getValue(property).toString().toLowerCase(java.util.Locale.ROOT);
+    }
+
+    private static String modelOptions(com.google.gson.JsonElement data) {
+        var options = new com.google.gson.JsonArray();
+        if (data.isJsonArray()) options = data.getAsJsonArray();
+        else options.add(data);
+        List<String> result = new ArrayList<>();
+        for (var option : options) {
+            var model = option.getAsJsonObject();
+            Map<String, String> normalized = new java.util.TreeMap<>();
+            model.entrySet().forEach(entry -> normalized.put(entry.getKey(), entry.getValue().getAsString()));
+            normalized.putIfAbsent("weight", "1");
+            result.add(normalized.toString());
+        }
+        java.util.Collections.sort(result);
+        return result.toString();
     }
 
     private static void loadLoot() throws Exception {
@@ -186,7 +272,8 @@ public final class SnowMechanicsTest {
                 covered.randomTick(level, POS, level.random);
                 check(level.getBlockState(POS).equals(raw), "Melt lost host " + host);
                 check(level.entities.isEmpty(), "Melt duplicated drops");
-                check(covered.getBlock().getCloneItemStack(level, POS, covered).getItem() == host.asItem(), "Pick-block returns wrapper");
+                check(covered.getBlock().getCloneItemStack(level, POS, covered).getItem()
+                        == host.getCloneItemStack(level, POS, raw).getItem(), "Pick-block must delegate native host result: " + host);
                 check(covered.getPistonPushReaction() == raw.getPistonPushReaction(), "Piston reaction changed");
                 for (ItemStack tool : List.of(Items.DIAMOND_SHOVEL.getDefaultInstance(),
                         Items.DIAMOND_PICKAXE.getDefaultInstance(), Items.SHEARS.getDefaultInstance())) {
@@ -263,6 +350,7 @@ public final class SnowMechanicsTest {
         tags.put(BlockTags.DIRT, List.of(Blocks.DIRT.builtInRegistryHolder()));
         tags.put(BlockTags.MUSHROOM_GROW_BLOCK, List.of(Blocks.MYCELIUM.builtInRegistryHolder()));
         tags.put(BlockTags.SAND, List.of(Blocks.SAND.builtInRegistryHolder()));
+        tags.put(BlockTags.SMALL_DRIPLEAF_PLACEABLE, List.of(Blocks.CLAY.builtInRegistryHolder()));
         for (var entry : Map.of(BlockTags.FENCES, FenceBlock.class, BlockTags.WOODEN_FENCES, FenceBlock.class,
                 BlockTags.WALLS, WallBlock.class).entrySet()) {
             List<Holder<Block>> values = new ArrayList<>();
@@ -307,7 +395,7 @@ public final class SnowMechanicsTest {
             }
         }
         for (Block invalid : List.of(Blocks.CHEST, Blocks.FURNACE, Blocks.OAK_FENCE_GATE, Blocks.OAK_SLAB,
-                Blocks.OAK_STAIRS, Blocks.WHEAT, Blocks.SEAGRASS, Blocks.VINE, Blocks.STONE, Blocks.WATER)) {
+                Blocks.OAK_STAIRS, Blocks.SEAGRASS, Blocks.KELP, Blocks.STONE, Blocks.WATER)) {
             check(SnowHosts.cover(invalid.defaultBlockState(), 1) == null, "Wrapped unsupported " + invalid);
             cases++;
         }
@@ -393,6 +481,7 @@ public final class SnowMechanicsTest {
         SnowHosts.hosts().stream().filter(host -> host instanceof BushBlock).forEach(hosts::add);
         List<Block> incoming = new ArrayList<>(hosts);
         incoming.addAll(List.of(Blocks.STONE, Blocks.CHEST, Blocks.SNOW));
+        incoming.removeIf(block -> !(block.asItem() instanceof net.minecraft.world.item.BlockItem));
         for (Block host : hosts) {
             for (BlockState raw : host.getStateDefinition().getPossibleStates()) {
                 if (!raw.getFluidState().isEmpty()) continue;
@@ -486,6 +575,8 @@ public final class SnowMechanicsTest {
             for (boolean coveredLower : new boolean[]{true, false}) {
                 for (boolean coveredUpper : new boolean[]{true, false}) {
                     Fixture level = world();
+                    if (block == Blocks.PITCHER_CROP) level.states.put(POS.below(), Blocks.FARMLAND.defaultBlockState());
+                    if (block == Blocks.SMALL_DRIPLEAF) level.states.put(POS.below(), Blocks.CLAY.defaultBlockState());
                     BlockState lower = block.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER);
                     BlockState upper = block.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER);
                     level.states.put(POS, coveredLower ? SnowHosts.cover(lower, 3) : lower);
@@ -817,6 +908,7 @@ public final class SnowMechanicsTest {
         @Override public boolean isLoaded(BlockPos pos) { return loaded; }
         @Override public int getBrightness(LightLayer layer, BlockPos pos) { return layer == LightLayer.BLOCK ? light : 15; }
         @Override public int getMaxLocalRawBrightness(BlockPos pos) { return 15; }
+        @Override public int getRawBrightness(BlockPos pos, int darkness) { return 15 - darkness; }
         @Override public boolean isRaining() { return raining; }
         @Override public boolean isThundering() { return thunder; }
         @Override public boolean isRainingAt(BlockPos pos) { return false; }

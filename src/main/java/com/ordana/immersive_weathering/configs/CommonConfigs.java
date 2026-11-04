@@ -185,7 +185,7 @@ public class CommonConfigs {
         builder.pop();
 
         builder.push("sand");
-        SAND_HOSTS = builder.comment("Allow regular/red sand layers to share dry vanilla fences and dead bushes, in either placement order.")
+        SAND_HOSTS = builder.comment("Allow regular/red sand layers to share the same dry vanilla/IW plants, fences and walls as snow, in either placement order.")
                 .define("host_mixing", true);
         REPLACE_SAND_PILES = builder.comment("Allow ordinary block items to replace sand piles at any depth, including eight layers. Supported hosts retain the sand when mixing is enabled; covered fences retain native replacement rules.")
                 .define("replace_piles", true);
@@ -319,7 +319,7 @@ public class CommonConfigs {
         builder.pop();
 
         builder.push("snow");
-        SNOW_HOSTS = builder.comment("Allow snow to share a cell with supported dry fences, walls and plants.")
+        SNOW_HOSTS = builder.comment("Allow snow to share the common dry vanilla/IW plant, fence and wall inventory with regular/red sand.")
                 .define("host_mixing", true);
         FALLING_SNOW = builder.comment("Unsupported snow falls without moving the plant, fence or wall.")
                 .define("falling", true);

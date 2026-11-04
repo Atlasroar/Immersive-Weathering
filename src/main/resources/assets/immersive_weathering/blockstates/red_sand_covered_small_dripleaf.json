@@ -1,0 +1,146 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_bottom"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_top"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_bottom",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_top",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_bottom",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_top",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "lower"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_bottom",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "half": "upper"
+      },
+      "apply": {
+        "model": "minecraft:block/small_dripleaf_top",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "layers": "1"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_1"
+      }
+    },
+    {
+      "when": {
+        "layers": "2"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_2"
+      }
+    },
+    {
+      "when": {
+        "layers": "3"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_3"
+      }
+    },
+    {
+      "when": {
+        "layers": "4"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_4"
+      }
+    },
+    {
+      "when": {
+        "layers": "5"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_5"
+      }
+    },
+    {
+      "when": {
+        "layers": "6"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_6"
+      }
+    },
+    {
+      "when": {
+        "layers": "7"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_7"
+      }
+    },
+    {
+      "when": {
+        "layers": "8"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_8"
+      }
+    }
+  ]
+}

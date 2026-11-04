@@ -110,18 +110,21 @@ The [snow architecture](Architecture.md#standalone-snow-ownership) defines the
 new deterministic `immersive_weathering:snow_covered_<host_path>` IDs. These
 are ordinary block states with `layers=1..8` and the dry host's property values;
 double plants retain `half`; added saplings, propagules, petals, weeds and frosty
-plants retain their native stage/age/facing/amount/natural properties. The 72-host
-list is explicit, not an arbitrary plant-class discovery rule.
+plants retain their native stage/age/facing/amount/natural properties. The
+Unreleased **116-host** inventory is shared with both sand colors: 82 vegetation
+blocks plus 34 vanilla fences/walls. It is explicit, not arbitrary class discovery.
 They do not have block items or block entities.
 Do not remap old `snowy_*` masonry IDs, change their growth JSON, or migrate world
 data into these containers.
-Exact block/state predicates still distinguish a covered ID from its raw host;
-datapacks must explicitly include the covered ID and retained properties where
-that distinction should be ignored. The narrow native plant-identity hooks are
-not global RuleTest overrides. Shipped growth definitions and their existing
-snow-target eligibility are unchanged by this placement/cohabitation follow-up.
+Saved block IDs still distinguish mineral covers from raw hosts. Runtime
+block/tag identity recognizes the raw host as well; IW growth target/area/neighbor
+predicates and owner dispatch explicitly receive raw host states. Other exact
+state predicates are not globally rewritten. Existing covered cells retain their
+mineral/depth when a growth writes another registered dry plant, not when it
+writes AIR, fluid, a tree or an unsupported block.
 
-`tools/snow_resources.py` derives the explicit host inventory from `SnowHosts`
+`tools/pile_resources.py` derives vegetation from `PilePlants` and structures
+from `SnowHosts`; `tools/snow_resources.py` consumes that shared inventory
 and generates static multipart blockstates, eight snow models and IW semantic
 tags. Run it after intentional host/resource changes, then `--check`. Vanilla
 append-only tags reference these IW tags for fences, walls, mining, flowers and
@@ -146,16 +149,19 @@ uses only vanilla's sampled server chunk hook, not a second block-growth entry.
 The [configuration contract](../players/Configuration.md#standalone-snow) explains
 the bounded column cap and gamerule-1 sentinel. Existing growths remain independent.
 
-## Sand-cover resources (2.4.0)
+## Sand-cover resources
 
 `tools/sand_resources.py` generates the two sand colors for the explicit
-13-host inventory: 26 multipart blockstates, 16 cover models using vanilla
-sand/red-sand textures, and five append-only host semantic tags. It shares
-native host/model helpers with `tools/snow_resources.py`; existing snow output
-is unchanged. After intentional changes run:
+116-host inventory: 232 multipart blockstates, 16 cover models using vanilla
+sand/red-sand textures, and six append-only host semantic tags. It shares native
+host/model helpers with snow, preserving native age/facing/half/multiface model
+selection. Sand uses normal grass/fern appearance; only snow uses IW frosty
+short-grass/fern models. Published 2.5.0 keeps its original 13-host sand inventory.
+After intentional source changes run:
 
 ```powershell
 python tools\sand_resources.py
+python tools\snow_resources.py
 python tools\sand_resources.py --check
 python tools\snow_resources.py --check
 ```

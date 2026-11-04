@@ -142,11 +142,12 @@ block, not a destructive world conversion. The configurable **weather-only**
 cap never limits manual stacking or falling-pile merging, and lowering it does
 not remove existing layers.
 
-With `sand.host_mixing=true`, sand shares a dry block cell with any of the
-**12 vanilla fences or a dead bush**, in either placement order. Sandstorms and
-falling sand can also cover those hosts. Fence connections, collision and
-interactions stay native. Waterlogged fences, walls, cactus, other plants and
-modded hosts are not included; a datapack alone cannot add a new host schema.
+With `sand.host_mixing=true`, sand shares the [common mineral-pile inventory](#shared-mineral-pile-plants)
+in either placement order. Sandstorms and falling sand use that same inventory.
+Connections, collision and plant interactions stay native. Waterlogged states,
+aquatic plants and arbitrary third-party hosts are excluded; a datapack alone
+cannot add a new host schema. The expanded inventory is **Unreleased**, not
+part of the published 2.5.0 jar; that jar supports fences and dead bushes only.
 Regular and red sand never merge with one another.
 
 Ordinary block items replace **uncovered piles at every depth, including eight
@@ -230,22 +231,46 @@ See [fire settings](Configuration.md#standalone-fire) and the
 These mechanics are independent of `general.block_growths` and do not replace
 existing wood charring, soot, smoldering, snow or datapack mechanics.
 
+## Shared mineral-pile plants
+
+**Unreleased source behavior; published 2.5.0 is unchanged.** Snow, regular sand
+and red sand use one inventory: **82 vegetation blocks** (75 vanilla and seven
+IW) plus 12 vanilla fences and 22 vanilla walls, **116 hosts per pile type**.
+
+The vegetation inventory includes grasses/ferns, small and double flowers,
+petals, saplings/propagules, mushrooms, dead bushes, crops and attached stems,
+berries/cave vines, cocoa, Nether wart/roots/fungi/sprouts/vines, bamboo and its
+sapling, sugar cane, cactus, vines, glow lichen, moss carpet, azaleas, hanging
+roots, spore blossom, dripleaf and chorus. IW contributes **weeds, dune grass,
+frosty grass, frosty fern, ivy, moss clump and wall hanging roots**.
+Tree logs/leaves, terrain and melon/pumpkin fruit blocks are not plant containers.
+
+Every cover retains the plant's age, faces, halves and other native properties.
+Growth, bonemeal, harvest/contact behavior, growing-vine head/body transitions,
+native support and host loot remain authoritative. New shoots and successful
+trees are not automatically coated; an existing covered cell keeps its mineral
+type and depth when it changes to another supported plant. A valid floor is
+still required for the pile, including farmland or soul sand. A valid hanging
+plant does not hold a pile in midair.
+
+Only **dry states** qualify: no seagrass, kelp, lily pads or waterlogged hosts.
+Leaf piles and azalea-flower litter keep their separate existing systems.
+Regular sand, red sand and snow cannot be combined into one cover.
+The existing independent `snow.host_mixing` and `sand.host_mixing` controls remain.
+See [MP01-MP06](../developers/Feature-testing.md#shared-mineral-pile-plants) for
+replication and the [results ledger](../developers/Test-results.md) for evidence.
+
 ## Standalone snow
 
-Beta 2.1.0-beta.1 adds four related mechanics without a separate snow mod:
-snow layers can share a cell with the 12 vanilla fences, 22 vanilla walls,
-grass, fern, tall grass, large fern, sunflower, lilac, rose bush, and peony.
+Snow cohabitation uses the shared inventory above without a separate snow mod.
 Place snow into a dry supported host, or place a supported host into partial
 snow (layers 1-7). Host properties and plant halves are retained. Gates, slabs,
 stairs, waterlogged hosts, block entities, and arbitrary modded blocks are not
 snow containers. Existing IW snowy masonry remains a separate, unchanged system.
 
-The **2.1.0-beta.2** follow-up expands the explicit list to **72 hosts**:
-all vanilla small flowers, including torchflowers and pink petals; the seven
-tree saplings and dry mangrove propagules; red/brown mushrooms; dead bushes;
-and IW weeds, dune grass, frosty grass and frosty fern. Other crops, aquatic
-plants, vines and arbitrary modded plants remain excluded. Plant-first and
-snow-first placement keep the existing layer count. Snow-covered short grass
+The published 2.5.0 inventory contains 72 hosts; the common expanded inventory
+is Unreleased. Plant-first and snow-first placement keep the existing layer count.
+Snow-covered short grass
 uses the existing frosty-grass appearance only while covered; removing the
 snow restores normal grass rather than permanently converting the plant.
 Stable **2.1.0** applies the same rule to short ferns: covered ferns

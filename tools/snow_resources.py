@@ -4,6 +4,7 @@ import argparse
 import json
 import re
 from pathlib import Path
+from pile_resources import all_hosts, immersive_plants, extra_plant_parts, structural_hosts
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "src/main/java/com/ordana/immersive_weathering/snow/SnowHosts.java"
@@ -11,17 +12,14 @@ RESOURCES = ROOT / "src/main/resources"
 
 
 def hosts():
-    source = SOURCE.read_text(encoding="utf-8")
-    vanilla = source.split("return List.of(", 1)[1].split(");", 1)[0]
-    return [name.lower() for name in re.findall(r"Blocks\.([A-Z_]+)", vanilla)] + immersive_hosts()
+    return all_hosts()
 
 
 def immersive_hosts():
-    source = SOURCE.read_text(encoding="utf-8").split("List<Block> immersiveHosts()", 1)[1].split(");", 1)[0]
-    return [name.lower() for name in re.findall(r"ModBlocks\.([A-Z_]+)\.get\(\)", source)]
+    return immersive_plants()
 
 
-def host_parts(name):
+def host_parts(name, frosty=True):
     parts = []
     if name.endswith("_fence"):
         parts.append({"apply": {"model": f"minecraft:block/{name}_post"}})
@@ -31,7 +29,7 @@ def host_parts(name):
             if angle and not bamboo:
                 model["y"] = angle
             parts.append({"when": {direction: "true"}, "apply": model})
-    elif name.endswith("_wall"):
+    elif name.endswith("_wall") and name in structural_hosts():
         parts.append({"when": {"up": "true"}, "apply": {"model": f"minecraft:block/{name}_post"}})
         for side in ("low", "tall"):
             for direction, angle in zip(("north", "east", "south", "west"), (0, 90, 180, 270)):
@@ -41,7 +39,8 @@ def host_parts(name):
                     model["y"] = angle
                 parts.append({"when": {direction: side}, "apply": model})
     elif name in ("grass", "fern"):
-        parts.append({"apply": {"model": f"immersive_weathering:block/frosty_{name}"}})
+        model = f"immersive_weathering:block/frosty_{name}" if frosty else f"minecraft:block/{name}"
+        parts.append({"apply": {"model": model}})
     elif name == "pink_petals":
         for amount in range(1, 5):
             for direction, angle in zip(("north", "east", "south", "west"), (0, 90, 180, 270)):
@@ -58,10 +57,8 @@ def host_parts(name):
     elif name == "weeds":
         for age in range(8):
             parts.append({"when": {"age": str(age)}, "apply": {"model": f"immersive_weathering:block/weeds_{age}"}})
-    elif name in immersive_hosts():
-        parts.append({"apply": {"model": f"immersive_weathering:block/{name}"}})
     elif name not in ("tall_grass", "large_fern", "sunflower", "lilac", "rose_bush", "peony"):
-        parts.append({"apply": {"model": f"minecraft:block/{name}"}})
+        parts.extend(extra_plant_parts(name))
     else:
         for half, suffix in (("lower", "bottom"), ("upper", "top")):
             parts.append({"when": {"half": half}, "apply": {"model": f"minecraft:block/{name}_{suffix}"}})
@@ -98,7 +95,7 @@ def outputs():
         for name in names
     }
     fences = [n for n in names if n.endswith("_fence")]
-    walls = [n for n in names if n.endswith("_wall")]
+    walls = [n for n in names if n.endswith("_wall") and n in structural_hosts()]
     wood = [n for n in fences if n != "nether_brick_fence"]
     plants = [n for n in names if n not in fences and n not in walls]
     tall_flowers = ["sunflower", "lilac", "rose_bush", "peony"]

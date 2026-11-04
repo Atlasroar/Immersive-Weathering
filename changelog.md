@@ -1,3 +1,19 @@
+## Unreleased
+
+- Snow, regular sand and red sand now share one vegetation inventory and cover
+  implementation: 75 vanilla vegetation blocks, all seven IW plants, and the
+  existing 12 vanilla fences/22 walls. This includes crops, cactus, cane, bamboo,
+  vines, berries, Nether plants, dripleaf and chorus; dry states only.
+- Covers retain native properties, growth/bonemeal, head/body transitions,
+  interactions, shapes and loot. Farmland and soul sand support mineral piles;
+  ceiling/side attachment alone cannot suspend a pile. Shoveling keeps the host.
+- Aquatic/waterlogged expansion, arbitrary third-party plants, leaf piles and
+  azalea-flower litter remain outside this change. Existing block IDs, saved
+  configuration paths, layer limits and distinct snow/sand weather rules remain.
+- Expanded automated regressions and version-neutral MP01-MP06 manual procedures;
+  manual outcomes are recorded separately and do not inherit earlier passes.
+  Published 2.5.0 artifacts are unchanged.
+
 ## 2.5.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.

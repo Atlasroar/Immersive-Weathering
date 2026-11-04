@@ -9,11 +9,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(BlockBehaviour.class)
+@Mixin(BlockBehaviour.BlockStateBase.class)
 public class SandHostReplaceMixin {
-    @Inject(method = "canBeReplaced(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/item/context/BlockPlaceContext;)Z",
+    @Inject(method = "canBeReplaced(Lnet/minecraft/world/item/context/BlockPlaceContext;)Z",
             at = @At("HEAD"), cancellable = true)
-    private void sandIntoHost(BlockState state, BlockPlaceContext context, CallbackInfoReturnable<Boolean> cir) {
+    private void sandIntoHost(BlockPlaceContext context, CallbackInfoReturnable<Boolean> cir) {
+        BlockState state = (BlockState) (Object) this;
         if (SandHosts.canAdd(context, state)) cir.setReturnValue(true);
     }
 }

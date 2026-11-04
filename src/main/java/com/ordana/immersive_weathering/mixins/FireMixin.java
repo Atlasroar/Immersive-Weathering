@@ -25,6 +25,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = FireBlock.class, priority = 900)
 public abstract class FireMixin extends BaseFireBlock{
 
+    @org.spongepowered.asm.mixin.injection.ModifyVariable(
+            method = {"getIgniteOdds(Lnet/minecraft/world/level/block/state/BlockState;)I", "getBurnOdds"},
+            at = @At("HEAD"), argsOnly = true)
+    private BlockState pileFuel(BlockState state) {
+        return com.ordana.immersive_weathering.piles.PilePlants.raw(state);
+    }
+
     protected FireMixin(Properties settings, float damage) {
         super(settings, damage);
     }

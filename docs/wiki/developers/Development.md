@@ -214,14 +214,22 @@ states/layers, exact union collision, native rotation/mirroring and survival,
 both placement orders, weather cap/no-write behavior, all-depth replacement
 and native host protection, falling merge/remainders/support/NBT/timeout/drop
 rules, real vanilla/IW loot tables, and one-layer rain erosion/tag exemptions.
-The test fixture binds native fence/sand/dead-bush-support tags explicitly;
-it does not substitute a different dead-bush survival rule. The shared snow
-model generator still emits byte-identical snow resources. For
+The test fixture binds native support/vegetation tags explicitly;
+it does not substitute a different plant survival rule. For
 [SP01-SP08](Test-results.md#per-test-records), the tester reported
 **SP01-SP07 Pass; SP08 Not applicable** on 2026-11-02, at test-ID level without
 itemized variant notes. Published 2.3.0 artifacts remain immutable.
 Building alone does not deploy; the 2.4.0 release deployment replaces only the
 IW binary in the authorized test profile, retaining configs and other mods.
+
+Unreleased shared-pile coverage expands both colors to the same 116 hosts as
+snow. The sand harness also registers snow covers and compares actual native
+bonemeal results for crops, stems, berries, cocoa and weeds across all three
+mineral types at depths 1, 4 and 8. It checks growing-vine/bamboo head-to-body
+transitions, cultivated-floor/no-floating support, nested world scopes and
+exception cleanup. JavaExec does not weave Mixins: its storage fixture explicitly
+bridges the production `PileInteractions.retain` hook. These assertions are not
+evidence of real-world ticking, actual AI actions or client rendering.
 
 During sand/thunder implementation, `.\gradlew.bat build --console=plain`
 passed with 75,931 sand/storm native assertions, 4,571 fire assertions/hook
@@ -289,7 +297,7 @@ Reflection stages test registry registration before freeze, rather than
 unfreezing a live game registry. Raw and covered test blocks initialize native
 state caches; these fixture classes are not distributed.
 
-Coverage includes every dry state/layer of all 72 hosts, exact NBT round trips,
+Coverage includes every dry state/layer of all 116 hosts, exact NBT round trips,
 native collision unions, rotations, vanilla-model reference resolution, raw fence
 connectivity, wet/unsupported host rejection, placement-policy 1-8 boundaries and
 toggles, mixed double halves, scheduled orphan resolution for both halves at
@@ -298,8 +306,12 @@ incoming/target layer counts, overflow item counts, actual source/flow/waterlogg
 ray contacts, vanilla host/snow loot composition, melt/clone/piston-reaction
 contracts, and cold/warm/light/heightmap/load/config/weather/cap controls.
 Weather fixtures use Mojang's actual heightmap opacity predicate and verify all
-72 hosts reach eight without a second cell. Gamerules 0,1,2,8,24 and IW caps 1,3,8
+116 hosts reach eight without a second cell. Gamerules 0,1,2,8,24 and IW caps 1,3,8
 are crossed with clear/rain/thunder and ordinary-weather opt-in.
+The native resource check compares selected model parts, rotations and weighted
+options for every vanilla plant state across all three covers. Only snow's
+intentional frosty short-grass/fern appearance differs. Native model JSON is
+read from the Minecraft test classpath, not copied into the project.
 The covered-plant replacement matrix invokes actual wrapper replaceability and
 the placement injection for every plant state, layers 1-8, both independent
 settings, same/different supported hosts, solid/chest replacements, snow items,

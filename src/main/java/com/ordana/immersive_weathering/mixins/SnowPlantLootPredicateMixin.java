@@ -1,6 +1,6 @@
 package com.ordana.immersive_weathering.mixins;
 
-import com.ordana.immersive_weathering.snow.SnowCoveredBlock;
+import com.ordana.immersive_weathering.piles.PileCoveredBlock;
 import com.ordana.immersive_weathering.snow.SnowHosts;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
@@ -31,7 +31,7 @@ public class SnowPlantLootPredicateMixin {
     private void mixedPlantLocation(ServerLevel level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue() || blocks == null || nbt != NbtPredicate.ANY || !level.isLoaded(pos)) return;
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof SnowCoveredBlock covered && covered.host() instanceof DoublePlantBlock
+        if (state.getBlock() instanceof PileCoveredBlock covered
                 && blocks.contains(covered.host()) && (tag == null || state.is(tag))
                 && properties.matches(SnowHosts.raw(state))) cir.setReturnValue(true);
     }

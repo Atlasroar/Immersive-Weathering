@@ -95,6 +95,9 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.MudBlockHitboxMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.MobFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.PlayerFireMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PilePlantIdentityMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PilePlantWriteMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PileGrowingPlantMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitEatGoalMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RootedDirtBlockMixin` |

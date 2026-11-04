@@ -69,6 +69,8 @@ public final class SandstormMechanicsTest {
         boot.setAccessible(true);
         boot.setBoolean(null, true);
         BuiltInRegistries.REGISTRY.keySet();
+        Registry.register(BuiltInRegistries.ITEM, "immersive_weathering:moss_clump",
+                com.ordana.immersive_weathering.reg.ModItems.MOSS_ITEM);
         Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:sand_layer_block", ModBlocks.SAND);
         Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:red_sand_layer_block", ModBlocks.RED);
         Registry.register(BuiltInRegistries.PARTICLE_TYPE, "iw_storm:dust_grain",
@@ -78,6 +80,13 @@ public final class SandstormMechanicsTest {
             Registry.register(BuiltInRegistries.ITEM, BuiltInRegistries.BLOCK.getKey(pile), item);
             item.registerBlocks(Item.BY_BLOCK, item);
         }
+        for (var entry : com.ordana.immersive_weathering.piles.PilePlants.immersive().entrySet()) {
+            Block host = Registry.register(BuiltInRegistries.BLOCK, "immersive_weathering:" + entry.getKey(), entry.getValue().get());
+            var item = new BlockItem(host, new Item.Properties());
+            Registry.register(BuiltInRegistries.ITEM, "immersive_weathering:" + entry.getKey(), item);
+            item.registerBlocks(Item.BY_BLOCK, item);
+        }
+        com.ordana.immersive_weathering.snow.SnowHosts.init();
         SandHosts.init();
         Registry.register(BuiltInRegistries.ENTITY_TYPE, "iw_storm:falling",
                 com.ordana.immersive_weathering.reg.ModEntities.FALLING_LAYER.get());
@@ -89,6 +98,8 @@ public final class SandstormMechanicsTest {
         }
         SandHosts.entries().values().forEach(covers -> covers.forEach(covered ->
                 covered.get().getStateDefinition().getPossibleStates().forEach(BlockState::initCache)));
+        com.ordana.immersive_weathering.snow.SnowHosts.entries().values().forEach(covered ->
+                covered.get().getStateDefinition().getPossibleStates().forEach(BlockState::initCache));
         dry = biome("dry", false);
         red = biome("red", false);
         wet = biome("wet", true);
@@ -106,6 +117,7 @@ public final class SandstormMechanicsTest {
         sandFalling();
         sandRain();
         sandLoot();
+        sharedPlantLifecycle();
         slowing();
         client();
         System.out.println("Sandstorm mechanics: " + cases + " production/native assertions passed");
@@ -135,10 +147,20 @@ public final class SandstormMechanicsTest {
                 covers.forEach(covered -> wood.add(covered.get().builtInRegistryHolder()));
             }
         });
-        BuiltInRegistries.BLOCK.bindTags(Map.of(
+        Map<net.minecraft.tags.TagKey<Block>, List<Holder<Block>>> tags = new HashMap<>(Map.of(
                 net.minecraft.tags.BlockTags.SAND, List.of(Blocks.SAND.builtInRegistryHolder(), Blocks.RED_SAND.builtInRegistryHolder()),
                 net.minecraft.tags.BlockTags.DEAD_BUSH_MAY_PLACE_ON, List.of(Blocks.SAND.builtInRegistryHolder(), Blocks.RED_SAND.builtInRegistryHolder()),
                 net.minecraft.tags.BlockTags.FENCES, fences, net.minecraft.tags.BlockTags.WOODEN_FENCES, wood));
+        tags.put(net.minecraft.tags.BlockTags.DIRT, List.of(Blocks.DIRT.builtInRegistryHolder()));
+        tags.put(net.minecraft.tags.BlockTags.MUSHROOM_GROW_BLOCK, List.of(Blocks.MYCELIUM.builtInRegistryHolder()));
+        tags.put(net.minecraft.tags.BlockTags.NYLIUM, List.of(Blocks.WARPED_NYLIUM.builtInRegistryHolder()));
+        tags.put(net.minecraft.tags.BlockTags.JUNGLE_LOGS, List.of(Blocks.JUNGLE_LOG.builtInRegistryHolder()));
+        tags.put(net.minecraft.tags.BlockTags.BAMBOO_PLANTABLE_ON, List.of(Blocks.DIRT.builtInRegistryHolder()));
+        tags.put(net.minecraft.tags.BlockTags.SMALL_DRIPLEAF_PLACEABLE, List.of(Blocks.CLAY.builtInRegistryHolder()));
+        tags.put(net.minecraft.tags.BlockTags.BIG_DRIPLEAF_PLACEABLE, List.of(Blocks.CLAY.builtInRegistryHolder()));
+        BuiltInRegistries.BLOCK.bindTags(tags);
+        BuiltInRegistries.FLUID.bindTags(Map.of(net.minecraft.tags.FluidTags.WATER,
+                List.of(net.minecraft.world.level.material.Fluids.WATER.builtInRegistryHolder())));
     }
 
     private static void loadSandLoot() throws Exception {
@@ -170,11 +192,19 @@ public final class SandstormMechanicsTest {
                     var builder = new net.minecraft.world.level.storage.loot.LootParams.Builder(level)
                             .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, Vec3.atCenterOf(POS))
                             .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.TOOL, Items.SHEARS.getDefaultInstance());
+                    level.random.setSeed(8123);
                     List<ItemStack> drops = state.getDrops(builder);
                     Map<Item, Integer> counts = new HashMap<>();
                     drops.forEach(stack -> counts.merge(stack.getItem(), stack.getCount(), Integer::sum));
                     Item sand = layers == 8 ? (pile == ModBlocks.SAND ? Items.SAND : Items.RED_SAND) : pile.asItem();
-                    check(counts.equals(Map.of(host.asItem(), 1, sand, layers == 8 ? 1 : layers)), "Exact native host plus existing pile loot economy");
+                    Map<Item, Integer> expected = new HashMap<>();
+                    var hostBuilder = new net.minecraft.world.level.storage.loot.LootParams.Builder(level)
+                            .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, Vec3.atCenterOf(POS))
+                            .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.TOOL, Items.SHEARS.getDefaultInstance());
+                    level.random.setSeed(8123);
+                    host.defaultBlockState().getDrops(hostBuilder).forEach(stack -> expected.merge(stack.getItem(), stack.getCount(), Integer::sum));
+                    expected.merge(sand, layers == 8 ? 1 : layers, Integer::sum);
+                    check(counts.equals(expected), "Exact native host plus existing pile loot economy: " + host);
                 }
             }
         }
@@ -284,7 +314,7 @@ public final class SandstormMechanicsTest {
     }
 
     private static void sandCovers() throws Exception {
-        check(SandHosts.hosts().size() == 13 && SandHosts.entries().size() == 13, "Only 12 fences and dead bush");
+        check(SandHosts.hosts().size() == SandHosts.entries().size(), "Every shared plant/structure has both sand colors");
         Fixture level = world();
         level.states.put(POS.below(), Blocks.SAND.defaultBlockState());
         for (Block host : SandHosts.hosts()) {
@@ -316,7 +346,7 @@ public final class SandstormMechanicsTest {
                 }
             }
         }
-        for (Block block : List.of(Blocks.CACTUS, Blocks.GRASS, Blocks.OAK_SAPLING, Blocks.SANDSTONE_WALL, Blocks.CHEST)) {
+        for (Block block : List.of(Blocks.SEAGRASS, Blocks.KELP, Blocks.CHEST, Blocks.OAK_STAIRS)) {
             check(!SandHosts.supported(block.defaultBlockState()), "Unregistered host stays excluded: " + block);
         }
     }
@@ -337,7 +367,7 @@ public final class SandstormMechanicsTest {
                     BlockState state = pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, layers);
                     level.states.put(POS, state);
                     BlockPlaceContext hostContext = context(level, host.asItem().getDefaultInstance());
-                    check(state.canBeReplaced(hostContext), "Every layer allows host placement");
+                    if (host.asItem() instanceof BlockItem) check(state.canBeReplaced(hostContext), "Every layer allows host placement");
                     BlockState shared = SandHosts.placement(hostContext, host.defaultBlockState());
                     check(SandHosts.raw(shared).is(host) && SandHosts.layers(shared) == layers, "Host placed into pile retains all layers");
                     level.states.put(POS, layers == 1 ? host.defaultBlockState() : SandHosts.cover(host.defaultBlockState(), pile, layers - 1));
@@ -348,7 +378,8 @@ public final class SandstormMechanicsTest {
                     check(!SandHosts.canAdd(context(level, pile.asItem().getDefaultInstance()), level.getBlockState(POS)), "Full covered pile cannot receive ninth layer");
                 }
                 for (int cap = 1; cap <= 8; cap++) {
-                    level.states.put(POS, host.defaultBlockState());
+                    BlockState nativeHost = prepareHost(level, host);
+                    level.states.put(POS, nativeHost);
                     for (int layer = 1; layer <= cap; layer++) {
                         check(SandAccumulation.deposit(level, POS.above(), pile, cap),
                                 "Weather deposits around " + host + " cap=" + cap + " depth=" + layer
@@ -419,8 +450,8 @@ public final class SandstormMechanicsTest {
                 for (int incoming = 1; incoming <= 8; incoming++) {
                     for (Block host : SandHosts.hosts()) {
                         Fixture level = world();
-                        level.states.put(POS.below(), Blocks.SAND.defaultBlockState());
-                        level.states.put(POS, existing == 0 ? host.defaultBlockState() : SandHosts.cover(host.defaultBlockState(), pile, existing));
+                        BlockState nativeHost = prepareHost(level, host);
+                        level.states.put(POS, existing == 0 ? nativeHost : SandHosts.cover(nativeHost, pile, existing));
                         int remainder = SandPhysics.deposit(level, POS, pile, incoming);
                         int expected = Math.min(8, existing + incoming);
                         check(SandHosts.layers(level.states.get(POS)) == expected, "Falling sand fills host to eight");
@@ -474,6 +505,128 @@ public final class SandstormMechanicsTest {
         }
     }
 
+    private static void sharedPlantLifecycle() throws Exception {
+        for (int kind = 0; kind < 3; kind++) {
+            for (int layers : List.of(1, 4, 8)) {
+                for (Block plant : List.of(Blocks.WHEAT, Blocks.CARROTS, Blocks.POTATOES, Blocks.BEETROOTS,
+                        Blocks.COCOA, Blocks.SWEET_BERRY_BUSH, Blocks.MELON_STEM, Blocks.PUMPKIN_STEM,
+                        Blocks.TORCHFLOWER_CROP, Blocks.PITCHER_CROP, ModBlocks.WEEDS.get())) {
+                    Fixture level = world(), control = world();
+                    BlockState raw = prepareHost(level, plant);
+                    prepareHost(control, plant);
+                    BlockState covered = sharedCover(raw, kind, layers);
+                    level.states.put(POS, covered);
+                    control.states.put(POS, raw);
+                    ((BonemealableBlock) plant).performBonemeal(control, RandomSource.create(91), POS, raw);
+                    ((BonemealableBlock) covered.getBlock()).performBonemeal(level, RandomSource.create(91), POS, covered);
+                    check(com.ordana.immersive_weathering.piles.PilePlants.raw(level.getBlockState(POS))
+                                    == control.getBlockState(POS), "Native bonemeal preserves host growth for " + plant);
+                    check(level.getBlockState(POS) == sharedCover(control.getBlockState(POS), kind, layers),
+                            "Native growth preserves exact pile color/depth for " + plant);
+                }
+                for (Block plant : List.of(Blocks.TWISTING_VINES, Blocks.WEEPING_VINES, Blocks.CAVE_VINES,
+                        Blocks.BAMBOO_SAPLING)) {
+                    Fixture level = world();
+                    BlockState raw = prepareHost(level, plant);
+                    Direction direction = plant == Blocks.TWISTING_VINES || plant == Blocks.BAMBOO_SAPLING
+                            ? Direction.UP : Direction.DOWN;
+                    BlockState neighbor = (plant == Blocks.BAMBOO_SAPLING ? Blocks.BAMBOO : plant).defaultBlockState();
+                    BlockPos next = POS.relative(direction);
+                    level.states.put(next, neighbor);
+                    BlockState expected = plant.updateShape(raw, direction, neighbor, level, POS, next);
+                    BlockState covered = sharedCover(raw, kind, layers);
+                    BlockState actual = covered.updateShape(direction, neighbor, level, POS, next);
+                    check(com.ordana.immersive_weathering.piles.PilePlants.raw(actual) == expected,
+                            "Native growing head/body transition remains intact for " + plant);
+                    check(actual == sharedCover(expected, kind, layers), "Head/body transitions retain mineral identity");
+                }
+                Fixture level = world(), other = world();
+                BlockState leaf = prepareHost(level, Blocks.BIG_DRIPLEAF);
+                BlockState coveredLeaf = sharedCover(leaf, kind, layers);
+                coveredLeaf.getBlock().onPlace(coveredLeaf, level, POS, leaf, false);
+                coveredLeaf.updateShape(Direction.NORTH, Blocks.AIR.defaultBlockState(), level, POS, POS.north());
+                check(level.wrapperSchedules == 0, "Supported dripleaf keeps native scheduled tilt timing");
+                BlockState wheat = Blocks.WHEAT.defaultBlockState(), grown = wheat.setValue(CropBlock.AGE, 5);
+                BlockState covered = sharedCover(wheat, kind, layers);
+                level.states.put(POS, covered);
+                other.states.put(POS, covered);
+                check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, grown) == grown,
+                        "Unscoped writes never retain a cover");
+                final int pileKind = kind, depth = layers;
+                com.ordana.immersive_weathering.piles.PileInteractions.run(level, () -> {
+                    check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, grown)
+                            == sharedCover(grown, pileKind, depth), "Scoped writes retain the active world's pile");
+                    check(com.ordana.immersive_weathering.piles.PileInteractions.retain(other, POS, grown) == grown,
+                            "Scoped writes cannot affect another world");
+                    com.ordana.immersive_weathering.piles.PileInteractions.run(other, () ->
+                            check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, grown) == grown,
+                                    "Nested worlds isolate native writes"));
+                    check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, grown)
+                            == sharedCover(grown, pileKind, depth), "Nested scopes restore the outer world");
+                    check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, Blocks.AIR.defaultBlockState()).isAir(),
+                            "Harvest/removal never creates ghost plants");
+                    check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, Blocks.WATER.defaultBlockState())
+                            .is(Blocks.WATER), "Fluid writes never become covered plants");
+                });
+                try {
+                    com.ordana.immersive_weathering.piles.PileInteractions.run(level, () -> { throw new IllegalStateException("scope probe"); });
+                    throw new AssertionError("Expected callback failure");
+                } catch (IllegalStateException expected) {
+                    check("scope probe".equals(expected.getMessage()), "Callback failures propagate");
+                }
+                check(com.ordana.immersive_weathering.piles.PileInteractions.retain(level, POS, grown) == grown,
+                        "Exceptions restore the native-write scope");
+                for (Block floor : List.of(Blocks.FARMLAND, Blocks.SOUL_SAND)) {
+                    level.states.put(POS.below(), floor.defaultBlockState());
+                    check(SandPhysics.supported(level, POS)
+                                    && com.ordana.immersive_weathering.snow.SnowPhysics.supported(level, POS),
+                            "All mineral piles rest on cultivated soil");
+                }
+                level.states.put(POS.below(), Blocks.AIR.defaultBlockState());
+                check(!SandPhysics.supported(level, POS)
+                                && !com.ordana.immersive_weathering.snow.SnowPhysics.supported(level, POS),
+                        "Plant identity cannot support a floating pile");
+            }
+        }
+    }
+
+    private static BlockState sharedCover(BlockState state, int kind, int layers) {
+        return kind == 0 ? com.ordana.immersive_weathering.snow.SnowHosts.cover(state, layers)
+                : SandHosts.cover(state, kind == 1 ? ModBlocks.SAND : ModBlocks.RED, layers);
+    }
+
+    private static BlockState prepareHost(Fixture level, Block host) {
+        BlockState state = host.defaultBlockState();
+        Block support = Blocks.DIRT;
+        if (host instanceof CropBlock || host instanceof StemBlock || host instanceof AttachedStemBlock
+                || host instanceof PitcherCropBlock) support = Blocks.FARMLAND;
+        if (host instanceof com.ordana.immersive_weathering.blocks.WeedsBlock) support = Blocks.DIRT;
+        if (host == Blocks.NETHER_WART) support = Blocks.SOUL_SAND;
+        if (host == Blocks.DEAD_BUSH || host == Blocks.CACTUS || host == Blocks.SUGAR_CANE) support = Blocks.SAND;
+        if (host == Blocks.BROWN_MUSHROOM || host == Blocks.RED_MUSHROOM) support = Blocks.MYCELIUM;
+        if (host instanceof RootsBlock || host instanceof FungusBlock || host == Blocks.NETHER_SPROUTS
+                || host == Blocks.TWISTING_VINES || host == Blocks.TWISTING_VINES_PLANT) support = Blocks.WARPED_NYLIUM;
+        if (host == Blocks.CHORUS_PLANT || host == Blocks.CHORUS_FLOWER) support = Blocks.END_STONE;
+        if (host == Blocks.BIG_DRIPLEAF || host == Blocks.BIG_DRIPLEAF_STEM || host == Blocks.SMALL_DRIPLEAF) support = Blocks.CLAY;
+        level.states.put(POS.below(), support.defaultBlockState());
+        if (host == Blocks.SUGAR_CANE) level.states.put(POS.below().east(), Blocks.WATER.defaultBlockState());
+        if (host == Blocks.COCOA) level.states.put(POS.relative(state.getValue(CocoaBlock.FACING)), Blocks.JUNGLE_LOG.defaultBlockState());
+        if (host == Blocks.VINE || host instanceof MultifaceBlock) {
+            state = state.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.NORTH, true);
+            level.states.put(POS.north(), Blocks.STONE.defaultBlockState());
+        }
+        if (host == Blocks.HANGING_ROOTS || host == Blocks.SPORE_BLOSSOM
+                || host == Blocks.CAVE_VINES || host == Blocks.CAVE_VINES_PLANT
+                || host == Blocks.WEEPING_VINES || host == Blocks.WEEPING_VINES_PLANT) {
+            level.states.put(POS.above(), Blocks.STONE.defaultBlockState());
+        }
+        if (host instanceof com.ordana.immersive_weathering.blocks.WallRootsBlock) {
+            level.states.put(POS.south(), Blocks.STONE.defaultBlockState());
+        }
+        if (host == Blocks.BIG_DRIPLEAF_STEM) level.states.put(POS.above(), Blocks.BIG_DRIPLEAF.defaultBlockState());
+        return state;
+    }
+
     private static void sandRain() throws Exception {
         var rolls = new net.minecraft.world.level.levelgen.LegacyRandomSource(1) {
             @Override public double nextDouble() { return 0; }
@@ -489,6 +642,7 @@ public final class SandstormMechanicsTest {
                     check(SandHosts.layers(level.states.get(POS)) == layers - 1, "Production random tick removes exactly one layer");
                     check(SandHosts.raw(level.states.get(POS)).is(host), "Last erosion layer restores native host");
                 }
+
             }
             Fixture level = world();
             BlockState state = pile.defaultBlockState().setValue(LayerBlock.LAYERS_8, 8);
@@ -762,7 +916,7 @@ public final class SandstormMechanicsTest {
         private List<Entity> entities;
         private GameRules rules;
         private FixtureServer server;
-        private int top, writes;
+        private int top, writes, wrapperSchedules;
         private int samples, roll;
         private Fixture() { super(null, null, null, null, null, null, null, false, 0, List.of(), false, null); throw new AssertionError(); }
         @Override public BlockState getBlockState(BlockPos pos) {
@@ -772,13 +926,18 @@ public final class SandstormMechanicsTest {
         @Override public boolean setBlock(BlockPos pos, BlockState state, int flags, int recursion) {
             if (failWrites) return false;
             writes++;
-            states.put(pos.immutable(), state);
+            // JavaExec does not weave Level; bridge the production write hook explicitly.
+            states.put(pos.immutable(), com.ordana.immersive_weathering.piles.PileInteractions.retain(this, pos, state));
             return true;
         }
         @Override public List<Entity> getEntities(Entity except, AABB area, java.util.function.Predicate<? super Entity> predicate) { return List.of(); }
         @Override public int getMinBuildHeight() { return -64; }
         @Override public int getHeight() { return 384; }
+        @Override public int getRawBrightness(BlockPos pos, int darkness) { return 15 - darkness; }
+        @Override public int getMaxLocalRawBrightness(BlockPos pos) { return 15; }
+        @Override public net.minecraft.world.level.material.FluidState getFluidState(BlockPos pos) { return getBlockState(pos).getFluidState(); }
         @Override public boolean hasChunkAt(BlockPos pos) { return loaded; }
+        @Override public boolean isLoaded(BlockPos pos) { return loaded; }
         @Override public boolean isRaining() { return rain; }
         @Override public boolean canSeeSky(BlockPos pos) { return sky; }
         @Override public boolean isRainingAt(BlockPos pos) { return rain && sky && rainAt; }
@@ -787,7 +946,9 @@ public final class SandstormMechanicsTest {
         @Override public net.minecraft.server.MinecraftServer getServer() { return server; }
         @Override public RandomSource getRandomSequence(ResourceLocation id) { return random; }
         @Override public net.minecraft.world.flag.FeatureFlagSet enabledFeatures() { return net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS; }
-        @Override public void scheduleTick(BlockPos pos, Block block, int delay) {}
+        @Override public void scheduleTick(BlockPos pos, Block block, int delay) {
+            if (block instanceof com.ordana.immersive_weathering.piles.PileCoveredBlock) wrapperSchedules++;
+        }
         @Override public void levelEvent(net.minecraft.world.entity.player.Player player, int event, BlockPos pos, int data) {}
         @Override public void gameEvent(net.minecraft.world.level.gameevent.GameEvent event, Vec3 pos,
                                         net.minecraft.world.level.gameevent.GameEvent.Context context) {}

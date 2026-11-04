@@ -43,7 +43,7 @@ record NeighborCheck(RuleTest mustHavePredicate, RuleTest mustNotHavePredicate,
 
         for (Direction dir : list) {
             BlockPos p = pos.relative(dir);
-            BlockState state = level.getBlockState(p);
+            BlockState state = com.ordana.immersive_weathering.piles.PilePlants.raw(level.getBlockState(p));
             if (mustHavePredicate.test(state, random)) count += 1;
             else if (mustNotHavePredicate != AlwaysTrueTest.INSTANCE && mustNotHavePredicate.test(state, random))
                 return false;

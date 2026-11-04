@@ -1,0 +1,224 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "tilt": "none"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "tilt": "unstable"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "tilt": "partial"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_partial_tilt"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "tilt": "full"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_full_tilt"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "tilt": "none"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "tilt": "unstable"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "tilt": "partial"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_partial_tilt",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "tilt": "full"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_full_tilt",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "tilt": "none"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "tilt": "unstable"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "tilt": "partial"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_partial_tilt",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "tilt": "full"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_full_tilt",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "tilt": "none"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "tilt": "unstable"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "tilt": "partial"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_partial_tilt",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "tilt": "full"
+      },
+      "apply": {
+        "model": "minecraft:block/big_dripleaf_full_tilt",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "layers": "1"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_1"
+      }
+    },
+    {
+      "when": {
+        "layers": "2"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_2"
+      }
+    },
+    {
+      "when": {
+        "layers": "3"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_3"
+      }
+    },
+    {
+      "when": {
+        "layers": "4"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_4"
+      }
+    },
+    {
+      "when": {
+        "layers": "5"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_5"
+      }
+    },
+    {
+      "when": {
+        "layers": "6"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_6"
+      }
+    },
+    {
+      "when": {
+        "layers": "7"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_7"
+      }
+    },
+    {
+      "when": {
+        "layers": "8"
+      },
+      "apply": {
+        "model": "immersive_weathering:block/host_red_sand_8"
+      }
+    }
+  ]
+}

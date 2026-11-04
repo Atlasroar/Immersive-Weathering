@@ -29,10 +29,20 @@ IW deliberately yields its new storm features when Scorchful is installed.
 The [ST01-ST08 instructions](../developers/Feature-testing.md#standalone-sandstorms)
 are replication steps, not verified graphics, audio or multiplayer results.
 
+For **Unreleased shared mineral covers**, confirm the exact source build:
+published 2.5.0 does not contain the expanded shared inventory. Check the
+appropriate `snow.host_mixing` or `sand.host_mixing` setting, dry plant state,
+native plant support and a floor for the pile. Waterlogged plants and aquatic
+plants are intentionally excluded; a hanging plant alone cannot hold sand/snow
+in the air. Plant interactions retain their own light, support and growth rules.
+Leaf/flower litter is not part of this system. Use
+[MP01-MP06](../developers/Feature-testing.md#shared-mineral-pile-plants).
+
 For **2.4.0 sand/thunder changes**, first distinguish that version
 from published 2.3.0. Saved `sandstorms.layer_cap=1` stays one until
 explicitly changed; manual stacking still reaches eight. Mixing covers only
-dry vanilla fences and dead bushes, not cactus/walls/modded plants. A covered
+dry vanilla fences and dead bushes in the published 2.4.0/2.5.0 jars. The
+Unreleased inventory is described above. A covered
 fence cannot be replaced like bare sand. Rain erosion needs actual rainfall,
 positive randomTickSpeed and absence from **both** sandstorm biome tags;
 temperature alone is irrelevant. Thunder fire suppression uses sky exposure,
