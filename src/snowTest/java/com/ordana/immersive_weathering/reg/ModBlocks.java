@@ -28,6 +28,12 @@ public final class ModBlocks {
     public static final Supplier<Block> DUNE_GRASS = plant(new DuneGrassBlock(BlockBehaviour.Properties.copy(Blocks.GRASS)));
     public static final Supplier<Block> FROSTY_GRASS = plant(new FrostyGrassBlock(BlockBehaviour.Properties.copy(Blocks.GRASS).randomTicks()));
     public static final Supplier<Block> FROSTY_FERN = plant(new FrostyGrassBlock(BlockBehaviour.Properties.copy(Blocks.FERN).randomTicks()));
+    public static final Supplier<com.ordana.immersive_weathering.blocks.IvyBlock> IVY =
+            plant(new com.ordana.immersive_weathering.blocks.IvyBlock(BlockBehaviour.Properties.copy(Blocks.VINE)));
+    public static final Supplier<Block> MOSS =
+            plant(new com.ordana.immersive_weathering.blocks.MossMultifaceBlock(BlockBehaviour.Properties.copy(Blocks.GLOW_LICHEN)));
+    public static final Supplier<Block> HANGING_ROOTS_WALL =
+            plant(new com.ordana.immersive_weathering.blocks.WallRootsBlock(BlockBehaviour.Properties.copy(Blocks.HANGING_ROOTS)));
     public static final Supplier<Block> FROST = fixed(Blocks.AIR);
     public static final Supplier<Block> FROSTY_GLASS = fixed(Blocks.GLASS);
     public static final Supplier<Block> FROSTY_GLASS_PANE = fixed(Blocks.GLASS_PANE);

@@ -20,7 +20,8 @@ import net.minecraft.world.phys.Vec3;
 public final class SnowPhysics {
     private SnowPhysics() {}
 
-    public static boolean supported(Level level, BlockPos pos) {
+    public static boolean supported(net.minecraft.world.level.LevelReader level, BlockPos pos) {
+        if (com.ordana.immersive_weathering.piles.PilePlants.cultivatedFloor(level.getBlockState(pos.below()))) return true;
         if (coveredSupport(level.getBlockState(pos.below()))) return true;
         return Blocks.SNOW.defaultBlockState().canSurvive(level, pos);
     }

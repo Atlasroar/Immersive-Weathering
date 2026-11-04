@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 public final class SnowHosts {
     private static final Map<Block, Supplier<SnowCoveredBlock>> HOSTS = new LinkedHashMap<>();
 
-    public static List<Block> vanillaHosts() {
+    public static List<Block> structuralHosts() {
         return List.of(
                 Blocks.OAK_FENCE, Blocks.SPRUCE_FENCE, Blocks.BIRCH_FENCE, Blocks.JUNGLE_FENCE,
                 Blocks.ACACIA_FENCE, Blocks.DARK_OAK_FENCE, Blocks.MANGROVE_FENCE, Blocks.CHERRY_FENCE,
@@ -32,21 +32,17 @@ public final class SnowHosts {
                 Blocks.RED_NETHER_BRICK_WALL, Blocks.SANDSTONE_WALL, Blocks.END_STONE_BRICK_WALL,
                 Blocks.DIORITE_WALL, Blocks.BLACKSTONE_WALL, Blocks.POLISHED_BLACKSTONE_WALL,
                 Blocks.POLISHED_BLACKSTONE_BRICK_WALL, Blocks.COBBLED_DEEPSLATE_WALL, Blocks.POLISHED_DEEPSLATE_WALL,
-                Blocks.DEEPSLATE_BRICK_WALL, Blocks.DEEPSLATE_TILE_WALL, Blocks.MUD_BRICK_WALL,
-                Blocks.GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN,
-                Blocks.SUNFLOWER, Blocks.LILAC, Blocks.ROSE_BUSH, Blocks.PEONY,
-                Blocks.DANDELION, Blocks.POPPY, Blocks.BLUE_ORCHID, Blocks.ALLIUM, Blocks.AZURE_BLUET,
-                Blocks.RED_TULIP, Blocks.ORANGE_TULIP, Blocks.WHITE_TULIP, Blocks.PINK_TULIP,
-                Blocks.OXEYE_DAISY, Blocks.CORNFLOWER, Blocks.LILY_OF_THE_VALLEY,
-                Blocks.WITHER_ROSE, Blocks.TORCHFLOWER, Blocks.PINK_PETALS,
-                Blocks.OAK_SAPLING, Blocks.SPRUCE_SAPLING, Blocks.BIRCH_SAPLING, Blocks.JUNGLE_SAPLING,
-                Blocks.ACACIA_SAPLING, Blocks.DARK_OAK_SAPLING, Blocks.CHERRY_SAPLING, Blocks.MANGROVE_PROPAGULE,
-                Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM, Blocks.DEAD_BUSH);
+                Blocks.DEEPSLATE_BRICK_WALL, Blocks.DEEPSLATE_TILE_WALL, Blocks.MUD_BRICK_WALL);
+    }
+
+    public static List<Block> vanillaHosts() {
+        return java.util.stream.Stream.concat(structuralHosts().stream(),
+                com.ordana.immersive_weathering.piles.PilePlants.vanilla().stream()).toList();
     }
 
     public static List<Block> immersiveHosts() {
-        return List.of(ModBlocks.WEEDS.get(), ModBlocks.DUNE_GRASS.get(),
-                ModBlocks.FROSTY_GRASS.get(), ModBlocks.FROSTY_FERN.get());
+        return com.ordana.immersive_weathering.piles.PilePlants.immersive().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()).map(entry -> (Block) entry.getValue().get()).toList();
     }
 
     public static List<Block> hosts() {
@@ -55,10 +51,8 @@ public final class SnowHosts {
 
     public static void init() {
         for (Block block : vanillaHosts()) registerHost(block);
-        registerImmersiveHost("weeds", ModBlocks.WEEDS);
-        registerImmersiveHost("dune_grass", ModBlocks.DUNE_GRASS);
-        registerImmersiveHost("frosty_grass", ModBlocks.FROSTY_GRASS);
-        registerImmersiveHost("frosty_fern", ModBlocks.FROSTY_FERN);
+        com.ordana.immersive_weathering.piles.PilePlants.immersive().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()).forEach(entry -> registerImmersiveHost(entry.getKey(), entry.getValue()));
     }
 
     private static void registerImmersiveHost(String name, Supplier<? extends Block> host) {
@@ -91,12 +85,12 @@ public final class SnowHosts {
     }
 
     public static boolean supported(BlockState state) {
-        return !state.hasBlockEntity() && state.getFluidState().isEmpty()
+        return !state.hasBlockEntity() && state.getFluidState().isEmpty() && raw(state).getFluidState().isEmpty()
                 && (state.getBlock() instanceof SnowCoveredBlock || HOSTS.containsKey(state.getBlock()));
     }
 
     public static BlockState raw(BlockState state) {
-        return state.getBlock() instanceof SnowCoveredBlock block ? copy(state, block.host().defaultBlockState()) : state;
+        return com.ordana.immersive_weathering.piles.PilePlants.raw(state);
     }
 
     @Nullable

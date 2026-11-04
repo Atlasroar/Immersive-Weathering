@@ -24,21 +24,27 @@ public final class SandHosts {
     private static final Map<Block, List<Supplier<SandCoveredBlock>>> HOSTS = new LinkedHashMap<>();
 
     public static List<Block> hosts() {
-        return List.of(
-                Blocks.OAK_FENCE, Blocks.SPRUCE_FENCE, Blocks.BIRCH_FENCE, Blocks.JUNGLE_FENCE,
-                Blocks.ACACIA_FENCE, Blocks.DARK_OAK_FENCE, Blocks.MANGROVE_FENCE, Blocks.CHERRY_FENCE,
-                Blocks.BAMBOO_FENCE, Blocks.CRIMSON_FENCE, Blocks.WARPED_FENCE, Blocks.NETHER_BRICK_FENCE,
-                Blocks.DEAD_BUSH);
+        return SnowHosts.hosts();
     }
 
     public static void init() {
-        for (Block host : hosts()) {
+        for (Block host : SnowHosts.vanillaHosts()) {
             String name = BuiltInRegistries.BLOCK.getKey(host).getPath();
-            HOSTS.put(host, List.of(
-                    ModBlocks.regBlock("sand_covered_" + name,
-                            () -> SandCoveredBlock.create(host, (SandLayerBlock) ModBlocks.SAND_LAYER_BLOCK.get())),
-                    ModBlocks.regBlock("red_sand_covered_" + name,
-                            () -> SandCoveredBlock.create(host, (SandLayerBlock) ModBlocks.RED_SAND_LAYER_BLOCK.get()))));
+            register(name, () -> host);
+        }
+        com.ordana.immersive_weathering.piles.PilePlants.immersive().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()).forEach(entry -> register(entry.getKey(), entry.getValue()));
+    }
+
+    private static void register(String name, Supplier<? extends Block> host) {
+        for (String color : List.of("sand", "red_sand")) {
+            ModBlocks.regBlock(color + "_covered_" + name, () -> {
+                Block block = host.get();
+                SandCoveredBlock covered = SandCoveredBlock.create(block, (SandLayerBlock)
+                        (color.equals("sand") ? ModBlocks.SAND_LAYER_BLOCK.get() : ModBlocks.RED_SAND_LAYER_BLOCK.get()));
+                HOSTS.computeIfAbsent(block, key -> new java.util.ArrayList<>()).add(() -> covered);
+                return covered;
+            });
         }
     }
 
@@ -47,13 +53,12 @@ public final class SandHosts {
     }
 
     public static boolean supported(BlockState state) {
-        return !state.hasBlockEntity() && state.getFluidState().isEmpty()
+        return !state.hasBlockEntity() && state.getFluidState().isEmpty() && raw(state).getFluidState().isEmpty()
                 && (state.getBlock() instanceof SandCoveredBlock || HOSTS.containsKey(state.getBlock()));
     }
 
     public static BlockState raw(BlockState state) {
-        return state.getBlock() instanceof SandCoveredBlock covered
-                ? SnowHosts.copy(state, covered.host().defaultBlockState()) : state;
+        return com.ordana.immersive_weathering.piles.PilePlants.raw(state);
     }
 
     @Nullable
@@ -98,6 +103,12 @@ public final class SandHosts {
         BlockState old = context.getLevel().getBlockState(context.getClickedPos());
         SandLayerBlock pile = pile(old);
         if (pile == null || context.getItemInHand().is(pile.asItem())) return placement;
+        BlockState host = raw(old);
+        if (host.getBlock() instanceof net.minecraft.world.level.block.PinkPetalsBlock
+                && placement.is(host.getBlock()) && old.canBeReplaced(context)) {
+            placement = host.setValue(net.minecraft.world.level.block.PinkPetalsBlock.AMOUNT,
+                    Math.min(4, host.getValue(net.minecraft.world.level.block.PinkPetalsBlock.AMOUNT) + 1));
+        }
         BlockState covered = cover(placement, pile, layers(old));
         return covered == null ? placement : covered;
     }

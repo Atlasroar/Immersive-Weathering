@@ -182,6 +182,9 @@ public class ImmersiveWeatheringClient {
 
     @EventCalled
     private static void registerBlockColors(ClientHelper.BlockColorEvent event) {
+        com.ordana.immersive_weathering.sand.SandHosts.entries().values().forEach(blocks ->
+                blocks.forEach(block -> event.register((state, level, pos, tint) ->
+                        event.getColor(com.ordana.immersive_weathering.piles.PilePlants.raw(state), level, pos, tint), block.get())));
         com.ordana.immersive_weathering.snow.SnowHosts.entries().values().forEach(block ->
                 event.register((state, level, pos, tint) ->
                         event.getColor(snowHostColorState(state), level, pos, tint), block.get()));

@@ -2,14 +2,15 @@ import json
 import unittest
 
 import sand_resources
+import snow_resources
 
 
 class SandResourceTests(unittest.TestCase):
     def test_exact_host_inventory_and_generated_files(self):
         names = sand_resources.hosts()
-        self.assertEqual(len(names), 13)
+        self.assertEqual(names, snow_resources.hosts())
         self.assertEqual(sum(name.endswith("_fence") for name in names), 12)
-        self.assertEqual([name for name in names if not name.endswith("_fence")], ["dead_bush"])
+        self.assertTrue({"dead_bush", "dune_grass", "ivy", "moss", "wheat", "cactus"}.issubset(names))
         for path, data in sand_resources.outputs().items():
             with self.subTest(path=path):
                 self.assertEqual(json.loads(path.read_text(encoding="utf-8")), data)
@@ -21,8 +22,9 @@ class SandResourceTests(unittest.TestCase):
             parts = data["multipart"]
             layers = [part for part in parts if "layers" in part.get("when", {})]
             self.assertEqual([part["when"]["layers"] for part in layers], [str(i) for i in range(1, 9)])
-            self.assertTrue(all(part["apply"]["model"].startswith("minecraft:block/")
-                                for part in parts if part not in layers))
+            name = path.stem.split("_covered_", 1)[1]
+            self.assertEqual([part for part in parts if part not in layers],
+                             snow_resources.host_parts(name, frosty=False))
             self.assertTrue(all("red_sand" in part["apply"]["model"] for part in layers)
                             if path.stem.startswith("red_sand_") else
                             all("red_sand" not in part["apply"]["model"] for part in layers))
@@ -39,7 +41,7 @@ class SandResourceTests(unittest.TestCase):
             self.assertTrue(all("tintindex" not in face for face in element["faces"].values()))
 
     def test_tags_are_append_only_and_referenced_by_vanilla(self):
-        for name in ("fences", "wooden_fences", "mineable/axe", "mineable/pickaxe", "sword_efficient"):
+        for name in ("fences", "wooden_fences", "walls", "mineable/axe", "mineable/pickaxe", "sword_efficient"):
             path = sand_resources.RESOURCES / f"data/minecraft/tags/blocks/{name}.json"
             data = json.loads(path.read_text(encoding="utf-8"))
             self.assertFalse(data["replace"])

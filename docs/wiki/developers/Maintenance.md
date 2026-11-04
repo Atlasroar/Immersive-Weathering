@@ -61,6 +61,8 @@ instead of silently omitting unfamiliar definitions.
 The documentation workflow runs those checks plus standard-library unit tests on
 every push/pull request. There is no date stamp or network/API dependency in the
 generated page; identical source produces identical output.
+Both build and documentation workflows also accept manual `workflow_dispatch`
+runs for an explicit branch when automatic events do not produce checks.
 Inventories sort case-sensitively by POSIX-rendered path, independent of the
 host's Windows/Linux path-comparison rules.
 
@@ -107,6 +109,8 @@ repository commit. It generates the sidebar/footer and records its owned files
 in `.wiki-published-pages.json`. It preserves unrelated pages and removes only
 obsolete pages from that inventory. Review changes rather than force-pushing
 over concurrent Wiki edits.
+The source root is resolved before collecting pages so relative/short Windows
+paths and linked destinations use the same canonical paths and reading order.
 
 Republish after documentation changes intended for public readers. CI checks the
 repository source but does not have Wiki publication credentials or automatically

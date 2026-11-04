@@ -54,6 +54,11 @@ public class BlockGrowthHandler extends RegistryAccessJsonReloadListener {
 
     //TODO: change event for lighting
     public static void tickBlock(TickSource source, BlockState state, ServerLevel level, BlockPos pos) {
+        BlockState host = com.ordana.immersive_weathering.piles.PilePlants.raw(state);
+        if (host != state) {
+            com.ordana.immersive_weathering.piles.PileInteractions.run(level, () -> tickBlock(source, host, level, pos));
+            return;
+        }
         if (!CommonConfigs.BLOCK_GROWTHS.get()) return;
 
         //TODO: move this line to data pack self predicate

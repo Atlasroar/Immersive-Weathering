@@ -210,7 +210,7 @@ public class ConfigurableBlockGrowth implements IBlockGrowth {
             BlockPos targetPos = targetSelf ? pos : pos.relative(dir);
             BlockState target = level.getBlockState(targetPos);
 
-            if (targetSelf || targetPredicate.test(target, seed)) {
+            if (targetSelf || targetPredicate.test(com.ordana.immersive_weathering.piles.PilePlants.raw(target), seed)) {
                 if (targetSelf && targetPredicate instanceof RandomBlockMatchTestAccessor rbm) {
                     //hack to get a probability here for self target
                     if ((seed.nextFloat() >= rbm.getProbability())) return; //TODO: use AW here
@@ -229,7 +229,7 @@ public class ConfigurableBlockGrowth implements IBlockGrowth {
                             }
                             target2 = level.getBlockState(targetPos2);
                             seed = RandomSource.create(Mth.getSeed(pos));
-                            if (!targetPredicate.test(target2, seed)) {
+                            if (!targetPredicate.test(com.ordana.immersive_weathering.piles.PilePlants.raw(target2), seed)) {
                                 return;
                             }
                         }

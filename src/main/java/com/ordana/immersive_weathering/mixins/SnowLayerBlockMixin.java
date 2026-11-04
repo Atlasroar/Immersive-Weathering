@@ -39,7 +39,10 @@ public abstract class SnowLayerBlockMixin extends Block {
     @Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
     private void coveredSnowSupport(BlockState state, net.minecraft.world.level.LevelReader level,
                                       BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (SnowPhysics.coveredSupport(level.getBlockState(pos.below()))) cir.setReturnValue(true);
+        if (SnowPhysics.coveredSupport(level.getBlockState(pos.below()))
+                || com.ordana.immersive_weathering.piles.PilePlants.cultivatedFloor(level.getBlockState(pos.below()))) {
+            cir.setReturnValue(true);
+        }
     }
 
     @Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)

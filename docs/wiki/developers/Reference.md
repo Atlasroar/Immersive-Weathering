@@ -18,7 +18,7 @@ The build is a single root Fabric Loom project for Minecraft 1.20.1.
 | `maven_group` | `com.ordana` |
 | `minecraft_version` | `1.20.1` |
 | `mod_id` | `immersive_weathering` |
-| `mod_version` | `2.5.0` |
+| `mod_version` | `2.6.0` |
 | `modmenu_version` | `7.2.2` |
 | `moonlight_file_id` | `5619072` |
 | `moonlight_min_version` | `1.20-2.12.11` |
@@ -95,6 +95,9 @@ Source: [src/main/resources/immersive_weathering-gameplay.mixins.json](../../../
 | `mixins` | `com.ordana.immersive_weathering.mixins.MudBlockHitboxMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.MobFireMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.PlayerFireMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PilePlantIdentityMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PilePlantWriteMixin` |
+| `mixins` | `com.ordana.immersive_weathering.mixins.PileGrowingPlantMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitEatGoalMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RabbitMixin` |
 | `mixins` | `com.ordana.immersive_weathering.mixins.RootedDirtBlockMixin` |

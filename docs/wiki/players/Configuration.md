@@ -129,7 +129,7 @@ This does not add datapack-defined host schemas.
 
 | Key in `sand` | Default (bounds) | Meaning |
 | --- | --- | --- |
-| `host_mixing` | `true` | Regular/red sand shares dry vanilla fences and dead bushes, in either placement order and through weather/falling deposition. |
+| `host_mixing` | `true` | Regular/red sand shares the same dry vanilla/IW plant, fence and wall inventory as snow, in either placement order and through weather/falling deposition. Expanded inventory starts in 2.6.0; published 2.5.0 includes fences/dead bushes only. |
 | `replace_piles` | `true` | Ordinary block items replace bare sand at any depth, including eight. Covered fences remain protected; covered bushes retain native replaceability. |
 | `rain_erosion` | `true` | Actual rain removes one exposed layer per successful random tick without drops, restoring hosts at zero. Either sandstorm biome tag exempts the biome. |
 | `rain_erosion_chance` | `0.125` (0-1) | Erosion probability per eligible random tick; zero disables erosion. Roofs, snow and clear weather are negative controls. |

@@ -152,6 +152,49 @@ Probabilistic observations need counted trials, not a promise of gusts in a
 short wait. Restore all changed settings and delete only fixtures created for
 this round. Record each variant using the [result record](#return-results-by-test-id).
 
+## Shared mineral-pile plants
+
+Use the [common inventory](../players/Features.md#shared-mineral-pile-plants):
+75 vanilla vegetation blocks and all seven IW plants, plus the 12 vanilla
+fences and 22 walls. Repeat with snow, regular sand and red sand independently.
+Record exact plant states and each variant rather than one group verdict.
+
+### MP01
+
+**Replicate:** Place each supported dry plant before its pile and, where a native item exists, into an existing pile. Compare depths 1, 4 and 8; snow-first placement uses partial layers 1-7. Exercise ages, faces, halves, petal counts, dripleaf tilt and bamboo leaves. Include every IW plant. Rotate/mirror structures and save/reopen.
+
+**Expected and controls:** Native properties, mineral identity/depth, shape and tint persist. Snow alone temporarily uses frosty short-grass/fern models. Compare waterlogged states, seagrass/kelp/lily pads, a chest and an unsupported third-party plant: none is a mineral host. Do not mix different minerals in one cover.
+
+### MP02
+
+**Replicate:** Bone-meal and naturally grow covered crops, weeds, cocoa, stems, torchflower, pitcher, berries, saplings and mushrooms beside raw controls. Exercise failed and successful 2x2 saplings. Grow bamboo, cane, cactus and both upward/downward vines through covered head/body cells. Observe normal light/support requirements.
+
+**Expected and controls:** Growth changes the same native properties and uses native limits. Existing covered cells retain their independent mineral/depth through supported plant transitions; new shoots and tree blocks are not automatically coated. Harvest/reset and repeat with general.block_growths disabled to separate native growth from IW transformations.
+
+### MP03
+
+**Replicate:** Harvest sweet/glow berries, shear/spread ivy or moss where supported, step into cactus/berries/weeds/wither rose and trigger dripleaf tilt/projectile resets. Compare the same native states without a cover. Test villager harvesting/replanting, rabbit raids and bee crop growth in isolated plots.
+
+**Expected and controls:** Host actions, contact effects, native inventory costs and resulting states stay consistent. Unaffected neighboring covers keep their own depth/color. Exclude active weather erosion/melting while comparing native interactions.
+
+### MP04
+
+**Replicate:** Grow crops over vanilla and IW farmland and Nether wart over soul sand. Remove the floor beneath a still-valid side/ceiling plant; separately remove its actual support or a double-plant partner. Drop matching piles onto valid plants and beside incompatible/full/wet cells. Disable falling snow independently.
+
+**Expected and controls:** Cultivated soils support all three minerals. A side/ceiling attachment alone never suspends a pile; unsupported material detaches while a valid host stays. Invalid hosts resolve without duplicate plant/pile loot. Falling merging stops at eight and does not overwrite incompatible occupied cells.
+
+### MP05
+
+**Replicate:** Shovel each mineral off mature/immature crops, paired plants, multiface plants and structures in Survival/Creative. Break whole covers using hand, proper tools, shears, Fortune and Silk Touch beside raw-host and plain-pile controls. Compare all depths and save/reopen.
+
+**Expected and controls:** Shoveling preserves exact host state; Survival costs one durability and ordinary pile loot, Creative no cover loot. Whole breaking uses native host plus pile loot, with correct single drops for paired plants and crop maturity. Native replacement protection and independent mixing toggles remain.
+
+### MP06
+
+**Replicate:** Exercise cold snowfall/thunder, desert/badlands sand deposition, actual rain erosion and bright-light snow melt over the shared plant inventory. Toggle snow/sand host_mixing independently. F3+T reload, change biome/dimension, save/reopen and repeat on a matching two-client dedicated server with the intended optional mods/resource packs.
+
+**Expected and controls:** The same host eligibility applies to all three minerals, but weather caps, snow melt, sand erosion and subtype rules stay distinct. Disabled mixing stops new covers without making saved covers unremovable. Leaf piles and azalea-flower litter keep their separate existing behavior.
+
 ## Sand and thunder
 
 Use a disposable/backed-up cheats-enabled world and restore all settings
@@ -177,7 +220,7 @@ states; graphics alone are insufficient.
 
 ### SP01
 
-**Replicate:** For regular and red piles, place each of the 12 vanilla fences and a dead bush before sand and then into sand. Test depths 1, 4 and 8. Connect/disconnect neighboring fences and gates; attach a lead; rotate a saved structure. Compare waterlogged fence, cactus, wall and a modded plant.
+**Replicate:** For regular and red piles, place each of the 12 vanilla fences and a dead bush before sand and then into sand. Test depths 1, 4 and 8. Connect/disconnect neighboring fences and gates; attach a lead; rotate a saved structure. Compare waterlogged fences and an unsupported third-party plant; use MP01 for the expanded plants/walls.
 
 **Expected and controls:** Both orders retain the native dry host, color and exact layer count, including eight. Connections/collision/leads remain native. Unsupported/wet hosts do not become covers. Regular/red layers do not merge. No datapack-only modded-host claim.
 
