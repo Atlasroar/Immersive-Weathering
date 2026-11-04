@@ -268,6 +268,7 @@ def wiki_content(root: Path, page: Path, repo_url: str, ref: str) -> str:
 
 
 def export_wiki(root: Path, output: Path, repo_url: str, ref: str) -> None:
+    root = root.resolve()
     parsed = urlsplit(repo_url)
     if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
         raise ValueError("Repository URL must be HTTPS without credentials")

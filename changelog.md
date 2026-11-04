@@ -20,6 +20,9 @@ automated coverage and stable versioning do not establish manual acceptance.
 - Expanded automated regressions and version-neutral MP01-MP06 manual procedures;
   manual outcomes are recorded separately and do not inherit earlier passes.
   Published 2.5.0 artifacts are unchanged.
+- Wiki export normalizes source paths before ordering the sidebar, correcting
+  the Windows short-path failure. Build/wiki workflows allow manual checks of
+  an explicit branch when automatic runs are unavailable.
 
 ## 2.5.0
 

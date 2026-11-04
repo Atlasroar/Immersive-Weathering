@@ -165,7 +165,7 @@ builder.pop();
             for name in ("A", "B", "Z"):
                 (pages / "players" / f"{name}.md").write_text(f"# {name}\n", encoding="utf-8")
             output = Path(directory) / "output"
-            wiki.export_wiki(root, output, "https://github.com/test/repo", "abc123")
+            wiki.export_wiki(root / ".." / root.name, output, "https://github.com/test/repo", "abc123")
             sidebar = (output / "_Sidebar.md").read_text(encoding="utf-8")
             self.assertLess(sidebar.index("- [Z]"), sidebar.index("- [A]"))
             self.assertLess(sidebar.index("- [A]"), sidebar.index("- [B]"))
