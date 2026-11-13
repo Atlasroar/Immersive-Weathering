@@ -161,7 +161,7 @@ Record exact plant states and each variant rather than one group verdict.
 
 ### MP01
 
-**Replicate:** Place each supported dry plant before its pile and, where a native item exists, into an existing pile. Compare depths 1, 4 and 8; snow-first placement uses partial layers 1-7. Exercise ages, faces, halves, petal counts, dripleaf tilt and bamboo leaves. Include every IW plant. Rotate/mirror structures and save/reopen.
+**Replicate:** Place each supported dry plant before its pile and, where a native item exists, into an existing pile. Include an oxeye daisy on valid soil and dead bush on sand as separate controls; reverse their placement order for all three minerals. Compare depths 1, 2, 3, 4 and 8; snow-first placement uses partial layers 1-7. Exercise ages, faces, halves, petal counts, dripleaf tilt and bamboo leaves. Include every IW plant and the wall-root item's side placements. Rotate/mirror structures and save/reopen.
 
 **Expected and controls:** Native properties, mineral identity/depth, shape and tint persist. Snow alone temporarily uses frosty short-grass/fern models. Compare waterlogged states, seagrass/kelp/lily pads, a chest and an unsupported third-party plant: none is a mineral host. Do not mix different minerals in one cover.
 
@@ -1053,9 +1053,9 @@ apply; disabling just one grass rule does not necessarily remove all grass.
 
 ### C02
 
-**Replicate:** Inspect frost in newly generated icy terrain; apply the frost item to glass/panes, grass, and fern in cold conditions.
+**Replicate:** Inspect frost in newly generated icy terrain; apply the frost item to glass/panes, grass, and fern in cold conditions. Repeat grass/fern conversion inside snow, regular-sand and red-sand covers at depths 1, 4 and 8, then thaw with flint and steel.
 
-**Expected and controls:** The item converts mapped targets to frosty counterparts and is consumed in Survival; unsupported targets use ordinary frost placement instead. Shipped `frost_growth` and `frost_spreading` have chance **0**: lack of ambient growth from those two rules is expected, even at 1000.
+**Expected and controls:** The item converts mapped targets to frosty counterparts and is consumed in Survival; unsupported targets use ordinary frost placement instead. Converting/thawing a covered host preserves its mineral and depth. Snow's temporary frosty model alone is not this actual host conversion; flowers gain no new frosty variant. Shipped `frost_growth` and `frost_spreading` have chance **0**: lack of ambient growth from those two rules is expected, even at 1000.
 
 ### C03
 

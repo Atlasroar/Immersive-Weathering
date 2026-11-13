@@ -150,6 +150,14 @@ breaks the host instead. Full plain snow (layer 8) is not replaced in place by t
 partial-layer override. Source-water ice conversion requires falling snow, not
 stationary layers adjacent to water.
 
+In published 2.6.0, placing flowers such as oxeye daisies into partial snow can
+remove the snow even with `snow.host_mixing` enabled, while adding snow to an
+existing flower works. This is a confirmed placement-hook regression, not the
+intended rule or a reason to increase layer/tick limits. As a workaround, place
+the plant first and then add its layers. The shared placement and covered-plant
+frost-item corrections are Unreleased; do not assume the published 2.6.0 jar
+contains them. Check `snow.host_mixing` and `sand.host_mixing` independently.
+
 Rendering uses ordinary multipart models with vanilla host textures and the
 vanilla snow sprite, with no Indium/Kiwi requirement. Alternate resource packs
 and Sodium are included in N10's combined row, reported Pass in the

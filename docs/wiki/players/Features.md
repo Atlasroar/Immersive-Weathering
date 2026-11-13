@@ -257,6 +257,10 @@ Only **dry states** qualify: no seagrass, kelp, lily pads or waterlogged hosts.
 Leaf piles and azalea-flower litter keep their separate existing systems.
 Regular sand, red sand and snow cannot be combined into one cover.
 The existing independent `snow.host_mixing` and `sand.host_mixing` controls remain.
+Both placement orders must preserve the same mineral and layer count: for
+example, an oxeye daisy should share partial snow just as snow shares an
+existing oxeye daisy. Supported plants are not intended to erase eligible piles.
+Published 2.6.0 has a placement-order regression; its fix is currently Unreleased.
 See [MP01-MP06](../developers/Feature-testing.md#shared-mineral-pile-plants) for
 replication and the [results ledger](../developers/Test-results.md) for evidence.
 
@@ -277,6 +281,11 @@ Stable **2.1.0** applies the same rule to short ferns: covered ferns
 use the existing frosty-fern model/tint and become normal ferns again when the
 cover is removed or melts. This does not change large ferns or permanently
 convert plants to IW frosty blocks.
+
+Using a frost item is a separate, actual conversion of supported grass/ferns.
+The Unreleased fix recognizes the underlying plant in a snow/sand/red-sand cover
+and retains its mineral and depth; flint-and-steel thawing likewise retains the
+cover. This does not add frosty variants for flowers or make sand cause frosting.
 
 Right-click a covered host with a shovel to remove its snow and retain the host.
 Survival uses one durability and vanilla snow loot, including Silk Touch;

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "immersive_weathering_pile_tests",
+  "version": "1.0.0",
+  "name": "Immersive Weathering pile integration fixtures",
+  "environment": "server",
+  "mixins": ["pile-integration.mixins.json"],
+  "depends": {
+    "immersive_weathering": "*"
+  }
+}

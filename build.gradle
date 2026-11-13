@@ -146,6 +146,21 @@ sourceSets {
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
         runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
     }
+    pileIntegrationTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+loom {
+    runs {
+        pilePlacementTest {
+            server()
+            source sourceSets.pileIntegrationTest
+            runDir = "build/pile-integration"
+            programArgs "--initSettings", "nogui"
+        }
+    }
 }
 
 tasks.register("pairedGrowthTest", JavaExec) {
@@ -162,6 +177,7 @@ tasks.register("pairedGrowthTest", JavaExec) {
 tasks.named("check") {
     dependsOn growthPerformanceTest, pairedGrowthTest, "snowMechanicsTest", "fireMechanicsTest", "sandstormMechanicsTest"
     dependsOn "windMechanicsTest"
+    dependsOn "runPilePlacementTest"
 }
 
 tasks.register("windMechanicsTest", JavaExec) {

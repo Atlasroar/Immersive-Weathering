@@ -128,6 +128,24 @@ public final class SnowHosts {
                 && supported(state) && layers(state) < 8;
     }
 
+    @Nullable
+    public static BlockState placement(BlockPlaceContext context, @Nullable BlockState placement) {
+        if (placement == null || context.getItemInHand().is(Items.SNOW)) return placement;
+        BlockState old = context.getLevel().getBlockState(context.getClickedPos());
+        boolean replaceableCover = old.getBlock() instanceof SnowCoveredBlock && old.canBeReplaced(context);
+        if (replaceableCover) {
+            BlockState raw = raw(old);
+            if (raw.getBlock() instanceof PinkPetalsBlock && placement.is(raw.getBlock())) {
+                placement = raw.setValue(PinkPetalsBlock.AMOUNT, Math.min(4, raw.getValue(PinkPetalsBlock.AMOUNT) + 1));
+            }
+        }
+        if (SnowSettings.mixing() && (old.is(Blocks.SNOW) || replaceableCover) && layers(old) < 8) {
+            BlockState covered = cover(placement, layers(old));
+            if (covered != null) return covered;
+        }
+        return placement;
+    }
+
     public static boolean hostSurvives(BlockState host, LevelReader level, BlockPos pos) {
         if (host.getBlock() instanceof DoublePlantBlock
                 && host.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER) {

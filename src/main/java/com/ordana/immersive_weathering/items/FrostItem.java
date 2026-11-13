@@ -1,6 +1,7 @@
 package com.ordana.immersive_weathering.items;
 
 import com.ordana.immersive_weathering.blocks.frosted.Frosty;
+import com.ordana.immersive_weathering.piles.PilePlants;
 import com.ordana.immersive_weathering.reg.ModBlocks;
 import net.mehvahdjukaar.moonlight.api.client.util.ParticleUtil;
 import net.minecraft.core.BlockPos;
@@ -38,17 +39,21 @@ public class FrostItem extends BlockItem {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
+        BlockState host = PilePlants.raw(state);
 
-        var frosty = Frosty.getFrosty(state.getBlock());
+        var frosty = Frosty.getFrosty(host.getBlock());
         if (frosty.isPresent()) {
             Player player = context.getPlayer();
+            if (!level.isClientSide()
+                    && !level.setBlockAndUpdate(pos, PilePlants.retainCover(state, frosty.get().withPropertiesOf(host)))) {
+                return InteractionResult.FAIL;
+            }
             level.playSound(player, pos, SoundEvents.POWDER_SNOW_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
             if (level.isClientSide()) ParticleUtil.spawnParticlesOnBlockFaces(level, pos, ParticleTypes.SNOWFLAKE, UniformInt.of(3, 5), -0.05f, 0.05f, false);
             if (player instanceof ServerPlayer) {
                 if (!player.getAbilities().instabuild) {
                     context.getItemInHand().shrink(1);
                 }
-                level.setBlockAndUpdate(pos, frosty.get().withPropertiesOf(state));
             }
             return InteractionResult.SUCCESS;
         }

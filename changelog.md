@@ -1,5 +1,15 @@
 ## Unreleased
 
+- Fix plant-first/pile-first placement consistency: one shared item-write hook
+  replaces competing snow/sand placement-return injections. Supported dry plants
+  retain partial snow or regular/red sand depth, including wall-root items with
+  custom placement methods. Full snow and native placement restrictions remain.
+- Frost items recognize covered grass/ferns and preserve their mineral/depth
+  during conversion. A rejected conversion does not consume frost or emit effects.
+- Add a Fabric-woven, init-only placement/frost regression to `build`; it uses
+  bounded storage fixtures, does not create a saved world or accept the EULA,
+  and is not packaged in release jars.
+
 - Mineral-pile wrappers precompute immutable raw-host state lookups at registration,
   removing repeated property-copy work from ticking, shapes, plant identity,
   interactions and tint selection. Original host properties and mineral gameplay

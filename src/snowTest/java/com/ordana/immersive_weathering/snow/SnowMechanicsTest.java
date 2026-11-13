@@ -3,7 +3,6 @@ package com.ordana.immersive_weathering.snow;
 import com.ordana.immersive_weathering.configs.CommonConfigs;
 import com.ordana.immersive_weathering.entities.FallingLayerEntity;
 import com.ordana.immersive_weathering.mixins.SnowDoublePlantMixin;
-import com.ordana.immersive_weathering.mixins.SnowHostPlacementMixin;
 import com.ordana.immersive_weathering.mixins.SnowLayerBlockMixin;
 import com.ordana.immersive_weathering.mixins.SnowPlantLootPredicateMixin;
 import net.minecraft.SharedConstants;
@@ -418,9 +417,6 @@ public final class SnowMechanicsTest {
     }
 
     private static void placement() throws Exception {
-        Method placement = SnowHostPlacementMixin.class.getDeclaredMethod("snowHostPlacement",
-                BlockPlaceContext.class, CallbackInfoReturnable.class);
-        placement.setAccessible(true);
         Method replace = SnowLayerBlockMixin.class.getDeclaredMethod("replacePartialSnow", BlockState.class,
                 BlockPlaceContext.class, CallbackInfoReturnable.class);
         replace.setAccessible(true);
@@ -438,7 +434,7 @@ public final class SnowMechanicsTest {
                 check(replacement.getReturnValue() == (enabled && layers < 8), "Partial replacement gate");
                 CommonConfigs.mixing = enabled;
                 CallbackInfoReturnable<BlockState> result = new CallbackInfoReturnable<>("test", true, Blocks.OAK_FENCE.defaultBlockState());
-                placement.invoke(new SnowHostPlacementMixin(), context, result);
+                applyPlacement(context, result);
                 check((result.getReturnValue().getBlock() instanceof SnowCoveredBlock) == (enabled && layers < 8), "Host into snow gate");
                 cases++;
             }
@@ -466,17 +462,22 @@ public final class SnowMechanicsTest {
                 CallbackInfoReturnable<BlockState> stackedResult = new CallbackInfoReturnable<>("test", true);
                 cover.invoke(mixin, snowContext, stackedResult);
                 check(stackedResult.isCancelled(), "Snow-into-host path was not selected");
-                placement.invoke(new SnowHostPlacementMixin(), snowContext, stackedResult);
+                applyPlacement(snowContext, stackedResult);
                 check(SnowHosts.layers(stackedResult.getReturnValue()) == layers + 1,
                         "Outer item placement undid snow stacking on " + host);
                 check(SnowHosts.raw(stackedResult.getReturnValue()).is(host), "Snow stacking changed the host");
                 cases++;
             }
         }
-        coveredReplacement(placement);
+        coveredReplacement();
     }
 
-    private static void coveredReplacement(Method placement) throws Exception {
+    private static void applyPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> result) {
+        BlockState placement = com.ordana.immersive_weathering.piles.PilePlants.placement(context, result.getReturnValue());
+        if (placement != result.getReturnValue()) result.setReturnValue(placement);
+    }
+
+    private static void coveredReplacement() throws Exception {
         List<Block> hosts = new ArrayList<>(List.of(Blocks.OAK_FENCE, Blocks.COBBLESTONE_WALL));
         SnowHosts.hosts().stream().filter(host -> host instanceof BushBlock).forEach(hosts::add);
         List<Block> incoming = new ArrayList<>(hosts);
@@ -504,7 +505,7 @@ public final class SnowMechanicsTest {
                                 BlockState nextState = next.defaultBlockState();
                                 CallbackInfoReturnable<BlockState> result =
                                         new CallbackInfoReturnable<>("test", true, nextState);
-                                placement.invoke(new SnowHostPlacementMixin(), context, result);
+                                applyPlacement(context, result);
                                 boolean preserve = expected && mixing && SnowHosts.supported(nextState);
                                 BlockState preservedState = nextState;
                                 if (expected && raw.getBlock() instanceof PinkPetalsBlock && nextState.is(raw.getBlock())) {
@@ -523,10 +524,10 @@ public final class SnowMechanicsTest {
                                     .setValue(FenceBlock.WATERLOGGED, true);
                             CallbackInfoReturnable<BlockState> wetResult =
                                     new CallbackInfoReturnable<>("test", true, wet);
-                            placement.invoke(new SnowHostPlacementMixin(), context(level, Items.OAK_FENCE.getDefaultInstance()), wetResult);
+                            applyPlacement(context(level, Items.OAK_FENCE.getDefaultInstance()), wetResult);
                             check(wetResult.getReturnValue().equals(wet), "Wrapped wet replacement");
                             CallbackInfoReturnable<BlockState> failed = new CallbackInfoReturnable<>("test", true);
-                            placement.invoke(new SnowHostPlacementMixin(), context(level, Items.OAK_FENCE.getDefaultInstance()), failed);
+                            applyPlacement(context(level, Items.OAK_FENCE.getDefaultInstance()), failed);
                             check(failed.getReturnValue() == null, "Revived failed item placement");
                             cases += 2;
                         }

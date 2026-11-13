@@ -286,7 +286,7 @@ python tools\snow_resources.py --check
 
 `build`/`check` includes this separate Java 17 source set, without adding a test
 framework or packaged dependency. Production `SnowHosts`, `SnowCoveredBlock`,
-`SnowPhysics`, `SnowWeather`, falling-entity save/tick methods, placement injection
+`SnowPhysics`, `SnowWeather`, falling-entity save/tick methods, placement policy
 bodies and Mojang block states/shapes/loot code are exercised. The source set
 substitutes common-config initialization, the falling entity's registration
 supplier, and the platform registration boundary. Test `ModBlocks` constructs
@@ -313,19 +313,19 @@ options for every vanilla plant state across all three covers. Only snow's
 intentional frosty short-grass/fern appearance differs. Native model JSON is
 read from the Minecraft test classpath, not copied into the project.
 The covered-plant replacement matrix invokes actual wrapper replaceability and
-the placement injection for every plant state, layers 1-8, both independent
+the shared placement policy for every plant state, layers 1-8, both independent
 settings, same/different supported hosts, solid/chest replacements, snow items,
 non-block items, wet/failed placements, negative fence/wall controls, and
 upper-half preservation through the normal double-plant placement callback.
-Snow-item additions invoke both placement hooks in their real order to catch
-layer-count resets. New controls cover native weed aging/bonemeal, sapling stage
+Snow-item additions invoke the snow-selection injection and shared policy to
+catch layer-count resets. New controls cover native weed aging/bonemeal, sapling stage
 progression, petal stacking, raw animation/contact forwarding, identity-hook
 bodies and failed/successful multi-sapling restoration probes with independent
 cover counts. Direct calls into the actual client color-state selector cover
 grass/fern frost matching and unchanged hosts at all eight layer counts; the
 existing melt checks retain the original normal plants. These are selection/state
 checks, not a GPU render or full tint-provider invocation.
-The current harness run passed **176,665 cases**.
+The shared-inventory harness run passed **432,868 cases**.
 
 The explicit fixture uses `Unsafe` to bypass server/level constructors, with
 in-memory storage, a supplied vanilla loot-table registry, seeded RNG, native
@@ -336,6 +336,41 @@ Mixin-loader, networking, chunk-save, piston-engine, explosion-engine, permissio
 or real rendering test. Block-state and falling-entity NBT round trips are not a
 whole-world save/reload claim. The test-only entity type can log its missing data
 fixer; it is not shipped.
+
+### Fabric-woven pile placement
+
+```powershell
+.\gradlew.bat runPilePlacementTest --console=plain
+```
+
+`build`/`check` also runs this separate Fabric server source set with the real
+Minecraft, Fabric API, Moonlight, IW registration, config and gameplay mixins.
+A development-only test mod runs its assertions after `--initSettings nogui`
+returns. Everything stays under `build/pile-integration`; the EULA remains false,
+no saved world is created, and fixture classes/metadata/mixins are not packaged.
+No extra test framework or dependency is installed.
+
+Tests call actual `BlockItem.place`, not independently reflected placement
+handlers. They cover both placement orders and depth boundaries for flowers
+(including oxeye daisy), dead bush, grass/fern and crops; normal/frosty host
+identity; both sand colors; native item counts/results; obstruction and solid
+replacement controls. The actual Fabric wall-root item exercises its overridden
+`getPlacementState` and all horizontal facings. Covered grass/fern frost conversion
+retains each mineral/depth with one write, unchanged rejected state/item/effects,
+and subsequent native thaw interaction.
+
+The original 2.6.0 pair of return injections failed the woven snow-first flower
+tests: sand's no-op cancellation prevented snow's hook from running. A single
+shared hook now transforms the argument passed to `placeBlock`, using that call's
+actual context after native placement validation. It applies to custom placement
+methods without cancelling the surrounding item pipeline.
+
+Storage, lighting, collision answers, sound capture and player state are bounded
+fixtures; dead-bush support binds the relevant vanilla tag to the sand controls
+because init-only startup does not load world datapacks. World constructors,
+chunk writes, renderer, live collision engine, network and save/reload remain
+outside this test. A woven pass is not a manual MP01 pass or installed-mod
+coexistence certification.
 
 For the beta.2 plant follow-up, a real Fabric dedicated launch completed mod
 initialization/mixin loading and stopped at the **unaccepted EULA gate**.

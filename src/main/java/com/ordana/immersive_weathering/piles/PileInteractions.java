@@ -1,8 +1,5 @@
 package com.ordana.immersive_weathering.piles;
 
-import com.ordana.immersive_weathering.sand.SandCoveredBlock;
-import com.ordana.immersive_weathering.sand.SandHosts;
-import com.ordana.immersive_weathering.snow.SnowHosts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,11 +28,7 @@ public final class PileInteractions {
     public static BlockState retain(Level level, BlockPos pos, BlockState next) {
         if (ACTIVE.get() != level || next.getBlock() instanceof PileCoveredBlock) return next;
         BlockState old = level.getBlockState(pos);
-        if (!(old.getBlock() instanceof PileCoveredBlock)) return next;
-        int layers = old.getValue(net.minecraft.world.level.block.SnowLayerBlock.LAYERS);
-        BlockState covered = old.getBlock() instanceof SandCoveredBlock sand
-                ? SandHosts.cover(next, sand.pile(), layers) : SnowHosts.cover(next, layers);
-        return covered == null ? next : covered;
+        return PilePlants.retainCover(old, next);
     }
 
     private PileInteractions() {}
