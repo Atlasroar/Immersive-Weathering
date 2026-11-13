@@ -45,7 +45,7 @@ public final class PilePlants {
 
     public static BlockState raw(BlockState state) {
         return state.getBlock() instanceof PileCoveredBlock covered
-                ? com.ordana.immersive_weathering.snow.SnowHosts.copy(state, covered.host().defaultBlockState()) : state;
+                ? covered.hostState(state) : state;
     }
 
     public static boolean cultivatedFloor(BlockState state) {

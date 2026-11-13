@@ -92,6 +92,10 @@ public final class SandstormMechanicsTest {
                 com.ordana.immersive_weathering.reg.ModEntities.FALLING_LAYER.get());
         boot.setBoolean(null, false);
         Bootstrap.bootStrap();
+        if (args.length == 1 && args[0].equals("--benchmark-piles")) {
+            PilePerformanceBenchmark.run();
+            return;
+        }
         BIOMES = new MappedRegistry<>(Registries.BIOME, Lifecycle.stable());
         for (var pile : List.of(ModBlocks.SAND, ModBlocks.RED)) {
             pile.getStateDefinition().getPossibleStates().forEach(BlockState::initCache);
@@ -117,6 +121,7 @@ public final class SandstormMechanicsTest {
         sandFalling();
         sandRain();
         sandLoot();
+        rawHostMappings();
         sharedPlantLifecycle();
         slowing();
         client();
@@ -503,6 +508,33 @@ public final class SandstormMechanicsTest {
             timeout.tick();
             check(timeout.isRemoved() && level.entities.isEmpty(), "Falling drops respect doEntityDrops");
         }
+    }
+
+    private static void rawHostMappings() {
+        int mapped = 0;
+        for (Block host : SandHosts.hosts()) {
+            List<com.ordana.immersive_weathering.piles.PileCoveredBlock> covers = new ArrayList<>();
+            covers.add(com.ordana.immersive_weathering.snow.SnowHosts.entries().get(host).get());
+            SandHosts.entries().get(host).forEach(cover -> covers.add(cover.get()));
+            for (var cover : covers) {
+                for (BlockState state : cover.getStateDefinition().getPossibleStates()) {
+                    BlockState expected = com.ordana.immersive_weathering.snow.SnowHosts.copy(state, host.defaultBlockState());
+                    check(com.ordana.immersive_weathering.piles.PilePlants.raw(state) == expected,
+                            "Cached raw host must preserve all properties and every mineral/layer");
+                    check(com.ordana.immersive_weathering.piles.PilePlants.raw(expected) == expected,
+                            "Raw host lookup is identity outside pile wrappers");
+                    mapped++;
+                }
+                try {
+                    cover.hostState(host.defaultBlockState());
+                    throw new AssertionError("Expected wrong-owner state rejection");
+                } catch (IllegalArgumentException expected) {
+                    check(expected.getMessage().startsWith("State does not belong to this pile cover:"),
+                            "Wrong-owner state rejected explicitly");
+                }
+            }
+        }
+        check(mapped > 0, "All registered pile host mappings exercised");
     }
 
     private static void sharedPlantLifecycle() throws Exception {

@@ -415,6 +415,57 @@ Neither it nor a clean build establishes Fabric lifecycle or a passed manual G07
 retest. See the [placement contract](Data-and-resources.md#paired-output-placement)
 and [manual retest](Feature-testing.md#paired-plant-growth).
 
+## Mineral-pile lookup performance
+
+```powershell
+.\gradlew.bat pilePerformanceBenchmark --console=plain
+```
+
+This optional Java 17 task uses the existing sand harness's native registration
+fixtures, not a running world. It checks every registered state against the
+original `SnowHosts.copy` oracle across snow and both sand colors, then measures
+grass, wheat, vine and cobblestone-wall lookups while cycling their actual
+registered states. Shape-cache/world initialization is deliberately excluded.
+It uses a fixed 512 MiB heap, at least one second of alternating warmup per
+scenario, seven alternating rounds of one million lookups per variant, median
+`nanoTime` and `ThreadMXBean` allocated bytes. Results are consumed, not discarded.
+Zero-allocation lookup is asserted; timing is not a CI threshold.
+`sandstormMechanicsTest`, already part of `build`, separately verifies all
+216,048 composite-to-native mappings and unchanged raw-state identity.
+
+November 13, 2026 local Windows run, property-copy versus cached lookup:
+
+| Host | Property copy ns/op | Cached ns/op | Copy B/op | Cached B/op |
+| --- | ---: | ---: | ---: | ---: |
+| Grass | 21.7 | 8.5 | 24 | 0 |
+| Wheat | 76.6 | 8.5 | 24 | 0 |
+| Vine | 381.1 | 11.3 | 24 | 0 |
+| Cobblestone wall | 574.8 | 27.6 | 24 | 0 |
+
+A separate repeat measured cached times 7.7/8.8/10.2/17.6 ns respectively, still
+zero allocated bytes. The fixed identity tables add registration-time work and
+retained references for the existing state inventory; their heap footprint was
+not measured. No world or gameplay-result cache is introduced. These numbers
+measure only host reconstruction, not whole block callbacks or whole-game
+TPS/MSPT, and do not prove a rendering or multiplayer improvement.
+
+### Performance review boundaries
+
+The existing growth benchmark still shows lower full-scan and early-exit costs
+than its historical baseline. Active dispatch is noisy and some scenarios are
+slower; do not claim all dispatch paths improved or change callback ordering to
+force a favorable microbenchmark.
+
+Storm fog uses cubic biome sampling in color/distance hooks; default storm
+particles visit a 40x40 column area per client tick. Wind contacts can ray-test
+36 cells per gust every five ticks, while spawn attempts clean weak live budgets.
+These are code-level profiling candidates, not measured dominant bottlenecks.
+Any further optimization should start with controlled live client/server profiles
+of pile-dense builds, clear weather, sandstorms and cold thunder, keeping seed,
+loaded chunks, entities, settings, simulation/view distance and JVM identical.
+Do not cache biome/tag/exposure answers across reloads or suppress daytime thunder
+gusts as a shortcut. Actual runtime profiles were not collected for this review.
+
 ## Growth performance harness
 
 Run the standard-library Java 17 harness using the existing Loom classpath:

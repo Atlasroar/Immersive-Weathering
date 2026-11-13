@@ -1,3 +1,13 @@
+## Unreleased
+
+- Mineral-pile wrappers precompute immutable raw-host state lookups at registration,
+  removing repeated property-copy work from ticking, shapes, plant identity,
+  interactions and tint selection. Original host properties and mineral gameplay
+  remain unchanged; only registered states are retained, never worlds or results.
+- Add an optional native-state lookup benchmark and full-inventory mapping
+  regressions. Isolated lookup timing/allocation is not in-game TPS/MSPT evidence.
+  Published 2.6.0 artifacts remain unchanged.
+
 ## 2.6.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.

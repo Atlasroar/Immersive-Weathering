@@ -383,6 +383,16 @@ There is no per-cell block entity, NBT payload, packet, render attachment, mutab
 world cache or global scratch position. Ordinary block-state persistence and
 vanilla block updates provide save/client synchronization.
 
+Raw-host lookup uses an immutable per-wrapper identity table built after the
+state definition is constructed. Every registered composite state maps to the
+same canonical native state produced by the original property-copy operation,
+including all host properties; layer/color changes do not change the native
+host mapping. `PilePlants.raw` reads this table instead of iterating properties
+on every call. Tables retain only already-registered block states, never worlds,
+positions, biome/tag answers or interaction results. This trades bounded
+registration-time table memory/work for allocation-free runtime lookups; wrong
+owner states fail explicitly. No world/reload invalidation is needed.
+
 Native plant callbacks run in a world-scoped `PileInteractions` context.
 `PilePlantWriteMixin` retains an existing mineral type/depth when Level.setBlock
 writes another supported dry plant into that cell. AIR/fluids/trees are not
