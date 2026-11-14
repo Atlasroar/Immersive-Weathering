@@ -18,7 +18,7 @@ The build is a single root Fabric Loom project for Minecraft 1.20.1.
 | `maven_group` | `com.ordana` |
 | `minecraft_version` | `1.20.1` |
 | `mod_id` | `immersive_weathering` |
-| `mod_version` | `2.6.0` |
+| `mod_version` | `2.7.0` |
 | `modmenu_version` | `7.2.2` |
 | `moonlight_file_id` | `5619072` |
 | `moonlight_min_version` | `1.20-2.12.11` |
@@ -155,6 +155,7 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.jav
 | `freezing_wind.icicle_chance` | `0.05, 0, 1` | `WIND_ICICLE_CHANCE` |
 | `snowstorms.enabled` | `true` | `SNOWSTORM_ENABLED` |
 | `snowstorms.deposition_bonus` | `1, 0, 3` | `SNOWSTORM_DEPOSITION_BONUS` |
+| `sandstorms.allow_without_thunder` | `false` | `SANDSTORM_WITHOUT_THUNDER` |
 | `sandstorms.deposition` | `true` | `SANDSTORM_DEPOSITION` |
 | `sandstorms.layer_cap` | `8, 1, 8` | `SANDSTORM_LAYER_CAP` |
 | `sandstorms.slowing` | `true` | `SANDSTORM_SLOWING` |

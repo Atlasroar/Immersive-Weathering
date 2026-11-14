@@ -13,6 +13,8 @@ import com.ordana.immersive_weathering.client.WindTimer;
 import com.ordana.immersive_weathering.configs.ClientConfigs;
 import com.ordana.immersive_weathering.configs.CommonConfigs;
 import com.ordana.immersive_weathering.reg.ModBlocks;
+import com.ordana.immersive_weathering.reg.ModTags;
+import com.ordana.immersive_weathering.util.TemperatureManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.RandomSource;
 import net.minecraft.client.Camera;
@@ -138,7 +140,7 @@ public final class SandstormMechanicsTest {
 
     private static void tags(boolean overlap) {
         BIOMES.bindTags(Map.of(Sandstorms.REGULAR, overlap ? List.of(dry, wet, red) : List.of(dry, wet),
-                Sandstorms.RED, List.of(red)));
+                Sandstorms.RED, List.of(red), ModTags.HAS_SANDSTORM, List.of()));
     }
 
     private static void bindBlockTags() {
@@ -223,7 +225,29 @@ public final class SandstormMechanicsTest {
         tags(true);
         check(Sandstorms.biomeType(red) == Sandstorms.Type.REGULAR, "Regular wins overlap");
         tags(false);
-        check(Sandstorms.exposedStorm(level, POS) == Sandstorms.Type.REGULAR, "Rain, not thunder");
+        BIOMES.bindTags(Map.of(Sandstorms.REGULAR, List.of(dry, wet), Sandstorms.RED, List.of(red),
+                ModTags.HAS_SANDSTORM, List.of(dry, wet, red)));
+        for (boolean ordinary : new boolean[]{false, true}) {
+            CommonConfigs.withoutThunder = ordinary;
+            for (boolean rain : new boolean[]{false, true}) {
+                for (boolean thunder : new boolean[]{false, true}) {
+                    level.rain = rain;
+                    level.thunder = thunder;
+                    boolean expected = rain && (thunder || ordinary);
+                    for (var biome : List.of(dry, red, wet)) {
+                        level.biome = biome;
+                        check(Sandstorms.visualStorm(level, POS) == (expected && biome != wet), "Both storm colors obey weather policy");
+                        check((Sandstorms.exposedStorm(level, POS) != Sandstorms.Type.NONE) == (expected && biome != wet),
+                                "Exposed storm obeys weather policy");
+                        check(TemperatureManager.hasSandstorm(level, POS) == expected,
+                                "Legacy dry/wet tagged growth obeys the same weather policy");
+                    }
+                }
+            }
+        }
+        CommonConfigs.withoutThunder = false;
+        level.biome = dry;
+        level.rain = level.thunder = true;
         level.rain = false;
         check(!Sandstorms.visualStorm(level, POS), "Clear weather");
         level.rain = true;
@@ -236,9 +260,11 @@ public final class SandstormMechanicsTest {
         level.top = 64;
         level.biome = wet;
         check(Sandstorms.exposedStorm(level, POS) == Sandstorms.Type.NONE, "Wet storm tag");
-        BIOMES.bindTags(Map.of(Sandstorms.REGULAR, List.of(), Sandstorms.RED, List.of()));
+        BIOMES.bindTags(Map.of(Sandstorms.REGULAR, List.of(), Sandstorms.RED, List.of(), ModTags.HAS_SANDSTORM, List.of()));
         level.biome = dry;
         check(!Sandstorms.visualStorm(level, POS), "Tag reload read live");
+        check(!TemperatureManager.hasSandstorm(level, POS),
+                "Legacy tag reload read live");
         tags(false);
     }
 
@@ -313,6 +339,19 @@ public final class SandstormMechanicsTest {
         SandAccumulation.tickChunk(level, chunk);
         check(level.samples == samples, "Disabled deposition no work");
         CommonConfigs.deposition = true;
+        level.thunder = false;
+        SandAccumulation.tickChunk(level, chunk);
+        check(level.samples == samples && level.writes == 2, "Ordinary rain no sampling or deposition by default");
+        CommonConfigs.withoutThunder = true;
+        SandAccumulation.tickChunk(level, chunk);
+        check(level.samples == samples + 1 && level.writes == 2, "Rain opt-in restores bounded trial");
+        level.roll = 0;
+        level.states.remove(POS);
+        SandAccumulation.tickChunk(level, chunk);
+        check(level.samples == samples + 2 && level.writes == 3 && level.states.get(POS).is(ModBlocks.RED),
+                "Rain opt-in actually deposits the matching mineral");
+        CommonConfigs.withoutThunder = false;
+        samples = level.samples;
         level.rain = false;
         SandAccumulation.tickChunk(level, chunk);
         check(level.samples == samples, "Clear weather no work");
@@ -691,7 +730,7 @@ public final class SandstormMechanicsTest {
                 check(!SandWeather.erode(level, POS, state, rolls), "Either storm tag protects even when precipitation is forced");
             }
             level.biome = rainy;
-            BIOMES.bindTags(Map.of(Sandstorms.REGULAR, List.of(), Sandstorms.RED, List.of()));
+            BIOMES.bindTags(Map.of(Sandstorms.REGULAR, List.of(), Sandstorms.RED, List.of(), ModTags.HAS_SANDSTORM, List.of()));
             level.sky = false;
             check(!SandWeather.erode(level, POS, state, rolls), "Roof blocks erosion");
             level.sky = true;
@@ -744,6 +783,17 @@ public final class SandstormMechanicsTest {
         check(speed.getModifier(SandstormSlowing.ID) == null, "Config disable cleans old modifier");
         CommonConfigs.slowing = true;
         SandstormSlowing.tick(living);
+        level.thunder = false;
+        SandstormSlowing.tick(living);
+        check(speed.getModifier(SandstormSlowing.ID) == null, "Thunder ending during rain removes modifier");
+        CommonConfigs.withoutThunder = true;
+        SandstormSlowing.tick(living);
+        near(speed.getValue(), 0.5, "Rain opt-in restores slowing");
+        CommonConfigs.withoutThunder = false;
+        SandstormSlowing.tick(living);
+        check(speed.getModifier(SandstormSlowing.ID) == null, "Policy change during rain removes modifier");
+        level.thunder = true;
+        SandstormSlowing.tick(living);
         level.rain = false;
         SandstormSlowing.tick(living);
         check(speed.getModifier(SandstormSlowing.ID) == null, "Weather cleanup");
@@ -780,10 +830,50 @@ public final class SandstormMechanicsTest {
         ClientFixture level = (ClientFixture) UNSAFE.allocateInstance(ClientFixture.class);
         level.biome = dry;
         level.rain = 1;
+        level.thunder = true;
         level.loaded = true;
         random(level);
         ProbeCamera camera = new ProbeCamera();
+        for (boolean ordinary : new boolean[]{false, true}) {
+            CommonConfigs.withoutThunder = ordinary;
+            for (float rain : new float[]{0, 1}) {
+                level.rain = rain;
+                for (boolean thunder : new boolean[]{false, true}) {
+                    level.thunder = thunder;
+                    for (var biome : List.of(dry, red, wet)) {
+                        level.biome = biome;
+                        boolean expected = rain > 0 && (thunder || ordinary) && biome != wet;
+                        near(SandstormEffects.stormBlend(level, camera, 1), expected ? 1 : 0,
+                                "Client fog shares server weather policy for both colors");
+                        check(SandstormEffects.hideClouds(level, POS, 1) == expected,
+                                "Client cloud hiding shares server weather policy");
+                    }
+                }
+            }
+        }
+        CommonConfigs.withoutThunder = false;
+        level.biome = dry;
+        level.rain = 1;
+        level.thunder = true;
         near(SandstormEffects.stormBlend(level, camera, 1), 1, "Full storm blend");
+        level.thunder = false;
+        near(SandstormEffects.stormBlend(level, camera, 1), 0, "Ordinary rain has no storm fog by default");
+        check(!SandstormEffects.hideClouds(level, POS, 1), "Ordinary rain retains clouds");
+        Method particles = SandstormEffects.class.getDeclaredMethod("particles", ClientLevel.class, BlockPos.class, ParticleStatus.class);
+        particles.setAccessible(true);
+        particles.invoke(null, level, POS, ParticleStatus.ALL);
+        check(level.particles == 0, "Ordinary rain emits no storm dust");
+        level.particles = level.columns = 0;
+        CommonConfigs.withoutThunder = true;
+        near(SandstormEffects.stormBlend(level, camera, 1), 1, "Rain opt-in restores fog");
+        check(SandstormEffects.hideClouds(level, POS, 1), "Rain opt-in restores cloud hiding");
+        ClientConfigs.rarity = 1;
+        particles.invoke(null, level, POS, ParticleStatus.ALL);
+        check(level.particles == 1600, "Rain opt-in restores storm dust");
+        level.particles = level.columns = 0;
+        ClientConfigs.rarity = 60;
+        CommonConfigs.withoutThunder = false;
+        level.thunder = true;
         level.rain = 0.5F;
         near(SandstormEffects.stormBlend(level, camera, 1), 0.5, "Weather gradient");
         level.rain = 1;
@@ -843,8 +933,6 @@ public final class SandstormMechanicsTest {
         check(distances.x <= distances.y, "Inverted config safe");
         ClientConfigs.start = 16;
         ClientConfigs.end = 64;
-        Method particles = SandstormEffects.class.getDeclaredMethod("particles", ClientLevel.class, BlockPos.class, ParticleStatus.class);
-        particles.setAccessible(true);
         ClientConfigs.rarity = 1;
         particles.invoke(null, level, POS, ParticleStatus.ALL);
         check(level.particles == 1600 && level.columns == 1600, "40x40 default bounded scan");
@@ -914,7 +1002,7 @@ public final class SandstormMechanicsTest {
         level.states.put(POS.below(), Blocks.STONE.defaultBlockState());
         level.border = new WorldBorder();
         level.biome = dry;
-        level.rain = level.sky = level.loaded = true;
+        level.rain = level.thunder = level.sky = level.loaded = true;
         level.rainAt = true;
         level.entities = new ArrayList<>();
         level.rules = new GameRules();
@@ -944,7 +1032,7 @@ public final class SandstormMechanicsTest {
         private Map<BlockPos, BlockState> states;
         private WorldBorder border;
         private Holder<Biome> biome;
-        private boolean rain, sky, loaded, rainAt, failWrites;
+        private boolean rain, thunder, sky, loaded, rainAt, failWrites;
         private List<Entity> entities;
         private GameRules rules;
         private FixtureServer server;
@@ -971,6 +1059,7 @@ public final class SandstormMechanicsTest {
         @Override public boolean hasChunkAt(BlockPos pos) { return loaded; }
         @Override public boolean isLoaded(BlockPos pos) { return loaded; }
         @Override public boolean isRaining() { return rain; }
+        @Override public boolean isThundering() { return thunder; }
         @Override public boolean canSeeSky(BlockPos pos) { return sky; }
         @Override public boolean isRainingAt(BlockPos pos) { return rain && sky && rainAt; }
         @Override public boolean addFreshEntity(Entity entity) { entities.add(entity); return true; }
@@ -1048,7 +1137,7 @@ public final class SandstormMechanicsTest {
         private Holder<Biome> biome;
         private float rain;
         private float day;
-        private boolean boundary, loaded = true;
+        private boolean thunder, boundary, loaded = true;
         private int columns, particles;
         private ClientFixture() { super(null, null, null, null, 0, 0, null, null, false, 0); throw new AssertionError(); }
         @Override public float getRainLevel(float partialTick) { return rain; }
@@ -1066,5 +1155,6 @@ public final class SandstormMechanicsTest {
             particles++;
         }
         @Override public boolean isRaining() { return rain > 0; }
+        @Override public boolean isThundering() { return thunder; }
     }
 }

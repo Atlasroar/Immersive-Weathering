@@ -1,5 +1,22 @@
 ## Unreleased
 
+## 2.7.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Install only `immersive_weathering-2.7.0.jar`, replacing the previous IW jar
+after backing up worlds/configuration. Required dependencies and existing
+content IDs are unchanged. The new storm weather key defaults to false in older
+configs that lack it; opt into ordinary-rain storms explicitly if desired.
+The placement/frost correction has native automated coverage, not a manual
+user-profile retest. MP01 remains Mixed for its recorded 2.6.0 subset.
+Real client/audio/gameplay/multiplayer acceptance remains unverified.
+
+- Sandstorms default to vanilla thunder only. Common
+  `sandstorms.allow_without_thunder=false` gates regular/red sand fog, clouds,
+  dust, wind audio, slowing, deposition and legacy sandy-block growth together.
+  Set it to true to restore ordinary-rain storms. Existing pile depths,
+  erosion rules, biome tags and installed Scorchful's own behavior are unchanged.
+
 - Fix plant-first/pile-first placement consistency: one shared item-write hook
   replaces competing snow/sand placement-return injections. Supported dry plants
   retain partial snow or regular/red sand depth, including wall-root items with
@@ -16,7 +33,8 @@
   remain unchanged; only registered states are retained, never worlds or results.
 - Add an optional native-state lookup benchmark and full-inventory mapping
   regressions. Isolated lookup timing/allocation is not in-game TPS/MSPT evidence.
-  Published 2.6.0 artifacts remain unchanged.
+  Published 2.6.0 artifacts remain unchanged. Isolated lookup timing does not
+  establish a whole-game performance gain.
 
 ## 2.6.0
 

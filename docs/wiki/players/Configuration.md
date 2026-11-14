@@ -96,6 +96,7 @@ tag changes; it is not a substitute for reloading config files.
 
 | Spec / key in `sandstorms` | Default (bounds) | Meaning |
 | --- | --- | --- |
+| Common `allow_without_thunder` | `false`, since 2.7.0 | Require vanilla thunder for IW storm visuals/audio, slowing, deposition and legacy sandy-block growth. True also permits ordinary rain; clear weather never activates storms. Published 2.6.0 predates this setting. |
 | Common `deposition` | `true` | Add existing IW sand layers on exposed, dry, sturdy surfaces; no cauldrons. |
 | Common `layer_cap` | `8` (1-8), since 2.4.0 | Weather-deposited layers per pile, including legacy growth's pile output. Manual/falling piles still reach eight; never trims taller piles or creates a new storm pile above a full one. |
 | Common `slowing` | `true` | Temporary total-speed reduction for exposed nonimmune living entities. Disabling removes IW's modifier next tick. |
@@ -111,14 +112,17 @@ tag changes; it is not a substitute for reloading config files.
 
 Existing configs retain their prior value (2.3.0 generated `layer_cap=1`);
 changing the default does not silently rewrite saved settings.
-These settings do **not** disable/retune the older `weather_sandstorm` sandy-block
-conversion or its `has_sandstorm` tag. The 2.4.0 pile-output guard is the
-exception: it now uses `layer_cap` and never overwrites an occupied block.
-Use growth settings/datapacks for the conversion itself.
+The new `allow_without_thunder` key defaults to false even in older configs
+that lack it; set it to true to retain ordinary-rain storms after updating.
+It also gates older `weather_sandstorm` sandy-block conversion, without changing
+its chance, growth config or `has_sandstorm` tag. The 2.4.0 pile-output guard uses
+`layer_cap` and never overwrites an occupied block. Other storm toggles do not
+disable the legacy conversion; use growth settings/datapacks for that.
 New storm subtype tags are `regular_sandstorms` and `red_sandstorms`; both also
 require precipitation-disabled biomes. Entity exemptions use
 `sandstorm_slow_immune`. When Scorchful is installed, new IW storm settings have
-no simulation/presentation effect because Scorchful owns that behavior.
+no effect on Scorchful's simulation/presentation because Scorchful owns that
+behavior. IW's legacy growth still uses IW's weather setting.
 
 ## Sand piles
 

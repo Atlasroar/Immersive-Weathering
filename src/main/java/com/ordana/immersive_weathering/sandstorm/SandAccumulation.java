@@ -19,7 +19,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 public final class SandAccumulation {
     public static void tickChunk(ServerLevel level, LevelChunk chunk) {
-        if (!Sandstorms.ownsStorms() || !CommonConfigs.SANDSTORM_DEPOSITION.get() || !level.isRaining()) return;
+        if (!Sandstorms.ownsStorms() || !CommonConfigs.SANDSTORM_DEPOSITION.get() || !Sandstorms.weatherActive(level)) return;
         var chunkPos = chunk.getPos();
         BlockPos top = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,
                 level.getBlockRandomPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ(), 15));

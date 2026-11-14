@@ -138,10 +138,16 @@ ship in both jars and are guarded by `tools/wind_resources.py`.
 
 `Sandstorms.biomeType` is the union of dry regular/red subtype tags; regular wins
 overlap. There is intentionally no separate master tag that can drift from the
-subtypes. `exposedStorm` adds vanilla rain, sky visibility and MOTION_BLOCKING
+subtypes. `Sandstorms.weatherActive` requires vanilla rain plus thunder by
+default; live common `sandstorms.allow_without_thunder` permits ordinary rain.
+Classification, client fog/cloud/dust/audio gates and the early chunk-deposition
+guard share that predicate. `exposedStorm` adds sky visibility and MOTION_BLOCKING
 height <= query Y; client visuals use biome/weather without the roof gate.
 The existing `TemperatureManager.hasSandstorm` and its `has_sandstorm` tag are
-**unchanged** and remain owned by legacy `SandGrowth`, including warm ocean.
+retain legacy `SandGrowth` ownership and biome eligibility, including warm ocean,
+but share the same weather predicate. Config changes do not mutate deposited
+piles; ending thunder during rain removes the slowing modifier on the next
+entity tick. Installed Scorchful still owns its own independent storm rules.
 
 `ServerLevelMixin.tickChunk` TAIL calls `SandAccumulation` once, independent of
 growth dispatch and the randomTickSpeed parameter. One sampled XZ column and
