@@ -2,7 +2,7 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
-For **slower sampled growth on unreleased source builds**, check common
+For **slower sampled growth since 2.8.0**, check common
 `general.weathering_sampling_rate`. New and older configs missing the key use
 `PERCENT_50`; choose `PERCENT_100` to restore legacy sampling without changing
 vanilla randomTickSpeed. Lower admission rates intentionally slow block/sky

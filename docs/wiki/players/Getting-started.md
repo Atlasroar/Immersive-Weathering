@@ -15,12 +15,12 @@
    versions and the declared minimum are not a guarantee that every later
    Moonlight release is compatible.
 
-This source targets stable **2.7.0**. Its mod version follows Semantic Versioning;
+This source targets stable **2.8.0**. Its mod version follows Semantic Versioning;
 Minecraft **1.20.1** is declared separately as compatibility.
-For 2.7.0, install `immersive_weathering-2.7.0.jar` from the
+For 2.8.0, install `immersive_weathering-2.8.0.jar` from the
 [published release assets](https://github.com/Atlasroar/Immersive-Weathering/releases)
 when available; source changes alone are not proof of publication. Published
-2.6.0/2.5.0/2.4.0/2.3.0/2.2.0 assets and the immutable
+2.7.0/2.6.0/2.5.0/2.4.0/2.3.0/2.2.0 assets and the immutable
 [2.1.0 release](https://github.com/Atlasroar/Immersive-Weathering/releases/tag/2.1.0)
 and earlier assets are unchanged. The development dependency set
 uses Fabric API **0.92.12+1.20.1** and Fabric Moonlight **1.20-2.12.11**
@@ -32,11 +32,17 @@ snow features. Existing content IDs remain valid; new snow-covered host IDs are
 additions, not a destructive world conversion. No Kiwi, SnowRealMagic, Indium,
 or additional renderer library is required by these snow features.
 This is not a promise to fix every catalogued gameplay report.
-Growth chances and seeded traversal are unchanged. See the
+Individual growth chances and seeded area traversal are unchanged; sampled
+block/sky opportunities now default to 50%. See the
 [paired-plant replication](../developers/Feature-testing.md#paired-plant-growth)
 and separate [recorded evidence](../developers/Test-results.md).
 
-The current source builds **2.7.0**: `build\libs\immersive_weathering-2.7.0.jar`.
+The current source builds **2.8.0**: `build\libs\immersive_weathering-2.8.0.jar`.
+Version 2.8.0 adds [IW growth sampling](Configuration.md#iw-growth-sampling),
+defaulting to 50% even when older configs lack the new key. Choose
+`PERCENT_100` to restore previous sampling; 25% and 75% are also supported.
+Lower rates slow sampled progression, not vanilla ticks or standalone weather.
+No measured live performance gain or manual gameplay acceptance is claimed.
 Version 2.7.0 corrects pile-first plant placement and covered grass/fern frost
 conversion, and caches native host-state lookups. Native regressions are not a
 manual retest or whole-game performance measurement.

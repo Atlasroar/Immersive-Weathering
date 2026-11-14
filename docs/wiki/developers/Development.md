@@ -48,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.7.0.jar --sources build\libs\immersive_weathering-2.7.0-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.8.0.jar --sources build\libs\immersive_weathering-2.8.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -56,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.7.0.jar -
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.7.0.jar`; install that remapped
+`build\libs\immersive_weathering-2.8.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -108,7 +108,7 @@ campfire dowse ordering without duplicate writes/events.
 ```powershell
 .\gradlew.bat windMechanicsTest --console=plain
 python tools\wind_resources.py --check
-python tools\wind_resources.py --jar build\libs\immersive_weathering-2.7.0.jar --sources build\libs\immersive_weathering-2.7.0-sources.jar
+python tools\wind_resources.py --jar build\libs\immersive_weathering-2.8.0.jar --sources build\libs\immersive_weathering-2.8.0-sources.jar
 ```
 
 The resource guard verifies ten pinned upstream PNGs, particle inventories,
@@ -198,11 +198,11 @@ No external profile/world or published 2.1.0 artifact is changed by these tasks.
 .\gradlew.bat sandstormMechanicsTest --console=plain
 python tools\sandstorm_resources.py --check
 python tools\sand_resources.py --check
-python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.7.0.jar --sources build\libs\immersive_weathering-2.7.0-sources.jar
+python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.8.0.jar --sources build\libs\immersive_weathering-2.8.0-sources.jar
 ```
 
-The current release target is **2.7.0**; do not overwrite the immutable published
-2.6.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
+The current release target is **2.8.0**; do not overwrite the immutable published
+2.7.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
 Java 17 harness alongside fire, snow and both growth harnesses. It executes
 production classification/exposure, deposition and modifier reconciliation on
 native biome holders, blocks/layer states and attributes. Test-only config and

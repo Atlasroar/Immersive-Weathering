@@ -46,9 +46,9 @@ config screen, lifecycle, registries, events, networking, and generated packs.
 
 ## IW sampled growth admission
 
-Unreleased `general.weathering_sampling_rate` is one synchronized common enum:
+Since 2.8.0, `general.weathering_sampling_rate` is one synchronized common enum:
 `PERCENT_25`, `PERCENT_50` (default, including missing old keys), `PERCENT_75`,
-`PERCENT_100`. No release version is assigned here.
+`PERCENT_100`.
 [`WeatheringSampler`](../../../src/main/java/com/ordana/immersive_weathering/data/block_growths/WeatheringSampler.java)
 is owned lazily by each `ServerLevel` through the existing
 [`ServerLevelMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/ServerLevelMixin.java).

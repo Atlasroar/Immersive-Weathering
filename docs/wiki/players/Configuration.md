@@ -36,7 +36,7 @@ source expressions rather than guessing what a setting's name means.
 
 ## IW growth sampling
 
-**Unreleased source change; published 2.7.0 has no sampling multiplier.**
+**Added in 2.8.0; published 2.7.0 has no sampling multiplier.**
 Common `general.weathering_sampling_rate` accepts exactly `PERCENT_25`,
 `PERCENT_50` (default), `PERCENT_75` and `PERCENT_100`. Configure it on the server;
 use the IW config screen where available, or stop the instance before editing
