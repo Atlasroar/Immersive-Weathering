@@ -20,11 +20,11 @@ percentage that treats these different historical rounds as current acceptance.
 | --- | ---: | --- |
 | Pass | 82 | User explicitly reported the case or group as passing, subject to its coverage notes. |
 | Fail | 1 | User reported a failing case. |
-| Mixed | 1 | Different subcases have different outcomes. |
+| Mixed | 2 | Different subcases have different outcomes. |
 | Not observed | 5 | The expected event was not observed; this alone does not establish failure. |
 | Not applicable | 2 | Tester marked the setup inapplicable; no pass is inferred. |
 | Not reported | 18 | No individual verdict was supplied. |
-| Not run | 28 | No manual execution result is recorded for these checklist cases. |
+| Not run | 27 | No manual execution result is recorded for these checklist cases. |
 | **Total** | **137** | Historical per-ID records, not current-release certification. |
 
 ## Recorded rounds and evidence limits
@@ -42,6 +42,7 @@ percentage that treats these different historical rounds as current acceptance.
 | 2026-11-02, 2.4.0 sand/thunder | SP01-SP07 Pass; SP08 Not applicable. These are user-reported test-ID verdicts, not agent reproductions or an inventory of every host/configuration variant. No reason for SP08 was supplied. |
 | Freezing wind/snowstorms, introduced in 2.5.0 | FW01-FW08 Not run. Release, deployment, builds, native fixtures and init-only startup do not establish in-world visuals, audio, gameplay, multiplayer or optional-mod coexistence. |
 | Shared mineral-pile plants, introduced in 2.6.0 | MP01-MP06 Not run. Automated state/model/bonemeal/lifecycle assertions and init-only Mixin audits do not certify real rendering, AI, gameplay, multiplayer or optional-mod coexistence. Earlier SP/N passes cover only their original artifact/scope. |
+| 2026-11-13, 2.6.0 placement follow-up | MP01 Mixed for the reported subset: dead-bush placement reported working with all three minerals; oxeye daisy accepts all three covers plant-first but replaces snow in the reverse order. Both mixing settings were confirmed true. Exact complete depth/support/mod inventories and other MP01 controls were not supplied. The 2.7.0 correction and woven fixture results are not a manual retest. |
 
 ### Documented sand/thunder round setup
 
@@ -197,7 +198,7 @@ An introduction/checklist version with no test date is not a tested artifact.
 
 | Test ID | Result | Date | Artifact / round | Evidence / qualification |
 | --- | --- | --- | --- | --- |
-| MP01 | Not run | - | 2.6.0 checklist | Expanded inventory/placement/state/rendering; no manual evidence. |
+| MP01 | Mixed | 2026-11-13 | 2.6.0 user profile | Dead-bush placement reported working in sand, red sand and snow; all three covers can be added to an oxeye daisy, but oxeye-daisy placement replaces snow. Both host-mixing settings true. Earlier report mentions snow depths 1-3; the narrowed follow-up does not itemize every depth, support or other mod. No verdict for remaining inventory/state/rendering controls or the 2.7.0 fix. |
 | MP02 | Not run | - | 2.6.0 checklist | Native growth/bonemeal/head-body transitions; no manual evidence. |
 | MP03 | Not run | - | 2.6.0 checklist | Harvest/contact/dripleaf/AI interactions; no manual evidence. |
 | MP04 | Not run | - | 2.6.0 checklist | Cultivated soils, support loss and falling; no manual evidence. |

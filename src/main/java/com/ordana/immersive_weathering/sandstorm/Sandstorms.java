@@ -5,6 +5,7 @@
 package com.ordana.immersive_weathering.sandstorm;
 
 import com.ordana.immersive_weathering.ImmersiveWeathering;
+import com.ordana.immersive_weathering.configs.CommonConfigs;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -33,11 +34,15 @@ public final class Sandstorms {
     }
 
     public static boolean visualStorm(Level level, BlockPos pos) {
-        return level.isRaining() && biomeType(level.getBiome(pos)) != Type.NONE;
+        return weatherActive(level) && biomeType(level.getBiome(pos)) != Type.NONE;
+    }
+
+    public static boolean weatherActive(Level level) {
+        return level.isRaining() && (level.isThundering() || CommonConfigs.SANDSTORM_WITHOUT_THUNDER.get());
     }
 
     public static Type exposedStorm(Level level, BlockPos pos) {
-        if (!level.isRaining() || !level.canSeeSky(pos)
+        if (!weatherActive(level) || !level.canSeeSky(pos)
                 || level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) > pos.getY()) return Type.NONE;
         return biomeType(level.getBiome(pos));
     }

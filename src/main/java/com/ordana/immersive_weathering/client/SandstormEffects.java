@@ -44,7 +44,8 @@ public final class SandstormEffects {
     }
 
     public static double stormBlend(ClientLevel level, Camera camera, float partialTick) {
-        if (!Sandstorms.ownsStorms() || !ClientConfigs.SANDSTORM_FOG.get() || !clearCamera(camera)) return 0;
+        if (!Sandstorms.ownsStorms() || !ClientConfigs.SANDSTORM_FOG.get() || !clearCamera(camera)
+                || !Sandstorms.weatherActive(level)) return 0;
         float rain = level.getRainLevel(partialTick);
         if (rain <= 0) return 0;
         return rain * CubicSampler.gaussianSampleVec3(camera.getPosition(), (x, y, z) ->
@@ -85,6 +86,7 @@ public final class SandstormEffects {
 
     public static boolean hideClouds(ClientLevel level, BlockPos pos, float partialTick) {
         return Sandstorms.ownsStorms() && ClientConfigs.SANDSTORM_CLOUDS.get()
+                && Sandstorms.weatherActive(level)
                 && level.getRainLevel(partialTick) > 0.75F
                 && Sandstorms.biomeType(level.getBiome(pos)) != Sandstorms.Type.NONE;
     }
@@ -92,7 +94,7 @@ public final class SandstormEffects {
     private static void tick(ClientLevel level) {
         Minecraft client = Minecraft.getInstance();
         if (client.isPaused()) return;
-        boolean enabled = Sandstorms.ownsStorms() && level.isRaining();
+        boolean enabled = Sandstorms.ownsStorms() && Sandstorms.weatherActive(level);
         Camera camera = client.gameRenderer.getMainCamera();
         if (enabled && ClientConfigs.SANDSTORM_PARTICLES.get() && clearCamera(camera)) {
             particles(level, camera.getBlockPosition(), client.options.particles().get());

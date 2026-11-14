@@ -10,7 +10,7 @@ This fork maintains **Minecraft 1.20.1 on Fabric**, with Moonlight Lib required.
 - Bark, leaf piles, ivy, soil variants and biome-aware plant growth.
 - Snow and sand layers, including supported fence and plant sharing.
 - Frost, thin ice, icicles and configurable fire interactions.
-- Sandstorms, freezing wind and cold-biome thunder snowstorms, without a player-temperature system.
+- Thunder-default sandstorms, freezing wind and cold-biome thunder snowstorms, without a player-temperature system.
 
 [Download releases](https://github.com/Atlasroar/Immersive-Weathering/releases)
 or explore the guides for behavior, dependencies and compatibility limits.

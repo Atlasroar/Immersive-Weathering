@@ -94,9 +94,11 @@ Thermoo, CCA or another library. Use the
 [ST01-ST08 instructions](../developers/Feature-testing.md#standalone-sandstorms)
 and [results ledger](../developers/Test-results.md); snow/fire acceptance does not verify storms.
 
-Ordinary vanilla rain (`/weather rain`) becomes a sandstorm in tagged
-**precipitation-disabled** desert/badlands biomes. Thunder, daytime and a separate
-storm timer are not required. `/weather clear` ends it; `doWeatherCycle` controls
+**Since 2.7.0, vanilla thunder (`/weather thunder`)** becomes a
+sandstorm in tagged **precipitation-disabled** desert/badlands biomes.
+Common `sandstorms.allow_without_thunder=true` also permits ordinary rain,
+restoring published 2.6.0 behavior. Daytime and a separate storm timer are not
+required. `/weather clear` ends it; `doWeatherCycle` controls
 vanilla weather as usual. Regular sand wins when both subtype tags match.
 Rainy biomes (including warm ocean) do not gain this new storm behavior.
 
@@ -116,8 +118,9 @@ existing 2.3.0 configs keep their previous cap of one. Existing taller piles nev
 and full piles do not receive another storm pile above them. No source sand is
 consumed. Existing pile loot and recipes remain.
 This hook is independent of `randomTickSpeed` and `general.block_growths`.
-Legacy sandy-stone growth still uses its own rain tick, chance, config and old
-`has_sandstorm` biome tag, including warm ocean. Its sandy-block conversion
+Legacy sandy-stone growth shares the thunder/ordinary-rain weather setting but
+still uses its own tick, chance, growth config and old `has_sandstorm` biome tag,
+including warm ocean. Its sandy-block conversion
 remains separate; its pile output now uses the same guarded weather cap.
 
 Client dust, fog, cloud hiding and intermittent wind have separate controls.
@@ -257,6 +260,11 @@ Only **dry states** qualify: no seagrass, kelp, lily pads or waterlogged hosts.
 Leaf piles and azalea-flower litter keep their separate existing systems.
 Regular sand, red sand and snow cannot be combined into one cover.
 The existing independent `snow.host_mixing` and `sand.host_mixing` controls remain.
+Both placement orders must preserve the same mineral and layer count: for
+example, an oxeye daisy should share partial snow just as snow shares an
+existing oxeye daisy. Supported plants are not intended to erase eligible piles.
+Published 2.6.0 has a placement-order regression; 2.7.0 corrects its placement
+hook. The recorded user-profile result remains Mixed pending a manual retest.
 See [MP01-MP06](../developers/Feature-testing.md#shared-mineral-pile-plants) for
 replication and the [results ledger](../developers/Test-results.md) for evidence.
 
@@ -277,6 +285,11 @@ Stable **2.1.0** applies the same rule to short ferns: covered ferns
 use the existing frosty-fern model/tint and become normal ferns again when the
 cover is removed or melts. This does not change large ferns or permanently
 convert plants to IW frosty blocks.
+
+Using a frost item is a separate, actual conversion of supported grass/ferns.
+The 2.7.0 fix recognizes the underlying plant in a snow/sand/red-sand cover
+and retains its mineral and depth; flint-and-steel thawing likewise retains the
+cover. This does not add frosty variants for flowers or make sand cause frosting.
 
 Right-click a covered host with a shovel to remove its snow and retain the host.
 Survival uses one durability and vanilla snow loot, including Silk Touch;

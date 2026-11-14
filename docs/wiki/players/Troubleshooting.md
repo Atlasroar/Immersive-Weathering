@@ -13,16 +13,18 @@ disable_icicles/light/occupied-cell guards still apply. Unlit torches retain
 their normal/soul identity: relight, do not replace them to recover illumination.
 F3 distinguishes the two unlit types despite their shared frozen artwork.
 
-Snowstorm requires **thunder**, unlike sandstorm. Snow still needs its global
+Snowstorm requires **thunder**; 2.7.0 also defaults
+sandstorms to thunder. Snow still needs its global
 accumulation/cap/gamerule/support rules; bonus0/disabled storm preserves ordinary
 snow behavior rather than disabling snowfall. Check client snowstorm toggles,
 vanilla particle/Weather settings and actually installed Immersive Storms
 (which owns presentation only). No new upstream wind recordings were imported.
 See the [results ledger](../developers/Test-results.md) rather than inferring compatibility or rendering acceptance.
 
-For the **2.3.0 standalone sandstorms**, check vanilla rain first, then the
-new dry-biome subtype tags and common/client `sandstorms` settings. Thunder is
-unnecessary; wet-biome `has_sandstorm` legacy growth does not imply new dust/fog
+For **standalone sandstorms**, check the exact jar: published 2.6.0 allows
+ordinary rain; 2.7.0 requires thunder unless common
+`sandstorms.allow_without_thunder=true`. Then check dry-biome subtype tags and
+common/client settings. Wet-biome `has_sandstorm` legacy growth does not imply new dust/fog
 or layer deposition. A roof shelters slowdown/deposition, not biome fog/clouds.
 Check the Weather slider, subtitles and particle setting for missing wind/dust.
 IW deliberately yields its new storm features when Scorchful is installed.
@@ -149,6 +151,15 @@ Right-click a covered fence/wall with a shovel to retain it; mining the composit
 breaks the host instead. Full plain snow (layer 8) is not replaced in place by the
 partial-layer override. Source-water ice conversion requires falling snow, not
 stationary layers adjacent to water.
+
+In published 2.6.0, placing flowers such as oxeye daisies into partial snow can
+remove the snow even with `snow.host_mixing` enabled, while adding snow to an
+existing flower works. This is a confirmed placement-hook regression, not the
+intended rule or a reason to increase layer/tick limits. As a workaround, place
+the plant first and then add its layers. The shared placement and covered-plant
+frost-item corrections are included in 2.7.0; do not assume the published 2.6.0 jar
+contains them. A manual retest of the corrected jar remains pending.
+Check `snow.host_mixing` and `sand.host_mixing` independently.
 
 Rendering uses ordinary multipart models with vanilla host textures and the
 vanilla snow sprite, with no Indium/Kiwi requirement. Alternate resource packs

@@ -138,10 +138,16 @@ ship in both jars and are guarded by `tools/wind_resources.py`.
 
 `Sandstorms.biomeType` is the union of dry regular/red subtype tags; regular wins
 overlap. There is intentionally no separate master tag that can drift from the
-subtypes. `exposedStorm` adds vanilla rain, sky visibility and MOTION_BLOCKING
+subtypes. `Sandstorms.weatherActive` requires vanilla rain plus thunder by
+default; live common `sandstorms.allow_without_thunder` permits ordinary rain.
+Classification, client fog/cloud/dust/audio gates and the early chunk-deposition
+guard share that predicate. `exposedStorm` adds sky visibility and MOTION_BLOCKING
 height <= query Y; client visuals use biome/weather without the roof gate.
 The existing `TemperatureManager.hasSandstorm` and its `has_sandstorm` tag are
-**unchanged** and remain owned by legacy `SandGrowth`, including warm ocean.
+retain legacy `SandGrowth` ownership and biome eligibility, including warm ocean,
+but share the same weather predicate. Config changes do not mutate deposited
+piles; ending thunder during rain removes the slowing modifier on the next
+entity tick. Installed Scorchful still owns its own independent storm rules.
 
 `ServerLevelMixin.tickChunk` TAIL calls `SandAccumulation` once, independent of
 growth dispatch and the randomTickSpeed parameter. One sampled XZ column and
@@ -383,6 +389,23 @@ There is no per-cell block entity, NBT payload, packet, render attachment, mutab
 world cache or global scratch position. Ordinary block-state persistence and
 vanilla block updates provide save/client synchronization.
 
+Raw-host lookup uses an immutable per-wrapper identity table built after the
+state definition is constructed. Every registered composite state maps to the
+same canonical native state produced by the original property-copy operation,
+including all host properties; layer/color changes do not change the native
+host mapping. `PilePlants.raw` reads this table instead of iterating properties
+on every call. Tables retain only already-registered block states, never worlds,
+positions, biome/tag answers or interaction results. This trades bounded
+registration-time table memory/work for allocation-free runtime lookups; wrong
+owner states fail explicitly. No world/reload invalidation is needed.
+
+`PilePlants.retainCover` is the common state-only reconstruction helper for
+supported host transformations. The scoped native-write hook and frost item
+reuse it without widening arbitrary world reads. Frost-item conversion resolves
+the raw host, constructs the replacement with its original properties and cover,
+and commits one guarded server write before consumption/sound; it does not
+mistake a registered wrapper ID for a new frost-conversion target.
+
 Native plant callbacks run in a world-scoped `PileInteractions` context.
 `PilePlantWriteMixin` retains an existing mineral type/depth when Level.setBlock
 writes another supported dry plant into that cell. AIR/fluids/trees are not
@@ -425,9 +448,16 @@ There is no FRAPI custom model, Kiwi/Indium requirement, copied SnowRealMagic
 model/texture, or client import in shared snow code. Actual alternate-pack/Sodium
 visual acceptance remains required.
 
-`SnowHostReplaceMixin`, `SnowLayerBlockMixin` and `SnowHostPlacementMixin` cooperate
+`SnowHostReplaceMixin`, `SnowLayerBlockMixin` and `PileHostPlacementMixin` cooperate
 with normal `BlockPlaceContext`/`BlockItem` placement rather than reimplementing
 permissions, collision tests, callbacks, advancements, sounds or stack consumption.
+The single shared hook modifies the state argument to `BlockItem.placeBlock`
+after native placement selection/validation, using that call's actual placement
+context. It therefore also covers items overriding `getPlacementState` and
+preserves redirected contexts. It never cancels a no-op return injection:
+the separate sand return injection in published 2.6.0 did that and could prevent
+the snow injection from executing. Snow and sand policy helpers retain their
+independent gates, layer limits and native replacement rules.
 Partial covered plants permit ordinary block-item replacement only when
 `replace_partial_layers` is enabled and their reconstructed raw host accepts
 the item. Full eight-layer covers, fences/walls and non-block

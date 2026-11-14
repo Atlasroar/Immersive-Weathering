@@ -32,6 +32,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.IdentityHashMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * One registered block per explicitly supported host, with the host's property objects plus LAYERS.
@@ -40,10 +43,16 @@ import java.util.List;
 public abstract class PileCoveredBlock extends Block implements BonemealableBlock {
     private static final ThreadLocal<Block> SCHEMA = new ThreadLocal<>();
     private final Block host;
+    private final Map<BlockState, BlockState> hostStates;
 
     protected PileCoveredBlock(Block host) {
         super(Properties.copy(host).noOcclusion().randomTicks().offsetType(OffsetType.NONE));
         this.host = host;
+        Map<BlockState, BlockState> states = new IdentityHashMap<>(stateDefinition.getPossibleStates().size());
+        for (BlockState state : stateDefinition.getPossibleStates()) {
+            states.put(state, SnowHosts.copy(state, host.defaultBlockState()));
+        }
+        hostStates = Collections.unmodifiableMap(states);
         registerDefaultState(SnowHosts.copy(host.defaultBlockState(), stateDefinition.any()).setValue(SnowLayerBlock.LAYERS, 1));
     }
 
@@ -63,6 +72,12 @@ public abstract class PileCoveredBlock extends Block implements BonemealableBloc
     }
 
     public Block host() { return host; }
+
+    public BlockState hostState(BlockState state) {
+        BlockState raw = hostStates.get(state);
+        if (raw == null) throw new IllegalArgumentException("State does not belong to this pile cover: " + state);
+        return raw;
+    }
 
     protected BlockState raw(BlockState state) { return PilePlants.raw(state); }
     protected abstract BlockState pileState(BlockState state);

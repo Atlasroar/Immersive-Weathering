@@ -54,10 +54,11 @@ accelerate vanilla crops, saplings, decay, and eligible mod blocks.
 **Return to 3 for interactions, fluids, movement, and physics tests.** These
 systems are not uniformly accelerated by this gamerule. IW's sky-access
 sampling does use it, but still needs the correct weather, biome, and exposure.
-Use `/weather clear`, `/weather rain`, `/time set day`, and `/time set night`
+Use `/weather clear`, `/weather rain`, `/weather thunder`, `/time set day`, and `/time set night`
 only in the disposable world; record and restore any settings you change.
-In cold biomes `/weather rain` produces snow. In a tagged desert it can drive
-IW sandstorms despite the absence of vanilla rain particles.
+In cold biomes `/weather rain` produces snow. Current source defaults tagged
+desert sandstorms to `/weather thunder`; ordinary rain requires
+`sandstorms.allow_without_thunder=true`. Dry biomes still lack vanilla rain particles.
 
 At the end, restore the **original recorded** `randomTickSpeed`, not necessarily
 3. Record `doFireTick`, `mobGriefing`, and `doWeatherCycle` if relevant; do not
@@ -161,7 +162,7 @@ Record exact plant states and each variant rather than one group verdict.
 
 ### MP01
 
-**Replicate:** Place each supported dry plant before its pile and, where a native item exists, into an existing pile. Compare depths 1, 4 and 8; snow-first placement uses partial layers 1-7. Exercise ages, faces, halves, petal counts, dripleaf tilt and bamboo leaves. Include every IW plant. Rotate/mirror structures and save/reopen.
+**Replicate:** Place each supported dry plant before its pile and, where a native item exists, into an existing pile. Include an oxeye daisy on valid soil and dead bush on sand as separate controls; reverse their placement order for all three minerals. Compare depths 1, 2, 3, 4 and 8; snow-first placement uses partial layers 1-7. Exercise ages, faces, halves, petal counts, dripleaf tilt and bamboo leaves. Include every IW plant and the wall-root item's side placements. Rotate/mirror structures and save/reopen.
 
 **Expected and controls:** Native properties, mineral identity/depth, shape and tint persist. Snow alone temporarily uses frosty short-grass/fern models. Compare waterlogged states, seagrass/kelp/lily pads, a chest and an unsupported third-party plant: none is a mineral host. Do not mix different minerals in one cover.
 
@@ -301,10 +302,11 @@ original gamerules/weather/config after the round.
 /fillbiome 0 48 0 31 79 31 minecraft:desert
 /tp @s 8 64 8
 /attribute @s minecraft:generic.movement_speed get
-/weather rain 600
+/weather thunder 600
 ```
 
-Current source default common `sandstorms`: deposition=true, layer_cap=8, slowing=true,
+Current source default common `sandstorms`: allow_without_thunder=false,
+deposition=true, layer_cap=8, slowing=true,
 slow_amount=0.3. Default client: particles/fog/hide_clouds/sounds=true,
 particle_range=20, particle_rarity=60, fog_start=16, fog_end=64.
 Use vanilla All particles, nonzero Weather volume and subtitles, without a
@@ -316,15 +318,15 @@ with F3 targeted-block readout; screenshots of dust alone prove no server rule.
 
 ### ST01
 
-**Replicate:** Run the fixture with ordinary rain (no thunder); `/weather clear`, then rain again. Use `/fillbiome 0 48 0 31 79 31 minecraft:badlands`, then warm_ocean and plains; return to desert. With weather cycling disabled, wait and explicitly change weather; repeat at night.
+**Replicate:** Run the fixture with thunder; compare ordinary rain and clear, then thunder again. Use `/fillbiome 0 48 0 31 79 31 minecraft:badlands`, then warm_ocean and plains; return to desert. Restart with allow_without_thunder=true and repeat all weather controls, then restore false. With weather cycling disabled, wait and explicitly change weather; repeat at night.
 
-**Expected and controls:** Dry desert deposits regular IW layers, dry badlands red; warm ocean/plains have no new storm effects/deposition. Ordinary rain/night suffice; clear stops gameplay, gradients fade visuals. No independent storm timer. Warm-ocean legacy sandy-block growth is a separate control at a restored positive randomTickSpeed.
+**Expected and controls:** Default thunder deposits regular IW layers in dry desert and red in dry badlands; ordinary rain has no IW storm fog/cloud hiding/dust/audio/slowing/deposition. Opt-in permits ordinary rain, never clear. Warm ocean/plains have no standalone storm effects/deposition. Day/night both work; no independent storm timer. Warm-ocean legacy sandy-block growth shares the weather setting but is a separate control at a restored positive randomTickSpeed.
 
 ### ST02
 
-**Replicate:** During rain compare `/attribute @s minecraft:generic.movement_speed get` with the clear value without sprint/effects. `/fill 4 67 4 12 67 12 minecraft:stone`, stand below it, then remove roof. Summon a pig and camel on the platform and inspect their movement-speed attributes too.
+**Replicate:** During thunder compare `/attribute @s minecraft:generic.movement_speed get` with the clear value without sprint/effects. Switch to ordinary rain and back; repeat with allow_without_thunder=true, then restore false. `/fill 4 67 4 12 67 12 minecraft:stone`, stand below it, then remove roof. Summon a pig and camel on the platform and inspect their movement-speed attributes too.
 
-**Expected and controls:** Exposed eligible entities have a temporary 30% reduction; roof removes it on the next server tick, camel remains immune. No damage, armor/thirst/temperature state or wind force. Biome fog/cloud effects may remain indoors.
+**Expected and controls:** Exposed eligible entities have a temporary 30% reduction; roof or ending thunder during rain with opt-in off removes it on the next server tick, camel remains immune. Opt-in restores rain slowing without stacking. No damage, armor/thirst/temperature state or wind force. Biome fog/cloud effects may remain indoors during eligible weather.
 
 ### ST03
 
@@ -1053,9 +1055,9 @@ apply; disabling just one grass rule does not necessarily remove all grass.
 
 ### C02
 
-**Replicate:** Inspect frost in newly generated icy terrain; apply the frost item to glass/panes, grass, and fern in cold conditions.
+**Replicate:** Inspect frost in newly generated icy terrain; apply the frost item to glass/panes, grass, and fern in cold conditions. Repeat grass/fern conversion inside snow, regular-sand and red-sand covers at depths 1, 4 and 8, then thaw with flint and steel.
 
-**Expected and controls:** The item converts mapped targets to frosty counterparts and is consumed in Survival; unsupported targets use ordinary frost placement instead. Shipped `frost_growth` and `frost_spreading` have chance **0**: lack of ambient growth from those two rules is expected, even at 1000.
+**Expected and controls:** The item converts mapped targets to frosty counterparts and is consumed in Survival; unsupported targets use ordinary frost placement instead. Converting/thawing a covered host preserves its mineral and depth. Snow's temporary frosty model alone is not this actual host conversion; flowers gain no new frosty variant. Shipped `frost_growth` and `frost_spreading` have chance **0**: lack of ambient growth from those two rules is expected, even at 1000.
 
 ### C03
 
@@ -1113,9 +1115,9 @@ apply; disabling just one grass rule does not necessarily remove all grass.
 
 ### C12
 
-**Replicate:** Run `/weather rain` in tagged desert terrain with exposed sandable masonry. Separately apply a sand-layer item and shovel it off.
+**Replicate:** Run `/weather thunder` in tagged desert terrain with exposed sandable masonry. Compare ordinary rain with allow_without_thunder=false/true, then restore the original setting. Separately apply a sand-layer item and shovel it off.
 
-**Expected and controls:** Sandstorm growth makes eligible sandy states/layers. Shoveling can remove a heavier sandiness stage first, then the remaining cover, yielding a sand layer. Ordinary rain in an untagged biome is not a sandstorm.
+**Expected and controls:** Sandstorm growth makes eligible sandy states/layers during thunder by default; ordinary rain requires the opt-in and a legacy-tagged biome. Shoveling can remove a heavier sandiness stage first, then the remaining cover, yielding a sand layer. Ordinary rain in an untagged biome is not a sandstorm.
 
 ### C13
 

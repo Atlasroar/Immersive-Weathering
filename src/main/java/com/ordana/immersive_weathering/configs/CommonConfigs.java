@@ -28,6 +28,7 @@ public class CommonConfigs {
     public static final Supplier<Double> WIND_ICICLE_CHANCE;
     public static final Supplier<Boolean> SNOWSTORM_ENABLED;
     public static final Supplier<Integer> SNOWSTORM_DEPOSITION_BONUS;
+    public static final Supplier<Boolean> SANDSTORM_WITHOUT_THUNDER;
     public static final Supplier<Boolean> SANDSTORM_DEPOSITION;
     public static final Supplier<Integer> SANDSTORM_LAYER_CAP;
     public static final Supplier<Boolean> SANDSTORM_SLOWING;
@@ -174,7 +175,9 @@ public class CommonConfigs {
         builder.pop();
 
         builder.push("sandstorms");
-        SANDSTORM_DEPOSITION = builder.comment("Deposit existing IW sand layers in exposed dry desert/badlands during vanilla rain. Independent of block growths/randomTickSpeed; no cauldron changes. Yields to installed Scorchful.")
+        SANDSTORM_WITHOUT_THUNDER = builder.comment("Allow sandstorms during ordinary vanilla rain instead of thunderstorms only. Applies to IW presentation, slowing, deposition and legacy sandy-block growth; does not change installed Scorchful behavior.")
+                .define("allow_without_thunder", false);
+        SANDSTORM_DEPOSITION = builder.comment("Deposit existing IW sand layers in exposed dry desert/badlands during allowed storm weather (thunder by default). Independent of block growths/randomTickSpeed; no cauldron changes. Yields to installed Scorchful.")
                 .define("deposition", true);
         SANDSTORM_LAYER_CAP = builder.comment("Maximum weather-deposited layers per pile (1-8), including the pile output of legacy sandy growth. Manual/falling piles still reach eight; never reduces existing piles. Does not limit sandy-block variant conversion.")
                 .define("layer_cap", 8, 1, 8);

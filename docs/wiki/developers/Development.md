@@ -48,7 +48,7 @@ From the repository root:
 ```powershell
 java -version
 .\gradlew.bat build
-python tools\fabric.py --check --jar build\libs\immersive_weathering-2.6.0.jar --sources build\libs\immersive_weathering-2.6.0-sources.jar
+python tools\fabric.py --check --jar build\libs\immersive_weathering-2.7.0.jar --sources build\libs\immersive_weathering-2.7.0-sources.jar
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```
@@ -56,7 +56,7 @@ python tools\fabric.py --check --jar build\libs\immersive_weathering-2.6.0.jar -
 Loom supplies development launch tasks. The dedicated server may need its usual
 EULA setup before starting. Dev launches are for local test instances, not your
 only production world. The Fabric remapped artifact is produced under
-`build\libs\immersive_weathering-2.6.0.jar`; install that remapped
+`build\libs\immersive_weathering-2.7.0.jar`; install that remapped
 jar, not `build\devlibs` output or the matching `-sources.jar`.
 Both distribution jars include the unchanged `LICENSE`, `COPYING`, and
 `ATTRIBUTIONS`. Dependencies are separate, never bundled or shaded.
@@ -108,7 +108,7 @@ campfire dowse ordering without duplicate writes/events.
 ```powershell
 .\gradlew.bat windMechanicsTest --console=plain
 python tools\wind_resources.py --check
-python tools\wind_resources.py --jar build\libs\immersive_weathering-2.6.0.jar --sources build\libs\immersive_weathering-2.6.0-sources.jar
+python tools\wind_resources.py --jar build\libs\immersive_weathering-2.7.0.jar --sources build\libs\immersive_weathering-2.7.0-sources.jar
 ```
 
 The resource guard verifies ten pinned upstream PNGs, particle inventories,
@@ -198,16 +198,22 @@ No external profile/world or published 2.1.0 artifact is changed by these tasks.
 .\gradlew.bat sandstormMechanicsTest --console=plain
 python tools\sandstorm_resources.py --check
 python tools\sand_resources.py --check
-python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.6.0.jar --sources build\libs\immersive_weathering-2.6.0-sources.jar
+python tools\sandstorm_resources.py --jar build\libs\immersive_weathering-2.7.0.jar --sources build\libs\immersive_weathering-2.7.0-sources.jar
 ```
 
-The current release target is **2.6.0**; do not overwrite the immutable published
-2.5.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
+The current release target is **2.7.0**; do not overwrite the immutable published
+2.6.0 or earlier artifacts. Source version alone does not prove publication. `build`/`check` runs this
 Java 17 harness alongside fire, snow and both growth harnesses. It executes
 production classification/exposure, deposition and modifier reconciliation on
 native biome holders, blocks/layer states and attributes. Test-only config and
 registration substitutes avoid platform initialization; explicit Unsafe-allocated
 storage/client fixtures replace chunk storage, not storm policy.
+
+Version 2.7.0 coverage crosses clear/rain/thunder with the ordinary-rain
+opt-in for both colors and legacy dry/wet-tagged growth. It checks that rain-only
+weather skips deposition sampling by default, the opt-in deposits normally,
+ending thunder/config changes clean up slowing, and fog/clouds/dust obey the
+same policy. These native fixtures do not establish real client/audio acceptance.
 
 Version 2.4.0 coverage adds production sand schemas for both colors/all host
 states/layers, exact union collision, native rotation/mirroring and survival,
@@ -286,7 +292,7 @@ python tools\snow_resources.py --check
 
 `build`/`check` includes this separate Java 17 source set, without adding a test
 framework or packaged dependency. Production `SnowHosts`, `SnowCoveredBlock`,
-`SnowPhysics`, `SnowWeather`, falling-entity save/tick methods, placement injection
+`SnowPhysics`, `SnowWeather`, falling-entity save/tick methods, placement policy
 bodies and Mojang block states/shapes/loot code are exercised. The source set
 substitutes common-config initialization, the falling entity's registration
 supplier, and the platform registration boundary. Test `ModBlocks` constructs
@@ -313,19 +319,19 @@ options for every vanilla plant state across all three covers. Only snow's
 intentional frosty short-grass/fern appearance differs. Native model JSON is
 read from the Minecraft test classpath, not copied into the project.
 The covered-plant replacement matrix invokes actual wrapper replaceability and
-the placement injection for every plant state, layers 1-8, both independent
+the shared placement policy for every plant state, layers 1-8, both independent
 settings, same/different supported hosts, solid/chest replacements, snow items,
 non-block items, wet/failed placements, negative fence/wall controls, and
 upper-half preservation through the normal double-plant placement callback.
-Snow-item additions invoke both placement hooks in their real order to catch
-layer-count resets. New controls cover native weed aging/bonemeal, sapling stage
+Snow-item additions invoke the snow-selection injection and shared policy to
+catch layer-count resets. New controls cover native weed aging/bonemeal, sapling stage
 progression, petal stacking, raw animation/contact forwarding, identity-hook
 bodies and failed/successful multi-sapling restoration probes with independent
 cover counts. Direct calls into the actual client color-state selector cover
 grass/fern frost matching and unchanged hosts at all eight layer counts; the
 existing melt checks retain the original normal plants. These are selection/state
 checks, not a GPU render or full tint-provider invocation.
-The current harness run passed **176,665 cases**.
+The shared-inventory harness run passed **432,868 cases**.
 
 The explicit fixture uses `Unsafe` to bypass server/level constructors, with
 in-memory storage, a supplied vanilla loot-table registry, seeded RNG, native
@@ -336,6 +342,41 @@ Mixin-loader, networking, chunk-save, piston-engine, explosion-engine, permissio
 or real rendering test. Block-state and falling-entity NBT round trips are not a
 whole-world save/reload claim. The test-only entity type can log its missing data
 fixer; it is not shipped.
+
+### Fabric-woven pile placement
+
+```powershell
+.\gradlew.bat runPilePlacementTest --console=plain
+```
+
+`build`/`check` also runs this separate Fabric server source set with the real
+Minecraft, Fabric API, Moonlight, IW registration, config and gameplay mixins.
+A development-only test mod runs its assertions after `--initSettings nogui`
+returns. Everything stays under `build/pile-integration`; the EULA remains false,
+no saved world is created, and fixture classes/metadata/mixins are not packaged.
+No extra test framework or dependency is installed.
+
+Tests call actual `BlockItem.place`, not independently reflected placement
+handlers. They cover both placement orders and depth boundaries for flowers
+(including oxeye daisy), dead bush, grass/fern and crops; normal/frosty host
+identity; both sand colors; native item counts/results; obstruction and solid
+replacement controls. The actual Fabric wall-root item exercises its overridden
+`getPlacementState` and all horizontal facings. Covered grass/fern frost conversion
+retains each mineral/depth with one write, unchanged rejected state/item/effects,
+and subsequent native thaw interaction.
+
+The original 2.6.0 pair of return injections failed the woven snow-first flower
+tests: sand's no-op cancellation prevented snow's hook from running. A single
+shared hook now transforms the argument passed to `placeBlock`, using that call's
+actual context after native placement validation. It applies to custom placement
+methods without cancelling the surrounding item pipeline.
+
+Storage, lighting, collision answers, sound capture and player state are bounded
+fixtures; dead-bush support binds the relevant vanilla tag to the sand controls
+because init-only startup does not load world datapacks. World constructors,
+chunk writes, renderer, live collision engine, network and save/reload remain
+outside this test. A woven pass is not a manual MP01 pass or installed-mod
+coexistence certification.
 
 For the beta.2 plant follow-up, a real Fabric dedicated launch completed mod
 initialization/mixin loading and stopped at the **unaccepted EULA gate**.
@@ -414,6 +455,57 @@ engine, a real resource reload, a loot/drop simulation, or an in-game tick loop.
 Neither it nor a clean build establishes Fabric lifecycle or a passed manual G07
 retest. See the [placement contract](Data-and-resources.md#paired-output-placement)
 and [manual retest](Feature-testing.md#paired-plant-growth).
+
+## Mineral-pile lookup performance
+
+```powershell
+.\gradlew.bat pilePerformanceBenchmark --console=plain
+```
+
+This optional Java 17 task uses the existing sand harness's native registration
+fixtures, not a running world. It checks every registered state against the
+original `SnowHosts.copy` oracle across snow and both sand colors, then measures
+grass, wheat, vine and cobblestone-wall lookups while cycling their actual
+registered states. Shape-cache/world initialization is deliberately excluded.
+It uses a fixed 512 MiB heap, at least one second of alternating warmup per
+scenario, seven alternating rounds of one million lookups per variant, median
+`nanoTime` and `ThreadMXBean` allocated bytes. Results are consumed, not discarded.
+Zero-allocation lookup is asserted; timing is not a CI threshold.
+`sandstormMechanicsTest`, already part of `build`, separately verifies all
+216,048 composite-to-native mappings and unchanged raw-state identity.
+
+November 13, 2026 local Windows run, property-copy versus cached lookup:
+
+| Host | Property copy ns/op | Cached ns/op | Copy B/op | Cached B/op |
+| --- | ---: | ---: | ---: | ---: |
+| Grass | 21.7 | 8.5 | 24 | 0 |
+| Wheat | 76.6 | 8.5 | 24 | 0 |
+| Vine | 381.1 | 11.3 | 24 | 0 |
+| Cobblestone wall | 574.8 | 27.6 | 24 | 0 |
+
+A separate repeat measured cached times 7.7/8.8/10.2/17.6 ns respectively, still
+zero allocated bytes. The fixed identity tables add registration-time work and
+retained references for the existing state inventory; their heap footprint was
+not measured. No world or gameplay-result cache is introduced. These numbers
+measure only host reconstruction, not whole block callbacks or whole-game
+TPS/MSPT, and do not prove a rendering or multiplayer improvement.
+
+### Performance review boundaries
+
+The existing growth benchmark still shows lower full-scan and early-exit costs
+than its historical baseline. Active dispatch is noisy and some scenarios are
+slower; do not claim all dispatch paths improved or change callback ordering to
+force a favorable microbenchmark.
+
+Storm fog uses cubic biome sampling in color/distance hooks; default storm
+particles visit a 40x40 column area per client tick. Wind contacts can ray-test
+36 cells per gust every five ticks, while spawn attempts clean weak live budgets.
+These are code-level profiling candidates, not measured dominant bottlenecks.
+Any further optimization should start with controlled live client/server profiles
+of pile-dense builds, clear weather, sandstorms and cold thunder, keeping seed,
+loaded chunks, entities, settings, simulation/view distance and JVM identical.
+Do not cache biome/tag/exposure answers across reloads or suppress daytime thunder
+gusts as a shortcut. Actual runtime profiles were not collected for this review.
 
 ## Growth performance harness
 

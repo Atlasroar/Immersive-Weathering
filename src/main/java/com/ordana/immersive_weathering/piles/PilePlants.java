@@ -1,9 +1,15 @@
 package com.ordana.immersive_weathering.piles;
 
 import com.ordana.immersive_weathering.reg.ModBlocks;
+import com.ordana.immersive_weathering.sand.SandCoveredBlock;
+import com.ordana.immersive_weathering.sand.SandHosts;
+import com.ordana.immersive_weathering.snow.SnowHosts;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +51,23 @@ public final class PilePlants {
 
     public static BlockState raw(BlockState state) {
         return state.getBlock() instanceof PileCoveredBlock covered
-                ? com.ordana.immersive_weathering.snow.SnowHosts.copy(state, covered.host().defaultBlockState()) : state;
+                ? covered.hostState(state) : state;
+    }
+
+    @Nullable
+    public static BlockState placement(BlockPlaceContext context, @Nullable BlockState placement) {
+        if (placement == null) return null;
+        BlockState old = context.getLevel().getBlockState(context.getClickedPos());
+        return SandHosts.pile(old) != null ? SandHosts.placement(context, placement)
+                : SnowHosts.placement(context, placement);
+    }
+
+    public static BlockState retainCover(BlockState old, BlockState next) {
+        if (!(old.getBlock() instanceof PileCoveredBlock) || next.getBlock() instanceof PileCoveredBlock) return next;
+        int layers = old.getValue(SnowLayerBlock.LAYERS);
+        BlockState covered = old.getBlock() instanceof SandCoveredBlock sand
+                ? SandHosts.cover(next, sand.pile(), layers) : SnowHosts.cover(next, layers);
+        return covered == null ? next : covered;
     }
 
     public static boolean cultivatedFloor(BlockState state) {

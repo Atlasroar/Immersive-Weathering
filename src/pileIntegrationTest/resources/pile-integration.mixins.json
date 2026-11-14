@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "com.ordana.immersive_weathering.piles.integration.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": ["PileIntegrationMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

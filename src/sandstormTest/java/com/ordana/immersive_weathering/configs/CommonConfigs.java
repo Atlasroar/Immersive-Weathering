@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 /** Replaces platform config initialization, not production storm rules. */
 public final class CommonConfigs {
     public static boolean deposition = true, slowing = true;
+    public static boolean withoutThunder = false;
+    public static final Supplier<Boolean> SANDSTORM_WITHOUT_THUNDER = () -> withoutThunder;
     public static boolean mixing = true, replacement = true, erosion = true;
     public static double erosionChance = 0.125;
     public static final Supplier<Boolean> SAND_HOSTS = () -> mixing;
