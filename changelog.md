@@ -1,5 +1,16 @@
 ## Unreleased
 
+- Add common `general.weathering_sampling_rate`: `PERCENT_25`, `PERCENT_50`
+  (new default), `PERCENT_75`, or `PERCENT_100` (legacy sampling). Missing keys
+  in older configs now default to 50%. This thins only IW sampled `BLOCK_TICK`
+  and sky-access growth opportunities; each rule's `growth_chance` is unchanged.
+  Expect slower progression at lower rates. Vanilla random ticks/randomTickSpeed,
+  direct lightning/API growth, standalone sand deposition, snow accumulation and
+  freezing wind are unchanged. Full rate preserves legacy sampling/RNG/order
+  without an admission draw. Independent level-owned IW admission streams avoid
+  gameplay RNG draws and world/chunk caches. No measured live performance gain
+  or manual gameplay acceptance is claimed.
+
 ## 2.7.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.

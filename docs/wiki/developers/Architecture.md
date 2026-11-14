@@ -44,6 +44,51 @@ unchanged.
 EMI and Mod Menu entrypoints remain optional; Moonlight continues to supply the
 config screen, lifecycle, registries, events, networking, and generated packs.
 
+## IW sampled growth admission
+
+Unreleased `general.weathering_sampling_rate` is one synchronized common enum:
+`PERCENT_25`, `PERCENT_50` (default, including missing old keys), `PERCENT_75`,
+`PERCENT_100`. No release version is assigned here.
+[`WeatheringSampler`](../../../src/main/java/com/ordana/immersive_weathering/data/block_growths/WeatheringSampler.java)
+is owned lazily by each `ServerLevel` through the existing
+[`ServerLevelMixin`](../../../src/main/java/com/ordana/immersive_weathering/mixins/ServerLevelMixin.java).
+Two independent `java.util.Random` streams are seeded from world seed and
+dimension ID, with a separate sky salt. They retain no level/chunk references
+or maps, consume no Minecraft RNG to make admission decisions, and do not
+depend on other worlds' tick order. They are ephemeral, not saved simulation
+state; a level reload restarts them. Admission uses `nextInt(4) < quarters`,
+giving the selected probability without periodic every-fourth-position bias.
+
+Existing sand deposition uses gameplay `nextInt(16)`; snow reuses a vanilla
+sample. Neither is suitable prior art for independent IW admission: borrowing
+gameplay RNG would add unrelated draws, and an every-N counter could correlate
+with vanilla position/order patterns. Two small, level-owned JDK streams avoid
+that correlation without new RNG algorithms, caches, category knobs or budgets.
+Full rate short-circuits before sampler lookup/initialization and draws nothing.
+
+Only two admission boundaries change:
+
+- `IW_weatheringTick` stays at the existing `getFluidState` anchor **after**
+  native block random ticking. Reject before the extra section-state read;
+  admit then reread the fresh post-native state and call `tickBlock(BLOCK_TICK)`.
+- `BlockGrowthHandler.performSkyAccessTick` keeps its original
+  `randomTickSpeed / 48f` chance, strict `chance > nextFloat()` comparison,
+  decrement and do/while order. Admission follows a successful original roll,
+  before position generation, heightmap/state/biome queries and dispatch.
+  Zero speed still consumes its original one source float and no admission;
+  speeds above 48 retain guaranteed opportunities plus any fractional remainder.
+
+Full rate preserves original sampling/RNG/query/dispatch order. At lower rates,
+skipped work also skips its existing growth/position draws, so later gameplay
+RNG traces are not promised identical; **admission itself** never draws gameplay
+RNG. Per-rule `growth_chance` and the vanilla randomTickSpeed gamerule are not
+modified. `tickBlock` keeps its config/conditional callback and mutable
+registration semantics: no admission or eligibility guard is moved there.
+Direct lightning/API calls (even an API `BLOCK_TICK` call), vanilla random ticks,
+standalone sand deposition, snow accumulation and freezing wind are excluded.
+Fewer IW opportunities mean slower progression, not measured live performance
+gains. See [sampling validation](Development.md#weathering-sampling-checks).
+
 ## System map
 
 | System | Start reading here | Coupled surfaces |

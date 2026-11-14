@@ -14,5 +14,6 @@ public class PileIntegrationMixin {
             throw new IllegalStateException("Pile integration tests require init-only server startup");
         }
         PilePlacementIntegrationTest.verify();
+        com.ordana.immersive_weathering.data.block_growths.WeatheringSamplingIntegrationTest.verify();
     }
 }

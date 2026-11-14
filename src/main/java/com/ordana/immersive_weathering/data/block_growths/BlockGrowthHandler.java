@@ -101,7 +101,7 @@ public class BlockGrowthHandler extends RegistryAccessJsonReloadListener {
         int minZ = chunkpos.getMinBlockZ();
         boolean isRaining = level.isRaining();
         do {
-            if (chance > level.getRandom().nextFloat()) {
+            if (chance > level.getRandom().nextFloat() && WeatheringSampler.sampleSky(level)) {
 
                 BlockPos firstAirPos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(minX, 0, minZ, 15));
                 BlockPos targetPos = firstAirPos.below();

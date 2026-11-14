@@ -507,6 +507,42 @@ loaded chunks, entities, settings, simulation/view distance and JVM identical.
 Do not cache biome/tag/exposure answers across reloads or suppress daytime thunder
 gusts as a shortcut. Actual runtime profiles were not collected for this review.
 
+## Weathering sampling checks
+
+```powershell
+.\gradlew.bat weatheringSamplingTest growthPerformanceTest --console=plain
+.\gradlew.bat runPilePlacementTest --console=plain
+```
+
+Both are included in `build`/`check`. The native sampling task uses production
+`WeatheringSampler` and `BlockGrowthHandler`, real Mojang states/biomes/RNG,
+and the existing test-only config/reload bootstrap substitutes. Four exhaustive
+equally likely quarter draws establish exact 25/50/75/100 admission probabilities.
+Six seeds with one million opportunities per rate/stream require measured
+admissions within **0.25 percentage points** of the configured proportion.
+Separate world/stream interleavings establish isolation and full-rate draws
+nothing. Sky tests cover clear/rain/snow source order, zero, fractional and
+48/49/96/97/480 speeds; full-rate traces and subsequent RNG equal the legacy
+loop. Rejected sky opportunities skip position generation, heightmaps, state
+reads and dispatch. Direct lightning/API calls stay unthinned. The existing
+growth differential harness retains conditional/mutable-registration coverage.
+
+The existing init-only Fabric-woven pile task also runs
+`WeatheringSamplingIntegrationTest`. It loads/saves each supported enum through
+real Moonlight configuration, checks the 50% default, and invokes the actual
+woven block hook at its post-native boundary using a native random-ticking block
+that changes the stored section state. Admitted callbacks must see the new state;
+rejects skip its lookup/dispatch, native ticks and their RNG remain unchanged,
+and full rate never initializes a sampler. One hundred thousand samples per
+rate must be within 0.6 percentage points; full rate must admit every one.
+
+These constructor-free bounded fixtures use test-only JDK `Unsafe`, write only
+under `build`, do not create a saved world or accept the EULA, and are excluded
+from release artifacts. Hook invocation is not an end-to-end live `tickChunk`
+simulation, world unload/reload, multiplayer or manual gameplay acceptance.
+Source inspection also keeps the existing post-native injection anchor unchanged.
+No timing/TPS/MSPT/FPS gain is established by these proportion checks.
+
 ## Growth performance harness
 
 Run the standard-library Java 17 harness using the existing Loom classpath:

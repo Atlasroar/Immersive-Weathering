@@ -165,6 +165,7 @@ Source: [src/main/java/com/ordana/immersive_weathering/configs/CommonConfigs.jav
 | `sand.rain_erosion` | `true` | `SAND_RAIN_EROSION` |
 | `sand.rain_erosion_chance` | `0.125, 0, 1` | `SAND_RAIN_EROSION_CHANCE` |
 | `general.block_growths` | `true` | `BLOCK_GROWTHS` |
+| `general.weathering_sampling_rate` | `WeatheringSampler.Rate.PERCENT_50` | `WEATHERING_SAMPLING_RATE` |
 | `general.block_growth_blacklist` | `new ArrayList<>()` | `DISABLED_GROWTHS` |
 | `general.creative_tab` | `false` | `CREATIVE_TAB` |
 | `general.drop_in_creative` | `false` | `CREATIVE_DROP` |
