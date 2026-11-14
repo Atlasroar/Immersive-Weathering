@@ -2,6 +2,7 @@ package com.ordana.immersive_weathering.mixins;
 
 import com.ordana.immersive_weathering.data.block_growths.BlockGrowthHandler;
 import com.ordana.immersive_weathering.data.block_growths.TickSource;
+import com.ordana.immersive_weathering.data.block_growths.WeatheringSampler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -26,7 +28,19 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin extends Level {
+public abstract class ServerLevelMixin extends Level implements WeatheringSampler.Provider {
+    @Unique
+    private WeatheringSampler immersiveWeathering$sampler;
+
+    @Override
+    public WeatheringSampler immersiveWeathering$getSampler() {
+        if (immersiveWeathering$sampler == null) {
+            immersiveWeathering$sampler = new WeatheringSampler(
+                    ((ServerLevel) (Object) this).getSeed() ^ this.dimension().location().toString().hashCode());
+        }
+        return immersiveWeathering$sampler;
+    }
+
     @Inject(method = "tickChunk", at = @At("TAIL"))
     private void sandstormDeposition(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
         com.ordana.immersive_weathering.sandstorm.SandAccumulation.tickChunk((ServerLevel) (Object) this, chunk);
@@ -58,6 +72,7 @@ public abstract class ServerLevelMixin extends Level {
     )
     private void IW_weatheringTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, ChunkPos chunkPos,
                                    boolean bl, int i, int j, ProfilerFiller profilerFiller, LevelChunkSection[] levelChunkSections, int m, LevelChunkSection levelChunkSection, int k, int n, int l, BlockPos blockPos3, BlockState blockState4) {
+        if (!WeatheringSampler.sampleBlock((ServerLevel) (Object) this)) return;
         // we need to get it again as it might have been changed by its own random tick
         BlockState newState = levelChunkSection.getBlockState(blockPos3.getX() - i,
                 blockPos3.getY() - n, blockPos3.getZ() - j);

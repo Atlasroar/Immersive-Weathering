@@ -25,6 +25,11 @@ a dedicated stone-brick comparison matrix.
 Not every block has every variant. Tool actions can consume items or durability.
 Do not infer that the mod weathers arbitrary blocks from other mods.
 
+The 2.8.0 [IW growth sampling setting](Configuration.md#iw-growth-sampling)
+defaults to 50% of sampled block/sky growth opportunities. Expect slower
+progression; choose 100% for legacy sampling. This is not a blanket slowdown of
+vanilla ticks, tool actions or standalone weather systems.
+
 ## Freezing wind and thunder snowstorms
 
 **Added in 2.5.0; not present in the published 2.4.0 jar.**

@@ -105,6 +105,8 @@
   "config.immersive_weathering.general.decay_sound": "Leaf Decay Sound",
 
   "config.immersive_weathering.general.block_growths": "Block Growths",
+  "config.immersive_weathering.general.weathering_sampling_rate": "IW Growth Sampling Rate",
+  "config.immersive_weathering.general.weathering_sampling_rate.descriptionKey": "Admit 25%, 50% (default), 75% or 100% (legacy) of IW sampled block/sky growth opportunities. Lower rates slow progression without changing growth_chance. Vanilla randomTickSpeed, direct lightning/API growth, standalone sand/snow accumulation and freezing wind are unchanged.",
   "config.immersive_weathering.item_interaction.block_growths.descriptionKey": "Should any block growth mechanics occur?",
   "config.immersive_weathering.item_interaction.drop_in_creative": "Interaction Items Drop in Creative",
   "config.immersive_weathering.general.creative_tab": "IW Creative Tab",

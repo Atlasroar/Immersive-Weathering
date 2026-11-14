@@ -2,6 +2,13 @@
 
 [Wiki home](../README.md) | [Players](README.md) | [Developers](../developers/README.md)
 
+For **slower sampled growth since 2.8.0**, check common
+`general.weathering_sampling_rate`. New and older configs missing the key use
+`PERCENT_50`; choose `PERCENT_100` to restore legacy sampling without changing
+vanilla randomTickSpeed. Lower admission rates intentionally slow block/sky
+growth opportunities, not individual growth chances. Published 2.7.0 has no
+such setting. See [affected paths and exclusions](Configuration.md#iw-growth-sampling).
+
 For **2.5.0 freezing wind / thunder snowstorms**, the published 2.4.0 jar
 does not contain this work. Record the release/source commit and actual binary
 hash. Natural ambient gusts require night, natural skylit dimensions, exposed

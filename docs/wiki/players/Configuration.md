@@ -21,6 +21,7 @@ source expressions rather than guessing what a setting's name means.
 | Goal | Setting or approach |
 | --- | --- |
 | Disable the block-growth dispatcher | Common `general.block_growths`; this is broad and does not disable every independent weathering/block behavior |
+| Reduce sampled IW growth opportunities | Common `general.weathering_sampling_rate`; 50% default, with 25%, 75% and legacy 100% options |
 | Disable specific growths | Common `general.block_growth_blacklist`, or a datapack override |
 | Control moss/crack spread | Common `mossy_blocks` and `cracked_blocks` sections |
 | Control natural rust | Common `rusting` section |
@@ -32,6 +33,32 @@ source expressions rather than guessing what a setting's name means.
 | Control sand sharing/replacement/erosion | Common `sand` section, added in 2.4.0; independent of the growth dispatcher |
 | Reduce leaf visuals/sounds | Client `general` section: `falling_leaf_particles`, `leaves_decay_particles`, `decay_sound`, and rate keys |
 | Inspect generated assets/data | Common `general.debug_save_dynamic_pack`; use a disposable development instance because it writes debug resources |
+
+## IW growth sampling
+
+**Added in 2.8.0; published 2.7.0 has no sampling multiplier.**
+Common `general.weathering_sampling_rate` accepts exactly `PERCENT_25`,
+`PERCENT_50` (default), `PERCENT_75` and `PERCENT_100`. Configure it on the server;
+use the IW config screen where available, or stop the instance before editing
+the active Moonlight common config. Restart after manual edits.
+Older configs missing this new key receive **50%, not legacy 100%**.
+Set `PERCENT_100` explicitly to restore legacy sampling.
+
+This setting admits the selected proportion, on average, of IW's sampled
+`BLOCK_TICK` growth attempts after vanilla block random ticks and successful
+sky-access growth opportunities (`clear_sky`, `rain`, `snow`). It reduces the
+number of opportunities, not a datapack growth's `growth_chance`. Lower rates
+therefore mean slower progression; short runs can vary, and 50% is not a promise
+that every block changes at exactly half speed. Existing weathered blocks are
+not reverted. Full rate retains the previous sampling, RNG and dispatch order.
+
+It does **not** change vanilla random ticks or the `randomTickSpeed` gamerule,
+direct lightning/API growth dispatch, standalone sand deposition, standalone
+snow accumulation or freezing wind. Sky-access growth still depends on
+randomTickSpeed (zero supplies no opportunities); standalone weather systems
+keep their own controls. Do not raise randomTickSpeed to compensate unless you
+also intend to accelerate vanilla systems. Reducing IW work is optional tuning,
+not a measured live TPS/MSPT or frame-rate improvement claim.
 
 ## Freezing wind and thunder snowstorms
 

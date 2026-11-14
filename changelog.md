@@ -1,5 +1,27 @@
 ## Unreleased
 
+## 2.8.0
+
+Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.
+Install only `immersive_weathering-2.8.0.jar`, replacing the previous IW jar
+after backing up worlds/configuration. Required dependencies and existing
+content IDs are unchanged. Existing configs missing the new sampling key receive
+50%; set `general.weathering_sampling_rate=PERCENT_100` for legacy sampling.
+Native and Fabric-woven admission checks do not establish manual gameplay or
+live performance acceptance. Historical manual verdicts, including MP01 Mixed,
+remain unchanged. Published 2.7.0 and earlier artifacts are immutable.
+
+- Add common `general.weathering_sampling_rate`: `PERCENT_25`, `PERCENT_50`
+  (new default), `PERCENT_75`, or `PERCENT_100` (legacy sampling). Missing keys
+  in older configs now default to 50%. This thins only IW sampled `BLOCK_TICK`
+  and sky-access growth opportunities; each rule's `growth_chance` is unchanged.
+  Expect slower progression at lower rates. Vanilla random ticks/randomTickSpeed,
+  direct lightning/API growth, standalone sand deposition, snow accumulation and
+  freezing wind are unchanged. Full rate preserves legacy sampling/RNG/order
+  without an admission draw. Independent level-owned IW admission streams avoid
+  gameplay RNG draws and world/chunk caches. No measured live performance gain
+  or manual gameplay acceptance is claimed.
+
 ## 2.7.0
 
 Stable release target for Minecraft **1.20.1**, **Fabric** and **Java 17**.

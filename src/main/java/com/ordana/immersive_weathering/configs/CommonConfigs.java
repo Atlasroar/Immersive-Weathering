@@ -1,6 +1,7 @@
 package com.ordana.immersive_weathering.configs;
 
 import com.ordana.immersive_weathering.ImmersiveWeathering;
+import com.ordana.immersive_weathering.data.block_growths.WeatheringSampler;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
@@ -39,6 +40,7 @@ public class CommonConfigs {
     public static final Supplier<Double> SAND_RAIN_EROSION_CHANCE;
 
     public static final Supplier<Boolean> BLOCK_GROWTHS;
+    public static final Supplier<WeatheringSampler.Rate> WEATHERING_SAMPLING_RATE;
     public static final Supplier<List<String>> DISABLED_GROWTHS;
     public static final Supplier<Boolean> CREATIVE_TAB;
     public static final Supplier<Boolean> CREATIVE_DROP;
@@ -200,6 +202,8 @@ public class CommonConfigs {
 
         builder.push("general");
         BLOCK_GROWTHS = builder.define("block_growths", true);
+        WEATHERING_SAMPLING_RATE = builder.comment("IW sampled block/sky growth opportunities: PERCENT_25, PERCENT_50 (default), PERCENT_75 or PERCENT_100 (legacy sampling). Lower rates slow progression, not individual growth_chance. Does not change vanilla randomTickSpeed, direct lightning/API dispatch, standalone sand/snow accumulation or freezing wind.")
+                .define("weathering_sampling_rate", WeatheringSampler.Rate.PERCENT_50);
         DISABLED_GROWTHS = builder.comment("put here the name of a block growth json you want to disable i.e: [weeds, weeds_spread]." +
                         "Note that this is not the preferred way to do this as block growths are all data driven so it would be best to disable or tweak them by creating a datapack that overrides them" +
                         "Check the mod data folder for the required names. Requires resource reload (/data reload)")
